@@ -970,12 +970,13 @@ ansi-wrap@0.1.0:
   version "0.1.0"
   resolved "https://registry.yarnpkg.com/ansi-wrap/-/ansi-wrap-0.1.0.tgz#a82250ddb0015e9a27ca82e82ea603bbfa45efaf"
 
-antique.ptf@byte-foundry/antique.ptf#feat/new-rendering:
+antique.ptf@byte-foundry/antique.ptf#feat/simplified-parameters:
   version "1.0.0"
-  resolved "https://codeload.github.com/byte-foundry/antique.ptf/tar.gz/9fa9f1dfad947b5814445d2f52a61960e42d4532"
+  resolved "https://codeload.github.com/byte-foundry/antique.ptf/tar.gz/e9e8ede4fc96a8bc76f599e315c4508cfb8a97cb"
   dependencies:
     karma "^1.7.1"
-    prototypo-precursor "^1.0.3"
+    prototypo-precursor "1.0.7"
+    yargs "^11.0.0"
 
 any-observable@^0.2.0:
   version "0.2.0"
@@ -4242,9 +4243,9 @@ elliptic@^6.0.0:
     minimalistic-assert "^1.0.0"
     minimalistic-crypto-utils "^1.0.0"
 
-elzevir.ptf@byte-foundry/elzevir.ptf#feat/new-rendering:
+elzevir.ptf@byte-foundry/elzevir.ptf#feat/simplified-parameters:
   version "1.0.0"
-  resolved "https://codeload.github.com/byte-foundry/elzevir.ptf/tar.gz/2cc2f375e2d26dca613bd47f84df9084c40f8701"
+  resolved "https://codeload.github.com/byte-foundry/elzevir.ptf/tar.gz/8f443fde29f396f75eba29e77dd3ddc1a6f98a74"
   dependencies:
     karma "^1.7.0"
     prototypo-precursor "^1.0.4"
@@ -5549,12 +5550,13 @@ getpass@^0.1.1:
   dependencies:
     assert-plus "^1.0.0"
 
-gfnt.ptf@byte-foundry/spectral.ptf#feat/new-rendering:
+gfnt.ptf@byte-foundry/spectral.ptf#feat/simplified-parameters:
   version "1.0.0"
-  resolved "https://codeload.github.com/byte-foundry/spectral.ptf/tar.gz/b87f17ef079400e3ee6a9af4274e9b92a841795f"
+  resolved "https://codeload.github.com/byte-foundry/spectral.ptf/tar.gz/4a09f9eab1e5fe54b2057761a2ef621de602de55"
   dependencies:
     karma "^2.0.0"
     prototypo-precursor "^1.0.4"
+    yargs "^11.0.0"
 
 glamor@^2.20.40:
   version "2.20.40"
@@ -7345,11 +7347,12 @@ jest@^22.2.1:
     import-local "^1.0.0"
     jest-cli "^22.4.2"
 
-john-fell.ptf@byte-foundry/john-fell.ptf#feat/new-rendering:
+john-fell.ptf@byte-foundry/john-fell.ptf#feat/simplified-parameters:
   version "1.0.0"
-  resolved "https://codeload.github.com/byte-foundry/john-fell.ptf/tar.gz/e2c99c90124a3a15bf92753ec199209826e06cef"
+  resolved "https://codeload.github.com/byte-foundry/john-fell.ptf/tar.gz/9dd4137dccec8ef3adb28eba13b45258943c64d5"
   dependencies:
     prototypo-precursor "^1.0.4"
+    yargs "^11.0.0"
 
 js-base64@^2.1.8, js-base64@^2.1.9:
   version "2.4.3"
@@ -10174,7 +10177,7 @@ prototypo-flux-testing@0.0.1:
   version "0.0.1"
   resolved "https://registry.yarnpkg.com/prototypo-flux-testing/-/prototypo-flux-testing-0.0.1.tgz#33694eb51c05ed4241b7072c5e49c0dda6587a3f"
 
-prototypo-precursor@^1.0.3:
+prototypo-precursor@1.0.7, prototypo-precursor@^1.0.7:
   version "1.0.7"
   resolved "https://registry.yarnpkg.com/prototypo-precursor/-/prototypo-precursor-1.0.7.tgz#4ac6dd0ff827cfeb0048566a35961c364d3a3607"
   dependencies:
@@ -10500,6 +10503,10 @@ react-inspector@^2.2.2:
     babel-runtime "^6.26.0"
     is-dom "^1.0.9"
 
+react-is@^16.4.1:
+  version "16.4.1"
+  resolved "https://registry.yarnpkg.com/react-is/-/react-is-16.4.1.tgz#d624c4650d2c65dbd52c72622bbf389435d9776e"
+
 react-joyride@^1.4.7:
   version "1.11.3"
   resolved "https://registry.yarnpkg.com/react-joyride/-/react-joyride-1.11.3.tgz#a28db9d83c3fd15c08870dd126ca8d2d5a43e811"
@@ -10618,13 +10625,6 @@ react-style-proptype@^3.0.0:
   dependencies:
     prop-types "^15.5.4"
 
-react-test-renderer@^15.6.2:
-  version "15.6.2"
-  resolved "https://registry.yarnpkg.com/react-test-renderer/-/react-test-renderer-15.6.2.tgz#d0333434fc2c438092696ca770da5ed48037efa8"
-  dependencies:
-    fbjs "^0.8.9"
-    object-assign "^4.1.0"
-
 react-test-renderer@^16.0.0-0:
   version "16.2.0"
   resolved "https://registry.yarnpkg.com/react-test-renderer/-/react-test-renderer-16.2.0.tgz#bddf259a6b8fcd8555f012afc8eacc238872a211"
@@ -10632,6 +10632,15 @@ react-test-renderer@^16.0.0-0:
     fbjs "^0.8.16"
     object-assign "^4.1.1"
     prop-types "^15.6.0"
+
+react-test-renderer@^16.4.1:
+  version "16.4.1"
+  resolved "https://registry.yarnpkg.com/react-test-renderer/-/react-test-renderer-16.4.1.tgz#f2fb30c2c7b517db6e5b10ed20bb6b0a7ccd8d70"
+  dependencies:
+    fbjs "^0.8.16"
+    object-assign "^4.1.1"
+    prop-types "^15.6.0"
+    react-is "^16.4.1"
 
 react-tippy@^1.2.2:
   version "1.2.2"
@@ -13027,11 +13036,12 @@ vendors@^1.0.0:
   version "1.0.1"
   resolved "https://registry.yarnpkg.com/vendors/-/vendors-1.0.1.tgz#37ad73c8ee417fb3d580e785312307d274847f22"
 
-venus.ptf@byte-foundry/venus.ptf#feat/new-rendering:
+venus.ptf@byte-foundry/venus.ptf#feat/simplified-params:
   version "1.0.0"
-  resolved "https://codeload.github.com/byte-foundry/venus.ptf/tar.gz/d233bc372537ffa540fc5f233009d8a68c31ba39"
+  resolved "https://codeload.github.com/byte-foundry/venus.ptf/tar.gz/d4d1862f501fa4a527e37dfb723fe6dda04b1b27"
   dependencies:
-    prototypo-precursor "^1.0.4"
+    prototypo-precursor "^1.0.7"
+    yargs "^11.0.0"
 
 verror@1.10.0:
   version "1.10.0"
@@ -13494,6 +13504,12 @@ yargs-parser@^8.0.0, yargs-parser@^8.1.0:
   dependencies:
     camelcase "^4.1.0"
 
+yargs-parser@^9.0.2:
+  version "9.0.2"
+  resolved "https://registry.yarnpkg.com/yargs-parser/-/yargs-parser-9.0.2.tgz#9ccf6a43460fe4ed40a9bb68f48d43b8a68cc077"
+  dependencies:
+    camelcase "^4.1.0"
+
 yargs@10.0.3:
   version "10.0.3"
   resolved "https://registry.yarnpkg.com/yargs/-/yargs-10.0.3.tgz#6542debd9080ad517ec5048fb454efe9e4d4aaae"
@@ -13545,6 +13561,23 @@ yargs@^10.0.3:
     which-module "^2.0.0"
     y18n "^3.2.1"
     yargs-parser "^8.1.0"
+
+yargs@^11.0.0:
+  version "11.0.0"
+  resolved "https://registry.yarnpkg.com/yargs/-/yargs-11.0.0.tgz#c052931006c5eee74610e5fc0354bedfd08a201b"
+  dependencies:
+    cliui "^4.0.0"
+    decamelize "^1.1.1"
+    find-up "^2.1.0"
+    get-caller-file "^1.0.1"
+    os-locale "^2.0.0"
+    require-directory "^2.1.1"
+    require-main-filename "^1.0.1"
+    set-blocking "^2.0.0"
+    string-width "^2.0.0"
+    which-module "^2.0.0"
+    y18n "^3.2.1"
+    yargs-parser "^9.0.2"
 
 yargs@^7.0.0:
   version "7.1.0"

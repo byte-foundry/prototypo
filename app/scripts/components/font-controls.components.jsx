@@ -38,6 +38,7 @@ export default class FontControls extends React.PureComponent {
 					indivEdit: headJS.indivEditingParams,
 					currentGroup: headJS.indivCurrentGroup || voidCurrentGroup,
 					uiSliderTooltip: head.toJS().d.uiSliderTooltip,
+					advancedMode: head.toJS().d.advancedMode,
 				});
 			})
 			.onDelete(() => {
@@ -76,6 +77,7 @@ export default class FontControls extends React.PureComponent {
 					indivMode={this.state.indivMode}
 					indivEdit={this.state.indivEdit}
 					currentGroup={this.state.currentGroup.name}
+					advancedMode={this.state.advancedMode}
 				/>
 			</ControlsTab>
 		));

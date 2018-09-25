@@ -382,7 +382,7 @@ export default class Toile {
 		this.drawLine(
 			{x: -infinityDistance, y: values.xHeight + values.overshoot},
 			{x: infinityDistance, y: values.xHeight + values.overshoot},
-			mediumGrey,
+			lightGrey,
 		);
 		this.drawLine(
 			{x: -infinityDistance, y: values.xHeight + values.capDelta},
@@ -398,7 +398,7 @@ export default class Toile {
 				x: infinityDistance,
 				y: values.xHeight + values.capDelta + values.overshoot,
 			},
-			mediumGrey,
+			lightGrey,
 		);
 		this.drawLine(
 			{x: -infinityDistance, y: 0},

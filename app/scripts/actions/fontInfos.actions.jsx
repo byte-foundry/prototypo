@@ -12,7 +12,7 @@ window.addEventListener('fluxServer.setup', () => {
 export default {
 	'/set-alternate': ({unicode, glyphName, relatedGlyphs = {}}) => {
 		const newParams = {...undoableStore.get('controlsValues')};
-		const altList = newParams.altList || {};
+		const altList = {...newParams.altList} || {};
 
 		altList[unicode] = glyphName;
 

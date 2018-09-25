@@ -43,7 +43,6 @@ class LibraryMain extends React.Component {
 
 		this.client.getStore('/prototypoStore', this.lifespan).onUpdate((head) => {
 			this.setState({
-				openFamilyModal: head.toJS().d.openFamilyModal,
 				openVariantModal: head.toJS().d.openVariantModal,
 				openChangeVariantNameModal: head.toJS().d.openChangeVariantNameModal,
 				openDuplicateVariantModal: head.toJS().d.openDuplicateVariantModal,
@@ -230,6 +229,7 @@ class LibraryMain extends React.Component {
 					updateTags: this.props.updateTags,
 					favourites: this.props.favourites,
 					addFavourite: this.props.addFavourite,
+					hostedDomains: this.props.hostedDomains,
 					createFavourite: this.props.createFavourite,
 					deleteFavourite: this.props.deleteFavourite,
 					abstractedTemplates: this.props.abstractedTemplates,
@@ -334,7 +334,7 @@ export const teamQuery = gql`
 	}
 `;
 
-const libraryUserQuery = gql`
+export const libraryUserQuery = gql`
 	query getLibraryUserInfos {
 		user {
 			id
@@ -365,9 +365,9 @@ const libraryUserQuery = gql`
 			}
 			favourites {
 				id
-				type
-				updatedAt
 				name
+				updatedAt
+				type
 				preset {
 					id
 				}
@@ -378,6 +378,32 @@ const libraryUserQuery = gql`
 					}
 				}
 				template
+			}
+			hostedDomains {
+				id
+				domain
+				updatedAt
+				hostedVariants {
+					id
+					createdAt
+					abstractedFont {
+						id
+						type
+						name
+						template
+						preset {
+							id
+						}
+						variant {
+							id
+							family {
+								id
+							}
+						}
+					}
+					url
+					version
+				}
 			}
 		}
 	}
@@ -561,6 +587,7 @@ export default compose(
 					userId: data.user.id,
 					favourites: data.user.favourites,
 					fontInUses: data.user.fontInUses,
+					hostedDomains: data.user.hostedDomains,
 				}
 			);
 		},

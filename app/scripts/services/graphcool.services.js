@@ -3,7 +3,9 @@ import {ApolloClient, createBatchingNetworkInterface} from 'react-apollo';
 import isProduction from '../helpers/is-production.helpers';
 
 const networkInterface = createBatchingNetworkInterface({
-	uri: `https://api.graph.cool/simple/v1/prototypo${isProduction() ? '' : '-new-dev'}`,
+	uri: `https://api.graph.cool/simple/v1/prototypo${
+		isProduction() ? '' : '-new-dev'
+	}`,
 	batchInterval: 10,
 });
 
@@ -30,5 +32,22 @@ const apolloClient = new ApolloClient({
 	dataIdFromObject: o => o.id,
 	connectToDevTools: true,
 });
+
+export const tmpUpload = async (file, name = 'font') => {
+	const data = new FormData();
+
+	data.append('filename', name);
+	data.append('data', file);
+
+	const response = await fetch(
+		'https://api.graph.cool/file/v1/ciz3x8qbba0ni0192kaicafgo',
+		{
+			method: 'POST',
+			body: data,
+		},
+	);
+
+	return response.json();
+};
 
 export default apolloClient;

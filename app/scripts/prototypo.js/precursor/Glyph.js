@@ -516,6 +516,22 @@ export default class Glyph {
 					+ (params.manualChanges[this.name.value].cursors[manualParamsKeys[i]]
 						|| 0);
 			}
+
+			const postDepManualParamsKeys = Object.keys(
+				params.postDepManualChanges[this.base.value].cursors,
+			);
+
+			for (let i = 0; i < postDepManualParamsKeys.length; i++) {
+				localParams.postDepManualChanges[this.name.value].cursors[
+					postDepManualParamsKeys[i]
+				]
+					= params.postDepManualChanges[this.base.value].cursors[
+						postDepManualParamsKeys[i]
+					]
+					+ (params.postDepManualChanges[this.name.value].cursors[
+						postDepManualParamsKeys[i]
+					] || 0);
+			}
 		}
 
 		const specialProps = this.unicode
