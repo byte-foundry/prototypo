@@ -6,12 +6,15 @@ import {Tooltip} from 'react-tippy';
 import 'react-tippy/dist/tippy.css';
 
 import onboardingData from '../../data/onboarding.data';
+import apolloClient from '../../services/graphcool.services';
 import LocalClient from '../../stores/local-client.stores';
 
 import Button from '../shared/new-button.components';
 import Step from './step.components';
 import FontUpdater from '../font-updater.components';
 import AlternateChoice from './alternate-choice.components';
+
+import {libraryQuery} from '../library/library-main.components';
 
 const flatten = list =>
 	list.reduce((a, b) => a.concat(Array.isArray(b) ? flatten(b) : b), []);
@@ -117,11 +120,45 @@ class OnboardingApp extends React.PureComponent {
 		}
 
 		try {
+			const abstractedFontMeta = this.props.location.state.abstractedFontMeta;
+			let abstracted;
+
+			if (abstractedFontMeta) {
+				const abstractedWhere = {
+					where: {},
+				};
+
+				if (abstractedFontMeta.type === 'VARIANT') {
+					abstractedWhere.where = {variant: {id: abstractedFontMeta.variantId}};
+				}
+				if (abstractedFontMeta.type === 'PRESET') {
+					abstractedWhere.where = {preset: {id: abstractedFontMeta.presetId}};
+				}
+				const abstractedquery = await apolloClient.query({
+					query: getAbstractedFontQuery,
+					variables: abstractedWhere,
+				});
+
+				abstracted = abstractedquery.data.allAbstractedFonts[0];
+
+				if (!abstracted) {
+					const abstractedFontCreated = await this.props.createAbstractedFont(
+						abstractedFontMeta.type,
+						abstractedFontMeta.variantId,
+						undefined,
+						abstractedFontMeta.presetId,
+						abstractedFontMeta.name,
+					);
+
+					abstracted = abstractedFontCreated.data.createAbstractedFont;
+				}
+			}
 			this.setState({creatingFamily: true});
 			const {data: {createFamily: newFont}} = await this.props.createFamily(
 				name,
 				this.state.selectedTemplate,
 				this.state.selectedValues,
+				abstracted ? abstracted.id : undefined,
 			);
 
 			this.setState({creatingFamily: false});
@@ -136,6 +173,7 @@ class OnboardingApp extends React.PureComponent {
 			this.getNextStep();
 		}
 		catch (err) {
+			console.log(err);
 			this.setState({creatingFamily: false});
 			this.setState({familyNameError: err.message});
 		}
@@ -495,32 +533,6 @@ class OnboardingApp extends React.PureComponent {
 	}
 }
 
-export const libraryQuery = gql`
-	query {
-		user {
-			id
-			library {
-				id
-				name
-				template
-				tags
-				designer
-				designerUrl
-				foundry
-				foundryUrl
-				variants {
-					id
-					name
-					values
-					width
-					weight
-					italic
-				}
-			}
-		}
-	}
-`;
-
 const updateVariantMutation = gql`
 	mutation updateVariant($id: ID!, $values: Json) {
 		updateVariant(id: $id, values: $values) {
@@ -557,12 +569,33 @@ const getUserIdQuery = gql`
 	}
 `;
 
+const createAbstractedFontMutation = gql`
+	mutation createAbstractedFont(
+		$type: FontType!
+		$variantId: ID
+		$template: String
+		$presetId: ID
+		$name: String!
+	) {
+		createAbstractedFont(
+			type: $type
+			variantId: $variantId
+			template: $template
+			presetId: $presetId
+			name: $name
+		) {
+			id
+		}
+	}
+`;
+
 const createFamilyMutation = gql`
 	mutation createFamily(
 		$name: String!
 		$template: String!
 		$values: Json
 		$ownerId: ID!
+		$abstractedFontId: ID
 	) {
 		createFamily(
 			name: $name
@@ -572,6 +605,7 @@ const createFamilyMutation = gql`
 			designerUrl: ""
 			foundry: "Prototypo"
 			foundryUrl: "https://prototypo.io/"
+			fromId: $abstractedFontId
 			variants: [
 				{
 					name: "Regular"
@@ -586,21 +620,43 @@ const createFamilyMutation = gql`
 			name
 			template
 			tags
-			id
-			name
-			template
 			designer
 			designerUrl
 			foundry
 			foundryUrl
+			from {
+				type
+				preset {
+					id
+				}
+				variant {
+					id
+					family {
+						id
+					}
+				}
+			}
 			variants {
 				id
+				updatedAt
 				name
 				values
-				weight
 				width
+				weight
 				italic
+				updatedAt
+				abstractedFont {
+					id
+				}
 			}
+		}
+	}
+`;
+
+const getAbstractedFontQuery = gql`
+	query getAbstractedFont($where: AbstractedFontFilter) {
+		allAbstractedFonts(filter: $where) {
+			id
 		}
 	}
 `;
@@ -624,6 +680,20 @@ export default compose(
 
 			return {refetch: data.refetch};
 		},
+	}),
+	graphql(createAbstractedFontMutation, {
+		props: ({mutate}) => ({
+			createAbstractedFont: (type, variantId, template, presetId, name) =>
+				mutate({
+					variables: {
+						type,
+						variantId,
+						template,
+						presetId,
+						name,
+					},
+				}),
+		}),
 	}),
 	graphql(deleteVariantMutation, {
 		props: ({mutate}) => ({
@@ -692,13 +762,14 @@ export default compose(
 	}),
 	graphql(createFamilyMutation, {
 		props: ({mutate, ownProps}) => ({
-			createFamily: (name, template, values) =>
+			createFamily: (name, template, values, abstractedId) =>
 				mutate({
 					variables: {
 						ownerId: ownProps.userId,
 						name,
 						template,
-						values: JSON.stringify(values),
+						values,
+						abstractedFontId: abstractedId,
 					},
 				}),
 		}),
