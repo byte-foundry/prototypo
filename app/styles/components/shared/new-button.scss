@@ -26,6 +26,7 @@
 	&--disabled {
 		cursor: default;
 		background-color: $light-grey;
+		pointer-events: none;
 
 		&:hover {
 			background-color: $light-grey;

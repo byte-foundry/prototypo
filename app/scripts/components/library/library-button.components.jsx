@@ -1,9 +1,9 @@
 import React from 'react';
 import classnames from 'classnames';
 
-export default class LibraryButton extends React.Component {
-	componentWillMount() {}
+import LoadingButton from '../shared/loading-button.components';
 
+export default class LibraryButton extends React.Component {
 	render() {
 		const {
 			big,
@@ -12,11 +12,8 @@ export default class LibraryButton extends React.Component {
 			floated,
 			bold,
 			full,
-			loading,
 			error,
 			disabled,
-			onClick,
-			onBlur,
 			name,
 			...rest
 		} = this.props;
@@ -25,34 +22,21 @@ export default class LibraryButton extends React.Component {
 			'button-big': big,
 			'button-dark': dark,
 			'button-highlight': highlight,
-			floated,
-			'button-bold': floated,
-			'button-full': full,
-			'button-loading': loading,
+			'button-bold': bold,
 			'button-error': error,
 			'button-disabled': disabled,
 		});
 
 		return (
-			<div
-				tabIndex="1"
+			<LoadingButton
 				className={classes}
-				onMouseDown={onClick}
-				onBlur={onBlur}
+				fluid={floated === false || full}
+				disabled={disabled}
+				outline
 				{...rest}
 			>
-				{loading ? (
-					<div className="sk-spinner-wave">
-						<div className="sk-rect1" />
-						<div className="sk-rect2" />
-						<div className="sk-rect3" />
-						<div className="sk-rect4" />
-						<div className="sk-rect5" />
-					</div>
-				) : (
-					<span>{name}</span>
-				)}
-			</div>
+				{name}
+			</LoadingButton>
 		);
 	}
 }
