@@ -64,8 +64,8 @@ const prototypoStore = new Remutable({
 		{
 			sample: 'antique-sample.svg',
 			sampleLarge: 'template-antique.svg',
-			name: 'Prototypo Antique Gothic',
-			familyName: 'Prototypo Antique Gothic',
+			name: 'Antique Gothic',
+			familyName: 'Antique Gothic',
 			templateName: 'antique.ptf',
 			provider: 'production',
 		},
@@ -138,6 +138,7 @@ const prototypoStore = new Remutable({
 	uiCreatefamilySelectedTemplate: undefined,
 	canvasMode: 'move',
 	uiSliderTooltip: undefined,
+	advancedMode: false,
 	// end ui store values
 
 	// commits store values

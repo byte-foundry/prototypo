@@ -216,12 +216,25 @@ export default class FontMediator {
 		oldFont[fontName] = fontFace;
 	}
 
-	getFontFile(fontName, template, params, subset) {
+	getFontFile(
+		fontName,
+		template,
+		params,
+		subset,
+		designer,
+		designerUrl,
+		foundry,
+		foundryUrl,
+		weight,
+		width,
+		italic,
+		merged = true,
+	) {
 		if (!this.workerPool) {
 			return undefined;
 		}
-		const familyName = this.family.name;
-		const styleName = this.style.name || 'REGULAR';
+		const familyName = fontName.family;
+		const styleName = fontName.style || 'REGULAR';
 
 		return new Promise((resolve) => {
 			const job = {
@@ -236,6 +249,13 @@ export default class FontMediator {
 						},
 						subset,
 						forExport: true,
+						designer,
+						designerUrl,
+						foundry,
+						foundryUrl,
+						weight,
+						width,
+						italic,
 					},
 				},
 				callback: async (arrayBuffer) => {
@@ -253,7 +273,7 @@ export default class FontMediator {
 						'fontinfo',
 						[id],
 						JSON.stringify({
-							template: this.template,
+							template,
 							family: familyName,
 							style: styleName,
 							date: new Date().getTime(),
@@ -263,7 +283,7 @@ export default class FontMediator {
 						'json',
 					);
 
-					resolve(mergedFont);
+					resolve(merged ? mergedFont : arrayBuffer);
 				},
 			};
 

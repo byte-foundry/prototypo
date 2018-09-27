@@ -9,7 +9,7 @@ import InputWithLabel from '../shared/input-with-label.components';
 import Button from '../shared/new-button.components';
 
 // TODO: we should externalize queries
-import {libraryQuery} from '../collection/collection.components';
+import {libraryQuery} from '../library/library-main.components';
 
 class DuplicateVariant extends React.PureComponent {
 	constructor(props) {

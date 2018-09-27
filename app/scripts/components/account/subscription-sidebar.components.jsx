@@ -181,8 +181,8 @@ export default class SubscriptionSidebar extends React.PureComponent {
 					<h1 className="subscription-sidebar-header">{header}</h1>
 					<h2 className="subscription-sidebar-title">{title}</h2>
 					<ul className="subscription-sidebar-list-feat">
-						{features.map((feat, i) => (
-							<li className="subscription-sidebar-list-feat-item" key={i}>
+						{features.map(feat => (
+							<li key={feat} className="subscription-sidebar-list-feat-item">
 								{feat}
 							</li>
 						))}

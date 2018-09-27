@@ -75,16 +75,6 @@ class GoProModal extends React.PureComponent {
 
 	goSubscribe() {
 		this.client.dispatchAction('/store-value', {openGoProModal: false});
-		console.log(this.state.billing);
-		console.log({
-			pathname: '/account/subscribe',
-			query: {
-				plan:
-					this.state.billing === 'monthly'
-						? monthlyConst.prefix
-						: annualConst.prefix,
-			},
-		});
 		this.props.router.push({
 			pathname: '/account/subscribe',
 			query: {

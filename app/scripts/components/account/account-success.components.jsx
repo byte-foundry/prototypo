@@ -7,26 +7,30 @@ export default class AccountSuccess extends React.Component {
 			<div className="account-success account-base">
 				<h1>Hooray! You're officially a Prototypo user!</h1>
 				<img src="https://media.giphy.com/media/11YAyUOnpiv6tq/giphy.gif" />
-				<p>You will receive an email to notify you of this accomplishment!</p>
+				<p>You will soon receive a confirmation email.</p>
 				<p>
-					It's time for you now to{' '}
+					Now it's time to go to{' '}
 					<Link className="account-link" to="/dashboard">
 						go to the app
 					</Link>{' '}
-					and make you own fonts. We love to have a lot of feedbacks from our
-					users. Feel free to contact us or share with us your production on{' '}
+					and design your own fonts. We are eager to see what you will be able
+					to do with Prototypo. Please share your creations with us on{' '}
 					<a
 						className="account-link"
 						href="https://www.twitter.com/prototypoApp"
 					>
 						Twitter
 					</a>{' '}
-					or{' '}
+					and{' '}
 					<a
 						className="account-link"
 						href="https://www.facebook.com/prototypoApp"
 					>
 						Facebook
+					</a>. If you have any questions or feedback, feel free to reach out to
+					us at{' '}
+					<a className="account-link" href="mailto:contact@prototypo.io">
+						contact@prototypo.io
 					</a>.
 				</p>
 				<p>

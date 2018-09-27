@@ -24,7 +24,7 @@
 	&-icon {
 		height:52px;
 		float:left;
-		width:70px;
+		width:93.3px;
 		background-color: $black;
 		background-repeat: no-repeat;
 		background-position: 50% 50%;
@@ -64,7 +64,7 @@
 			width: 0;
 			height: 0;
 
-			transform: translate(25px, 8px);
+			transform: translate(38px, 8px);
 			border-left: 10px solid transparent;
 			border-right: 10px solid transparent;
 			@include themify() {

@@ -1,6 +1,7 @@
 import PropTypes from 'prop-types';
 import React from 'react';
 import {graphql, gql} from 'react-apollo';
+import {libraryQuery} from '../library/library-main.components';
 
 import LocalClient from '../../stores/local-client.stores';
 
@@ -110,5 +111,21 @@ export default graphql(renameVariantMutation, {
 					newName,
 				},
 			}),
+		update: (store, {data: {updateVariant}}) => {
+			const data = store.readQuery({query: libraryQuery});
+			const family = data.user.library.find(
+				family => family.id === ownProps.family.id,
+			);
+			const variant = family.variants.find(
+				variant => variant.id === ownProps.variant.id,
+			);
+
+			variant.name = updateVariant.name;
+
+			store.writeQuery({
+				query: libraryQuery,
+				data,
+			});
+		},
 	}),
 })(ChangeNameVariant);

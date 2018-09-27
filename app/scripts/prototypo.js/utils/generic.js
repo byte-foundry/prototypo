@@ -147,10 +147,10 @@ function exeTransformOnNode(name, node, param, origin) {
 		origin,
 	);
 
-	node.x = x; // eslint-disable-line no-param-reassign
-	node.y = y; // eslint-disable-line no-param-reassign
-	node.xBase = xBase; // eslint-disable-line no-param-reassign
-	node.yBase = yBase; // eslint-disable-line no-param-reassign
+	node.x = Math.round(x); // eslint-disable-line no-param-reassign
+	node.y = Math.round(y); // eslint-disable-line no-param-reassign
+	node.xBase = Math.round(xBase); // eslint-disable-line no-param-reassign
+	node.yBase = Math.round(yBase); // eslint-disable-line no-param-reassign
 }
 
 export function glyphBoundingBox(glyph) {

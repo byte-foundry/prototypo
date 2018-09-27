@@ -41,7 +41,7 @@ export class Signin extends React.Component {
 		});
 
 		this.props.router.push({
-			pathname: this.props.location.query.prevHash || '/start',
+			pathname: this.props.location.query.prevHash || '/library/home',
 			query: this.props.location.query,
 		});
 	}
@@ -54,7 +54,7 @@ export class Signin extends React.Component {
 
 		const errors = [];
 
-		this.setState({loading: false, errors, inError: {}});
+		this.setState({loading: true, errors, inError: {}});
 
 		if (!email || !password) {
 			errors.push('Fields with a * are required');

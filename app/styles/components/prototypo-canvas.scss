@@ -31,8 +31,8 @@
 
 	&-reset-buttons {
 		position: absolute;
-		top: 20px;
-		left: 0px;
+		top: 30px;
+		left: 18px;
 		display: flex;
 		z-index: 3;
 
@@ -95,6 +95,11 @@
 					border: 3px dashed $theme-background;
 					background: transparentize($theme-background, 0.9);
 					color: $theme-background;
+				}
+				&.accepted {
+					color: $green;
+					border-color: $green;
+					background-color: transparentize($green, 0.9);
 				}
 				&.rejected {
 					color: $red;
@@ -175,7 +180,7 @@
 .canvas-menu {
 	position: absolute;
 	bottom: 18px;
-	left: 20px;
+	left: 38px;
 	display: flex;
 	flex-flow: row nowrap;
 	z-index: 3;

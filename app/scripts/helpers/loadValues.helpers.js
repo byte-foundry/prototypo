@@ -37,6 +37,7 @@ export const valuesToLoad = [
 	{remote: 'wordPanelHeight', local: 'wordPanelHeight'},
 	{remote: 'rulerDisplayed', local: 'uiRuler'},
 	{remote: 'guides', local: 'guides'},
+	{remote: 'advancedMode', local: 'advancedMode'},
 ];
 
 window.addEventListener('fluxServer.setup', () => {

@@ -3,10 +3,11 @@ import PropTypes from 'prop-types';
 import {graphql} from 'react-apollo';
 import Lifespan from 'lifespan';
 import classNames from 'classnames';
+import {withRouter} from 'react-router';
 
 import LocalClient from '../../stores/local-client.stores';
 
-import {libraryQuery} from '../collection/collection.components';
+import {libraryQuery} from '../library/library-main.components';
 
 const voidStateObject = {};
 const voidStateArray = [];
@@ -110,7 +111,7 @@ class ArianneThread extends React.PureComponent {
 	}
 
 	addFamily() {
-		this.client.dispatchAction('/store-value', {openFamilyModal: true});
+		this.props.router.push('/library/create');
 	}
 
 	addVariant() {
@@ -252,7 +253,6 @@ class ArianneThread extends React.PureComponent {
 			'arianne-item': true,
 			'is-active': this.state.indivMode,
 			'is-creating': this.state.indivCreate,
-			// 'is-demo': isFreeWithoutCredits,
 		});
 		const groupLabel = this.state.indivCreate
 			? 'Creating new group...'
@@ -281,7 +281,11 @@ class ArianneThread extends React.PureComponent {
 
 		return (
 			<div className="arianne-thread">
-				<RootArianneItem click={this.showCollection} />
+				<RootArianneItem
+					click={() => {
+						this.props.router.push('/library/home');
+					}}
+				/>
 				{familyItem}
 				{variantItem}
 				{group}
@@ -311,14 +315,14 @@ export default graphql(libraryQuery, {
 			families: data.user.library,
 		};
 	},
-})(ArianneThread);
+})(withRouter(ArianneThread));
 
 class RootArianneItem extends React.Component {
 	render() {
 		return (
 			<div className="arianne-item" onClick={this.props.click}>
 				<div className="arianne-item-action">
-					<span className="arianne-item-action-collection">My projects</span>
+					<span className="arianne-item-action-collection">My library</span>
 				</div>
 				<div className="arianne-item-arrow" />
 			</div>
@@ -429,7 +433,7 @@ class ArianneDropMenu extends React.PureComponent {
 		const items = this.props.list.map((item, index) => (
 			<ArianneDropMenuItem
 				item={item}
-				key={item.name}
+				key={item.id || item.name}
 				click={this.props.click}
 				family={this.props.family}
 				itemToEl={this.props.itemToEl}
