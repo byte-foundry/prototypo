@@ -6,8 +6,9 @@ import {LibrarySidebarRight} from './library-sidebars.components';
 export default class LibraryFontsInUse extends React.Component {
 	constructor(props) {
 		super(props);
-		const fontInUse = this.props.fontInUses.find(
-			e => e.id === this.props.params.fontinuseID,
+
+		const fontInUse = props.fontInUses.find(
+			e => e.id === props.match.params.fontinuseID,
 		);
 
 		if (!fontInUse) {
@@ -80,7 +81,7 @@ export default class LibraryFontsInUse extends React.Component {
 						)}
 					</div>
 				</div>
-				<LibrarySidebarRight router={this.props.router}>
+				<LibrarySidebarRight>
 					<Link className="sidebar-action" to="/library/fontinuse/create">
 						Add fontsinuse
 					</Link>

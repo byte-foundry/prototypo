@@ -8,6 +8,7 @@ import LocalClient from '../../stores/local-client.stores';
 
 import LibraryList from './library-list.components';
 import LibraryHosting from './library-hosting.components';
+import LibraryHostingCreate from './library-hosting-create.components';
 import LibraryCreate from './library-create.components';
 import LibraryReview from './library-review.components';
 import LibraryFontsInUseList from './library-fontinuse-list.components';
@@ -244,7 +245,6 @@ class LibraryMain extends React.Component {
 					userId={this.props.userId}
 					families={this.props.families}
 					favourites={this.props.favourites}
-					router={this.props.router}
 				/>
 				<TransitionGroup>
 					{this.props.loading ? (
@@ -264,6 +264,16 @@ class LibraryMain extends React.Component {
 							<Route
 								path="/library/hosting"
 								render={renderWithAllData(LibraryHosting)}
+								exact
+							/>
+							<Route
+								path="/library/hosting/create"
+								render={renderWithAllData(LibraryHostingCreate)}
+								exact
+							/>
+							<Route
+								path="/library/hosting/:hostedDomainId/edit"
+								render={renderWithAllData(LibraryHostingCreate)}
 								exact
 							/>
 							<Route

@@ -1,6 +1,5 @@
 import React from 'react';
-import {graphql, gql, compose} from 'react-apollo';
-import {Link} from 'react-router-dom';
+import {Link, withRouter} from 'react-router-dom';
 
 import {
 	LibrarySidebarRight,
@@ -8,7 +7,6 @@ import {
 	FamilySidebarGlyphs,
 	SidebarTags,
 } from './library-sidebars.components';
-import {Link} from 'react-router';
 import Lifespan from 'lifespan';
 import FontUpdater from '../font-updater.components';
 import LocalClient from '../../stores/local-client.stores';
@@ -308,7 +306,7 @@ class LibrarySee extends React.Component {
 							))}
 					</div>
 				</div>
-				<LibrarySidebarRight router={this.props.router}>
+				<LibrarySidebarRight>
 					<FamilySidebarActions
 						glyphs={this.state.family.glyphs}
 						family={this.state.family}
@@ -316,7 +314,6 @@ class LibrarySee extends React.Component {
 						exportFamily={this.exportFamily}
 						mode="see"
 						isPersonal={this.state.isPersonal}
-						router={this.props.router}
 						exporting={this.state.exporting}
 						errorExport={this.state.errorExport}
 					/>
@@ -325,7 +322,7 @@ class LibrarySee extends React.Component {
 						bold
 						full
 						onClick={() => {
-							this.props.router.push('/library/fontinuse/create');
+							this.props.history.push('/library/fontinuse/create');
 						}}
 					/>
 					{this.state.templateValues && (
@@ -498,4 +495,4 @@ export class VariantItem extends React.Component {
 	}
 }
 
-export default LibrarySee;
+export default withRouter(LibrarySee);

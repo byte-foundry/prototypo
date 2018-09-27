@@ -16,9 +16,11 @@ class LibraryFontInUseCreate extends React.Component {
 
 		let fontInUseMetadata;
 
-		if (this.props.params && this.props.params.fontinuseID) {
-			const fontInUse = this.props.fontInUses.find(
-				e => e.id === this.props.params.fontinuseID,
+		const {params} = props.match;
+
+		if (params && params.fontinuseID) {
+			const fontInUse = props.fontInUses.find(
+				e => e.id === params.fontinuseID,
 			);
 
 			fontInUseMetadata = {
@@ -514,7 +516,7 @@ class LibraryFontInUseCreate extends React.Component {
 						</form>
 					</div>
 				</div>
-				<LibrarySidebarRight router={this.props.router} />
+				<LibrarySidebarRight />
 			</div>
 		);
 	}

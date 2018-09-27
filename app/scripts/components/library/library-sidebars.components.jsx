@@ -195,7 +195,7 @@ class LibrarySidebarLeftRaw extends React.Component {
 						dark
 						big
 						onClick={() => {
-							this.props.router.push('/library/create');
+							this.props.history.push('/library/create');
 						}}
 					/>
 				)}
@@ -331,10 +331,7 @@ class LibrarySidebarLeftRaw extends React.Component {
 
 export const LibrarySidebarLeft = withRouter(LibrarySidebarLeftRaw);
 
-export class LibrarySidebarRight extends React.Component {
-	constructor(props) {
-		super(props);
-	}
+class LibrarySidebarRightRaw extends React.Component {
 	render() {
 		return (
 			<div className="library-sidebar-right">
@@ -345,7 +342,7 @@ export class LibrarySidebarRight extends React.Component {
 					highlight
 					full
 					onClick={() => {
-						this.props.router.push('/account/home');
+						this.props.history.push('/account/home');
 					}}
 				/>
 				{this.props.children}
@@ -354,7 +351,9 @@ export class LibrarySidebarRight extends React.Component {
 	}
 }
 
-export class FamilySidebarActions extends React.Component {
+export const LibrarySidebarRight = withRouter(LibrarySidebarRightRaw);
+
+class FamilySidebarActionsRaw extends React.Component {
 	constructor(props) {
 		super(props);
 		this.state = {
@@ -391,7 +390,7 @@ export class FamilySidebarActions extends React.Component {
 						bold
 						full
 						onClick={() => {
-							this.props.router.push(
+							this.props.history.push(
 								`/library/project/${this.props.familyId}/details`,
 							);
 						}}
@@ -404,7 +403,7 @@ export class FamilySidebarActions extends React.Component {
 						bold
 						full
 						onClick={() => {
-							this.props.router.push(
+							this.props.history.push(
 								`/library/project/${this.props.familyId}`,
 							);
 						}}
@@ -445,6 +444,8 @@ export class FamilySidebarActions extends React.Component {
 		);
 	}
 }
+
+export const FamilySidebarActions = withRouter(FamilySidebarActionsRaw);
 
 export class FamilySidebarGlyphs extends React.Component {
 	constructor(props) {

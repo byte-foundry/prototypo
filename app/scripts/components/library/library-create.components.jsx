@@ -275,7 +275,7 @@ class LibraryCreate extends React.Component {
 					</h1>
 					<FamilyList fontsToDisplay={this.state.fontsToDisplay} />
 				</div>
-				<LibrarySidebarRight router={this.props.router}>
+				<LibrarySidebarRight>
 					<SidebarFilters setActiveFilters={this.props.setActiveFilters} />
 				</LibrarySidebarRight>
 			</div>

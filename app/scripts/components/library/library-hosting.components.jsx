@@ -1,9 +1,9 @@
 import React from 'react';
-import {Link} from 'react-router';
+import {Link, withRouter} from 'react-router-dom';
 import {LibrarySidebarRight} from './library-sidebars.components';
 import LibraryButton from './library-button.components';
 
-export default class LibraryHosting extends React.Component {
+class LibraryHosting extends React.Component {
 	constructor(props) {
 		super(props);
 		this.state = {
@@ -123,7 +123,7 @@ export default class LibraryHosting extends React.Component {
 											<div
 												className="button-edit"
 												onClick={() => {
-													this.props.router.push(
+													this.props.history.push(
 														`/library/hosting/${hostedDomain.id}/edit`,
 													);
 												}}
@@ -166,7 +166,7 @@ export default class LibraryHosting extends React.Component {
 						bold
 						full
 						onClick={() => {
-							this.props.router.push('/library/hosting/create');
+							this.props.history.push('/library/hosting/create');
 						}}
 					/>
 				</LibrarySidebarRight>
@@ -174,3 +174,5 @@ export default class LibraryHosting extends React.Component {
 		);
 	}
 }
+
+export default withRouter(LibraryHosting);

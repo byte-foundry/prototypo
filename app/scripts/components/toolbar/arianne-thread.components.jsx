@@ -111,7 +111,7 @@ class ArianneThread extends React.PureComponent {
 	}
 
 	addFamily() {
-		this.props.router.push('/library/create');
+		this.props.history.push('/library/create');
 	}
 
 	addVariant() {

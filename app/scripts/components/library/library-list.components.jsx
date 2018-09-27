@@ -688,8 +688,6 @@ class LibraryList extends React.Component {
 	}
 
 	render() {
-		const query = new URLSearchParams(this.props.location.search);
-
 		return (
 			<div className="library-content-wrapper">
 				<div className="library-list library-see">
@@ -707,7 +705,7 @@ class LibraryList extends React.Component {
 							/>
 						)}
 				</div>
-				<LibrarySidebarRight router={this.props.router}>
+				<LibrarySidebarRight>
 					<LibrarySearch />
 					<SidebarFilters
 						setActiveFilters={this.props.setActiveFilters}
@@ -718,7 +716,7 @@ class LibraryList extends React.Component {
 						bold
 						full
 						onClick={() => {
-							this.props.router.push('/library/fontinuse/create');
+							this.props.history.push('/library/fontinuse/create');
 						}}
 					/>
 				</LibrarySidebarRight>
@@ -741,7 +739,7 @@ LibraryList.defaultProps = {
 	families: [],
 };
 
-export default LibraryList;
+export default withRouter(LibraryList);
 
 class FamilyList extends React.Component {
 	render() {

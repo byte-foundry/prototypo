@@ -1,5 +1,5 @@
 import React from 'react';
-import {Link} from 'react-router-dom';
+import {withRouter, Link} from 'react-router-dom';
 
 import {LibrarySidebarRight} from './library-sidebars.components';
 import LibraryButton from './library-button.components';
@@ -15,7 +15,7 @@ const isUrl = new RegExp(
 	'i',
 );
 
-export default class LibraryFontsInUseList extends React.Component {
+class LibraryFontsInUseList extends React.Component {
 	constructor(props) {
 		super(props);
 		this.state = {};
@@ -41,7 +41,6 @@ export default class LibraryFontsInUseList extends React.Component {
 		}
 	}
 	render() {
-		console.log(this.props.fontInUses);
 		return (
 			<div className="library-content-wrapper">
 				<div className="library-see">
@@ -110,13 +109,13 @@ export default class LibraryFontsInUseList extends React.Component {
 							))}
 					</div>
 				</div>
-				<LibrarySidebarRight router={this.props.router}>
+				<LibrarySidebarRight>
 					<LibraryButton
 						name="Add fontsinuse"
 						bold
 						full
 						onClick={() => {
-							this.props.router.push('/library/fontinuse/create');
+							this.props.history.push('/library/fontinuse/create');
 						}}
 					/>
 				</LibrarySidebarRight>
@@ -124,3 +123,5 @@ export default class LibraryFontsInUseList extends React.Component {
 		);
 	}
 }
+
+export default withRouter(LibraryFontsInUseList);
