@@ -1,5 +1,4 @@
 import React from 'react';
-import _uniq from 'lodash/uniq';
 import {Link, withRouter} from 'react-router-dom';
 import PropTypes from 'prop-types';
 import Lifespan from 'lifespan';
@@ -22,10 +21,6 @@ class LibraryList extends React.Component {
 		super(props);
 
 		this.state = {
-			search: '',
-			activeFilters: [],
-			librarySelectedTags: [],
-			mode: '',
 			displayedText: 'Hamburgefonstiv 123',
 		};
 
@@ -416,18 +411,8 @@ class LibraryList extends React.Component {
 
 		this.setState({
 			baseFontData: fontData,
-			fontsToDisplay: fontData,
 			isBaseValueLoaded: true,
 			tags: tagsDedup.slice(0, 10),
-		});
-		this.setState({
-			fontsToDisplay: this.filterFonts(
-				this.props.activeFilters,
-				this.state.librarySelectedTags,
-				this.state.search,
-				this.state.mode,
-				fontData,
-			),
 		});
 	}
 
@@ -436,12 +421,10 @@ class LibraryList extends React.Component {
 		selectedTags = [],
 		searchString = '',
 		mode = '',
-		newBaseFontData,
+		newBaseFontData = [],
 	) {
-		const baseFontData = newBaseFontData || this.state.baseFontData;
-
 		// Filter
-		let fontsToDisplay = baseFontData;
+		let fontsToDisplay = newBaseFontData;
 
 		Object.keys(activeFilters).forEach((filterBy) => {
 			fontsToDisplay = fontsToDisplay.filter(
@@ -540,65 +523,12 @@ class LibraryList extends React.Component {
 		return fontsToDisplay;
 	}
 
-	componentWillReceiveProps(newProps) {
-		if (newProps.activeFilters !== this.props.activeFilters) {
-			this.setState(state => ({
-				activeFilters: newProps.activeFilters,
-				fontsToDisplay: this.filterFonts(
-					newProps.activeFilters,
-					state.librarySelectedTags,
-					state.search,
-					state.mode,
-				),
-			}));
-		}
+	componentWillReceiveProps({families, favourites, presets}) {
 		if (
-			newProps.families !== this.props.families
-			|| newProps.favourites !== this.props.favourites
+			families !== this.props.families
+			|| favourites !== this.props.favourites
 		) {
-			this.generateFonts(
-				newProps.families,
-				newProps.presets,
-				newProps.favourites,
-			);
-		}
-		if (newProps.search !== this.props.search) {
-			this.setState(state => ({
-				search: newProps.search,
-				fontsToDisplay: this.filterFonts(
-					state.activeFilters,
-					state.librarySelectedTags,
-					newProps.search,
-					state.mode,
-				),
-			}));
-		}
-		if (
-			JSON.stringify(newProps.librarySelectedTags)
-			!== JSON.stringify(this.props.librarySelectedTags)
-		) {
-			this.setState(state => ({
-				librarySelectedTags: newProps.librarySelectedTags,
-				fontsToDisplay: this.filterFonts(
-					state.activeFilters,
-					newProps.librarySelectedTags,
-					state.search,
-					state.mode,
-				),
-			}));
-		}
-		if (newProps.location.search !== this.props.location.search) {
-			const query = new URLSearchParams(newProps.location.search);
-
-			this.setState(state => ({
-				mode: query.get('mode'),
-				fontsToDisplay: this.filterFonts(
-					state.activeFilters,
-					state.librarySelectedTags,
-					state.search,
-					query.get('mode'),
-				),
-			}));
+			this.generateFonts(families, presets, favourites);
 		}
 	}
 
@@ -650,7 +580,6 @@ class LibraryList extends React.Component {
 					<Link
 						to="/library"
 						onClick={() => {
-							this.setState({fontsToDisplay: this.filterFonts()});
 							this.client.dispatchAction('/store-value', {
 								librarySearchString: '',
 								librarySelectedTags: [],
@@ -665,7 +594,17 @@ class LibraryList extends React.Component {
 	}
 
 	render() {
-		const {fontsToDisplay} = this.state;
+		const {baseFontData} = this.state;
+		const {activeFilters, librarySelectedTags, search, location} = this.props;
+
+		const query = new URLSearchParams(location.search);
+		const fontsToDisplay = this.filterFonts(
+			activeFilters,
+			librarySelectedTags,
+			search,
+			query.get('mode'),
+			baseFontData,
+		);
 
 		return (
 			<div className="library-content-wrapper">
