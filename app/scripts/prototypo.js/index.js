@@ -162,6 +162,22 @@ export class PtypoFont {
 		return this.createFont(subset);
 	}
 
+	async createFontWithNoWorker(subset) {
+		const unicodeSubset = subset
+			? _uniq(subset.split('').map(char => char.charCodeAt(0)))
+			: undefined;
+
+		const {fontBuffer} = await this.mediator.getFontObjectNoWorker(
+			this.fontName,
+			'Regular',
+			this.fontTemplate,
+			this.values,
+			unicodeSubset || this.glyphsSet,
+		);
+
+		return this.mediator.mergeFontWithoutTimeout(fontBuffer, this.fontName);
+	}
+
 	async createFont(subset) {
 		const unicodeSubset = subset
 			? _uniq(subset.split('').map(char => char.charCodeAt(0)))

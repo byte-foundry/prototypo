@@ -1,6 +1,6 @@
 {
   "name": "prototypo-library",
-  "version": "1.3.3",
+  "version": "1.3.5",
   "description": "This is prototypo parametric font library",
   "main": "dist/library.js",
   "scripts": {
@@ -15,7 +15,7 @@
     "font"
   ],
   "dependencies": {
-    "lodash": "~4.14.0"
+    "lodash": "^4.17.11"
   },
   "author": "",
   "license": "MIT",
