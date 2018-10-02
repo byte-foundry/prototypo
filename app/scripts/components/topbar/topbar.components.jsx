@@ -248,7 +248,7 @@ class Topbar extends React.Component {
 	}
 
 	newProject() {
-		this.props.router.push('/library/create');
+		this.context.router.push('/library/create');
 	}
 
 	startTuto() {

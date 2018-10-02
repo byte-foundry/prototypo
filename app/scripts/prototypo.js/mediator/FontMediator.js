@@ -6,6 +6,8 @@ import FontPrecursor from '../precursor/FontPrecursor';
 
 import WorkerPool from '../../worker/worker-pool';
 
+import {fontToSfntTable} from '../../opentype/font';
+
 const MERGE_URL = process.env.MERGE
 	? 'http://localhost:3000'
 	: 'https://merge.prototypo.io/v1';
@@ -15,6 +17,12 @@ const oldFont = {};
 let localClient;
 let mergeTimeoutRef;
 let instance;
+
+const getfsSelection = (weight, italic) =>
+	(weight > 500
+		? 0b0000000000100000
+		: 0b0000000001000000)
+	| (italic ? 0b0000000000000001 : 0b0000000000000000);
 
 window.addEventListener('fluxServer.setup', () => {
 	localClient = LocalClient.instance();
@@ -338,6 +346,38 @@ export default class FontMediator {
 				);
 			});
 		});
+	}
+
+	getFontObjectNoWorker(
+		familyName,
+		styleName = 'Regular',
+		template,
+		params,
+		subset,
+	) {
+		const constructedGlyph = this.fontMakers[template].constructFont(
+			{
+				...params,
+			},
+			subset,
+		);
+
+		const arrayBuffer = fontToSfntTable({
+			...font,
+			fontFamily: {en: e.data.data.familyName || 'Prototypo web font'},
+			fontSubfamily: {en: e.data.data.styleName || 'Regular'},
+			postScriptName: {},
+			unitsPerEm: 1024,
+			usWeightClass: weight,
+			usWidthClass: width,
+			manufacturer: foundry,
+			manufacturerURL: foundryUrl,
+			designer,
+			designerURL: designerUrl,
+			fsSelection: getfsSelection(e.data.data.weight, e.data.data.italic),
+		});
+
+		return arrayBuffer;
 	}
 
 	getFontObject(familyName, styleName = 'Regular', template, params, subset) {
