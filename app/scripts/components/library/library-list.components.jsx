@@ -20,6 +20,7 @@ import LibraryButton from './library-button.components';
 class LibraryList extends React.Component {
 	constructor(props) {
 		super(props);
+
 		this.state = {
 			search: '',
 			activeFilters: [],
@@ -27,7 +28,7 @@ class LibraryList extends React.Component {
 			mode: '',
 			displayedText: 'Hamburgefonstiv 123',
 		};
-		this.generateFonts = this.generateFonts.bind(this);
+
 		this.filterFonts = this.filterFonts.bind(this);
 		this.createProject = this.createProject.bind(this);
 		this.selectFont = this.selectFont.bind(this);
@@ -51,19 +52,20 @@ class LibraryList extends React.Component {
 			.onUpdate((head) => {
 				this.setState({
 					openVariantModal: head.toJS().d.openVariantModal,
-					openChangeVariantNameModal: head.toJS().d
-						.openChangeVariantNameModal,
-					openDuplicateVariantModal: head.toJS().d
-						.openDuplicateVariantModal,
+					openChangeVariantNameModal: head.toJS().d.openChangeVariantNameModal,
+					openDuplicateVariantModal: head.toJS().d.openDuplicateVariantModal,
 					familySelectedVariantCreation: head.toJS().d
 						.familySelectedVariantCreation,
-					collectionSelectedVariant: head.toJS().d
-						.collectionSelectedVariant,
+					collectionSelectedVariant: head.toJS().d.collectionSelectedVariant,
 					templatesData: head.toJS().d.templatesData,
 					exporting: head.toJS().d.export,
 					errorExport: head.toJS().d.errorExport,
 				});
-				this.generateFonts();
+				this.generateFonts(
+					this.props.families,
+					this.props.presets,
+					this.props.favourites,
+				);
 			})
 			.onDelete(() => {
 				this.setState(undefined);
@@ -97,28 +99,14 @@ class LibraryList extends React.Component {
 			switch (type) {
 			case 'TEMPLATE':
 				this.props.addFavourite(
-					this.props.abstractedTemplates.find(
-						e => e.template === name,
-					).id,
+					this.props.abstractedTemplates.find(e => e.template === name).id,
 				);
 				break;
 			case 'PRESET':
-				this.props.createFavourite(
-					type,
-					undefined,
-					undefined,
-					id,
-					name,
-				);
+				this.props.createFavourite(type, undefined, undefined, id, name);
 				break;
 			case 'VARIANT':
-				this.props.createFavourite(
-					type,
-					id,
-					undefined,
-					undefined,
-					name,
-				);
+				this.props.createFavourite(type, id, undefined, undefined, name);
 				break;
 			default:
 				break;
@@ -183,10 +171,7 @@ class LibraryList extends React.Component {
 			templateName: templateInfo.templateName,
 			abstractedFontId: preset.abstractedFont && preset.abstractedFont.id,
 			favourite: favourites.find(
-				f =>
-					f.type === 'PRESET'
-					&& f.preset
-					&& f.preset.id === preset.id,
+				f => f.type === 'PRESET' && f.preset && f.preset.id === preset.id,
 			),
 			updateFavourites: this.updateFavourites,
 		});
@@ -237,16 +222,12 @@ class LibraryList extends React.Component {
 						&& variantToLoad.id === f.variant.id,
 				),
 				abstractedFontId:
-					variantToLoad.abstractedFont
-					&& variantToLoad.abstractedFont.id,
+					variantToLoad.abstractedFont && variantToLoad.abstractedFont.id,
 				updateFavourites: this.updateFavourites,
 			};
 	}
 
-	generateFonts(f, p, fa) {
-		const families = f || this.props.families;
-		const presets = p || this.props.presets;
-		const favourites = fa || this.props.favourites || [];
+	generateFonts(families, presets, favourites = []) {
 		const customBadgesColor = [
 			'#003049',
 			'#D62828',
@@ -283,11 +264,7 @@ class LibraryList extends React.Component {
 					designer: template.provider,
 					id: template.id,
 					type: 'Template',
-					props: this.getTemplateProps(
-						template,
-						templateData,
-						favourites,
-					),
+					props: this.getTemplateProps(template, templateData, favourites),
 					elem: TemplateItem,
 				});
 			});
@@ -317,8 +294,7 @@ class LibraryList extends React.Component {
 						type: 'Preset',
 						name: preset.variant.family.name,
 						designer:
-							preset.ownerInitials === 'LM'
-							|| preset.ownerInitials === 'HM'
+							preset.ownerInitials === 'LM' || preset.ownerInitials === 'HM'
 								? 'Prototypo'
 								: '',
 						id: preset.id,
@@ -350,9 +326,8 @@ class LibraryList extends React.Component {
 
 				family.tags && family.tags.map(tag => allTags.push(tag));
 				const variantToLoad
-					= family.variants.find(
-						e => e.name.toLowerCase() === 'regular',
-					) || family.variants[0];
+					= family.variants.find(e => e.name.toLowerCase() === 'regular')
+					|| family.variants[0];
 
 				if (variantToLoad) {
 					fontData.push({
@@ -386,25 +361,21 @@ class LibraryList extends React.Component {
 		this.props.subUsers
 			&& this.state.templateInfos
 			&& this.props.subUsers.forEach((subUser, index) => {
-				const subUserColor
-					= subUserColors[index % subUserColors.length];
+				const subUserColor = subUserColors[index % subUserColors.length];
 
 				subUser.id !== this.props.user.id
 					&& subUser.library.forEach((family) => {
 						const templateInfo = this.state.templateInfos.find(
-							template =>
-								template.templateName === family.template,
+							template => template.templateName === family.template,
 						) || {name: 'Undefined'};
 						const templateData = this.state.templatesData.find(
 							e => e.name === family.template,
 						);
 
-						family.tags
-							&& family.tags.map(tag => allTags.push(tag));
+						family.tags && family.tags.map(tag => allTags.push(tag));
 						const variantToLoad
-							= family.variants.find(
-								e => e.name.toLowerCase() === 'regular',
-							) || family.variants[0];
+							= family.variants.find(e => e.name.toLowerCase() === 'regular')
+							|| family.variants[0];
 
 						if (variantToLoad) {
 							fontData.push({
@@ -449,13 +420,15 @@ class LibraryList extends React.Component {
 			isBaseValueLoaded: true,
 			tags: tagsDedup.slice(0, 10),
 		});
-		this.filterFonts(
-			this.props.activeFilters,
-			this.state.librarySelectedTags,
-			this.state.search,
-			this.state.mode,
-			fontData,
-		);
+		this.setState({
+			fontsToDisplay: this.filterFonts(
+				this.props.activeFilters,
+				this.state.librarySelectedTags,
+				this.state.search,
+				this.state.mode,
+				fontData,
+			),
+		});
 	}
 
 	filterFonts(
@@ -564,18 +537,20 @@ class LibraryList extends React.Component {
 				&& fontsToDisplay.filter(font => !!font.props().favourite);
 		}
 
-		this.setState({fontsToDisplay});
+		return fontsToDisplay;
 	}
 
 	componentWillReceiveProps(newProps) {
 		if (newProps.activeFilters !== this.props.activeFilters) {
-			this.setState({activeFilters: newProps.activeFilters});
-			this.filterFonts(
-				newProps.activeFilters,
-				this.state.librarySelectedTags,
-				this.state.search,
-				this.state.mode,
-			);
+			this.setState(state => ({
+				activeFilters: newProps.activeFilters,
+				fontsToDisplay: this.filterFonts(
+					newProps.activeFilters,
+					state.librarySelectedTags,
+					state.search,
+					state.mode,
+				),
+			}));
 		}
 		if (
 			newProps.families !== this.props.families
@@ -588,38 +563,42 @@ class LibraryList extends React.Component {
 			);
 		}
 		if (newProps.search !== this.props.search) {
-			this.setState({search: newProps.search});
-			this.filterFonts(
-				this.state.activeFilters,
-				this.state.librarySelectedTags,
-				newProps.search,
-				this.state.mode,
-			);
+			this.setState(state => ({
+				search: newProps.search,
+				fontsToDisplay: this.filterFonts(
+					state.activeFilters,
+					state.librarySelectedTags,
+					newProps.search,
+					state.mode,
+				),
+			}));
 		}
 		if (
 			JSON.stringify(newProps.librarySelectedTags)
 			!== JSON.stringify(this.props.librarySelectedTags)
 		) {
-			this.setState({librarySelectedTags: newProps.librarySelectedTags});
-			this.filterFonts(
-				this.state.activeFilters,
-				newProps.librarySelectedTags,
-				this.state.search,
-				this.state.mode,
-			);
+			this.setState(state => ({
+				librarySelectedTags: newProps.librarySelectedTags,
+				fontsToDisplay: this.filterFonts(
+					state.activeFilters,
+					newProps.librarySelectedTags,
+					state.search,
+					state.mode,
+				),
+			}));
 		}
 		if (newProps.location.search !== this.props.location.search) {
 			const query = new URLSearchParams(newProps.location.search);
 
-			this.setState({
+			this.setState(state => ({
 				mode: query.get('mode'),
-			});
-			this.filterFonts(
-				this.state.activeFilters,
-				this.state.librarySelectedTags,
-				this.state.search,
-				query.get('mode'),
-			);
+				fontsToDisplay: this.filterFonts(
+					state.activeFilters,
+					state.librarySelectedTags,
+					state.search,
+					query.get('mode'),
+				),
+			}));
 		}
 	}
 
@@ -637,8 +616,8 @@ class LibraryList extends React.Component {
 				<div className="library-see-description">
 					<p>
 						<span>
-							Dive into Prototypo by creating your first project
-							with our templates or Unique presets
+							Dive into Prototypo by creating your first project with our
+							templates or Unique presets
 						</span>
 					</p>
 					<p>
@@ -652,9 +631,8 @@ class LibraryList extends React.Component {
 				<div className="library-see-description">
 					<p>
 						<span>
-							You have not starred any fonts yet. Simply click on
-							the star icon to tag fonts as your favorites in your
-							library.
+							You have not starred any fonts yet. Simply click on the star icon
+							to tag fonts as your favorites in your library.
 						</span>
 					</p>
 					<p>
@@ -672,7 +650,7 @@ class LibraryList extends React.Component {
 					<Link
 						to="/library"
 						onClick={() => {
-							this.filterFonts();
+							this.setState({fontsToDisplay: this.filterFonts()});
 							this.client.dispatchAction('/store-value', {
 								librarySearchString: '',
 								librarySelectedTags: [],
@@ -687,28 +665,23 @@ class LibraryList extends React.Component {
 	}
 
 	render() {
+		const {fontsToDisplay} = this.state;
+
 		return (
 			<div className="library-content-wrapper">
 				<div className="library-list library-see">
-					{this.state.fontsToDisplay
-					&& this.state.fontsToDisplay.length === 0 ? (
-							<div>
-								<div className="library-see-title">
-								There is nothing here!
-								</div>
-								{this.getEmptyMessage()}
-							</div>
-						) : (
-							<FamilyList
-								fontsToDisplay={this.state.fontsToDisplay}
-							/>
-						)}
+					{fontsToDisplay.length === 0 ? (
+						<div>
+							<div className="library-see-title">There is nothing here!</div>
+							{this.getEmptyMessage()}
+						</div>
+					) : (
+						<FamilyList fontsToDisplay={fontsToDisplay} />
+					)}
 				</div>
 				<LibrarySidebarRight>
 					<LibrarySearch />
-					<SidebarFilters
-						setActiveFilters={this.props.setActiveFilters}
-					/>
+					<SidebarFilters setActiveFilters={this.props.setActiveFilters} />
 					<SidebarTags tags={this.state.tags} mode="interactive" />
 					<LibraryButton
 						name="Add fontsinuse"
@@ -807,9 +780,7 @@ export class TemplateItem extends React.Component {
 				<span className="type">Template</span>
 				<p className="library-item-name">
 					<span
-						className={`star-icon ${
-							this.props.favourite ? 'active' : ''
-						}`}
+						className={`star-icon ${this.props.favourite ? 'active' : ''}`}
 						onClick={() => {
 							this.props.updateFavourites(
 								this.props.favourite,
@@ -834,11 +805,7 @@ export class TemplateItem extends React.Component {
 				>
 					{this.props.displayedText}
 				</p>
-				<div
-					className={`provider provider-${
-						this.props.template.provider
-					}`}
-				/>
+				<div className={`provider provider-${this.props.template.provider}`} />
 				<div
 					className={`library-item-actions ${
 						this.props.isOpen ? 'opened' : ''
@@ -849,17 +816,11 @@ export class TemplateItem extends React.Component {
 						floated
 						dark
 						onClick={() => {
-							this.props.createProject(
-								this.props.template.templateName,
-							);
+							this.props.createProject(this.props.template.templateName);
 						}}
 					/>
 					<LibraryButton
-						name={
-							this.state.keyDowns === 33
-								? 'Download source'
-								: 'Download'
-						}
+						name={this.state.keyDowns === 33 ? 'Download source' : 'Download'}
 						floated
 						dark
 						loading={this.props.exporting}
@@ -929,9 +890,7 @@ class FamilyItemRaw extends React.Component {
 				<span className="type">Project</span>
 				<p className="library-item-name">
 					<span
-						className={`star-icon ${
-							this.props.favourite ? 'active' : ''
-						}`}
+						className={`star-icon ${this.props.favourite ? 'active' : ''}`}
 						onClick={() => {
 							this.props.updateFavourites(
 								this.props.favourite,
@@ -945,9 +904,7 @@ class FamilyItemRaw extends React.Component {
 						★
 					</span>
 					{this.props.family.name}{' '}
-					<span className="small">
-						from {this.props.template.name}
-					</span>
+					<span className="small">from {this.props.template.name}</span>
 				</p>
 				<p
 					className="library-item-preview"
@@ -960,10 +917,8 @@ class FamilyItemRaw extends React.Component {
 					className={'provider provider-custom'}
 					style={{backgroundColor: this.props.background}}
 				>
-					{this.props.user.firstName
-						&& this.props.user.firstName.charAt(0)}
-					{this.props.user.lastName
-						&& this.props.user.lastName.charAt(0)}
+					{this.props.user.firstName && this.props.user.firstName.charAt(0)}
+					{this.props.user.lastName && this.props.user.lastName.charAt(0)}
 				</div>
 
 				<div
@@ -977,19 +932,12 @@ class FamilyItemRaw extends React.Component {
 							name="Open in the editor"
 							dark
 							onClick={() => {
-								this.props.open(
-									this.props.variantToLoad,
-									this.props.family,
-								);
+								this.props.open(this.props.variantToLoad, this.props.family);
 							}}
 						/>
 					)}
 					<LibraryButton
-						name={
-							this.state.keyDowns === 33
-								? 'Download source'
-								: 'Download'
-						}
+						name={this.state.keyDowns === 33 ? 'Download source' : 'Download'}
 						floated
 						dark
 						loading={this.props.exporting}
@@ -1079,9 +1027,7 @@ export class PresetItem extends React.Component {
 				<span className="type">Preset</span>
 				<p className="library-item-name">
 					<span
-						className={`star-icon ${
-							this.props.favourite ? 'active' : ''
-						}`}
+						className={`star-icon ${this.props.favourite ? 'active' : ''}`}
 						onClick={() => {
 							this.props.updateFavourites(
 								this.props.favourite,
@@ -1095,9 +1041,7 @@ export class PresetItem extends React.Component {
 						★
 					</span>
 					{this.props.name}{' '}
-					<span className="small">
-						from {this.props.template.name}
-					</span>
+					<span className="small">from {this.props.template.name}</span>
 				</p>
 				<p
 					className="library-item-preview"
@@ -1134,11 +1078,7 @@ export class PresetItem extends React.Component {
 						}}
 					/>
 					<LibraryButton
-						name={
-							this.state.keyDowns === 33
-								? 'Download source'
-								: 'Download'
-						}
+						name={this.state.keyDowns === 33 ? 'Download source' : 'Download'}
 						floated
 						dark
 						loading={this.props.exporting}
