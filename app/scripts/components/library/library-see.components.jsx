@@ -1,5 +1,6 @@
 import React from 'react';
 import {Link, withRouter} from 'react-router-dom';
+import onClickOutside from 'react-onclickoutside';
 
 import {
 	LibrarySidebarRight,
@@ -30,17 +31,13 @@ class LibrarySee extends React.Component {
 
 		const {projectID} = props.match.params;
 
-		const family = props.families.find(
-			e => e.id === projectID,
-		);
+		const family = props.families.find(e => e.id === projectID);
 
 		let teamProject;
 
 		if (props.subUsers && props.subUsers.length > 0) {
 			teamProject = props.subUsers
-				.find(u =>
-					u.library.find(f => f.id === projectID),
-				)
+				.find(u => u.library.find(f => f.id === projectID))
 				.library.find(f => f.id === projectID);
 		}
 
@@ -168,9 +165,7 @@ class LibrarySee extends React.Component {
 
 			if (newProps.subUsers && newProps.subUsers.length > 0) {
 				teamProject = newProps.subUsers
-					.find(u =>
-						u.library.find(f => f.id === projectID),
-					)
+					.find(u => u.library.find(f => f.id === projectID))
 					.library.find(f => f.id === projectID);
 			}
 
@@ -185,16 +180,12 @@ class LibrarySee extends React.Component {
 			this.generateVariants(family || teamProject);
 		}
 		if (oldProjectID !== projectID) {
-			const family = this.props.families.find(
-				e => e.id === projectID,
-			);
+			const family = this.props.families.find(e => e.id === projectID);
 			let teamProject;
 
 			if (newProps.subUsers && newProps.subUsers.length > 0) {
 				teamProject = newProps.subUsers
-					.find(u =>
-						u.library.find(f => f.id === projectID),
-					)
+					.find(u => u.library.find(f => f.id === projectID))
 					.library.find(f => f.id === projectID);
 			}
 
@@ -341,7 +332,8 @@ class LibrarySee extends React.Component {
 	}
 }
 
-export class VariantItem extends React.Component {
+/* eslint-disable-next-line */
+export class VariantItemRaw extends React.Component {
 	constructor(props) {
 		super(props);
 		this.state = {
@@ -355,18 +347,19 @@ export class VariantItem extends React.Component {
 		this.client = LocalClient.instance();
 	}
 
-	render() {
-		const subset = 'Hamburgefonstiv 123'
-			.split('')
-			.map(letter => letter.charCodeAt(0));
+	handleClickOutside() {
+		// this is a dirty hack
+		// we want other elements to open before this one close
+		setTimeout(() => {
+			this.setState({isOpen: false, confirmDelete: false});
+		}, 50);
+	}
 
+	render() {
 		return (
 			<div
 				className="library-item"
 				tabIndex={0}
-				onBlur={() => {
-					this.setState({isOpen: false, confirmDelete: false});
-				}}
 				onKeyDown={(e) => {
 					this.setState({keyDowns: this.state.keyDowns + e.keyCode});
 				}}
@@ -374,18 +367,21 @@ export class VariantItem extends React.Component {
 					this.setState({keyDowns: 0});
 				}}
 			>
-				<p className="library-item-name">
-					{this.props.family.name} {this.props.variant.name}
-				</p>
-				<p
-					className="library-item-preview"
-					style={{fontFamily: `variant${this.props.variant.id}`}}
+				<div
 					onClick={() => {
 						this.setState({isOpen: !this.state.isOpen});
 					}}
 				>
-					Hamburgefonstiv 123
-				</p>
+					<p className="library-item-name">
+						{this.props.family.name} {this.props.variant.name}
+					</p>
+					<p
+						className="library-item-preview"
+						style={{fontFamily: `variant${this.props.variant.id}`}}
+					>
+						Hamburgefonstiv 123
+					</p>
+				</div>
 				<div
 					className={`library-item-variant-actions ${
 						this.state.isOpen ? 'opened' : ''
@@ -430,44 +426,46 @@ export class VariantItem extends React.Component {
 							}}
 						/>
 						{this.props.isPersonal && (
-							<LibraryButton
-								name="Rename variant"
-								dark
-								onClick={() => {
-									this.props.rename(this.props.variant, this.props.family);
-								}}
-							/>
-						)}
-						{this.props.isPersonal && (
-							<LibraryButton
-								name="Duplicate variant"
-								dark
-								onClick={() => {
-									this.props.duplicate(this.props.variant, this.props.family);
-								}}
-							/>
-						)}
-						{this.props.isPersonal
-							&& this.props.family.variants.length > 1 && (
-							<LibraryButton
-								name={`${
-									this.state.confirmDelete ? 'Confirm' : 'Delete variant'
-								}`}
-								dark
-								error={this.state.confirmDelete}
-								onClick={(e) => {
-									if (this.state.confirmDelete) {
-										this.props.delete(this.props.variant, this.props.family);
-									}
-									else {
-										this.setState({confirmDelete: true});
-									}
-									setTimeout(() => {
-										this.setState({confirmDelete: false});
-									}, 600);
-									e.preventDefault();
-								}}
-							/>
+							<React.Fragment>
+								<LibraryButton
+									name="Rename variant"
+									dark
+									onClick={() => {
+										this.props.rename(this.props.variant, this.props.family);
+									}}
+								/>
+								<LibraryButton
+									name="Duplicate variant"
+									dark
+									onClick={() => {
+										this.props.duplicate(this.props.variant, this.props.family);
+									}}
+								/>
+								{this.props.family.variants.length > 1 && (
+									<LibraryButton
+										name={`${
+											this.state.confirmDelete ? 'Confirm' : 'Delete variant'
+										}`}
+										dark
+										error={this.state.confirmDelete}
+										onClick={(e) => {
+											if (this.state.confirmDelete) {
+												this.props.delete(
+													this.props.variant,
+													this.props.family,
+												);
+											}
+											else {
+												this.setState({confirmDelete: true});
+											}
+											setTimeout(() => {
+												this.setState({confirmDelete: false});
+											}, 600);
+											e.preventDefault();
+										}}
+									/>
+								)}
+							</React.Fragment>
 						)}
 						<FontUpdater
 							name={this.props.variant.fontName}
@@ -494,5 +492,7 @@ export class VariantItem extends React.Component {
 		);
 	}
 }
+
+const VariantItem = onClickOutside(VariantItemRaw);
 
 export default withRouter(LibrarySee);
