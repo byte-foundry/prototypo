@@ -77,21 +77,10 @@
 		&.has-news {
 			background-color: $red;
 
-			-webkit-animation-name: example;
 			animation-name: example;
-		    -webkit-animation-duration: 2s;
 		    animation-duration: 2s;
-			-webkit-animation-iteration-count: infinite;
 			animation-iteration-count: infinite;
 
-			/* Chrome, Safari, Opera */
-			@-webkit-keyframes example {
-			    0% {background-color: lighten($red, 2%);}
-			    30% {background-color: mix($dark-red, $red);}
-				100% {background-color: lighten($red, 2%);}
-			}
-
-			/* Standard syntax */
 			@keyframes example {
 			    0% {background-color: lighten($red, 2%);}
 			    30% {background-color: mix($dark-red, $red);}

@@ -25,7 +25,12 @@ module.exports = {
 			},
 			{
 				test: /\.scss$/,
-				use: ['style-loader', 'css-loader', 'sass-loader'],
+				use: [
+					'style-loader',
+					{loader: 'css-loader', options: {importLoaders: 2}},
+					'postcss-loader',
+					'sass-loader',
+				],
 				include: [path.join(__dirname, 'app/styles')],
 			},
 			{
@@ -77,12 +82,6 @@ module.exports = {
 			},
 		}),
 		new SpritePlugin(),
-		// Moment.js is an extremely popular library that bundles large locale files
-		// by default due to how Webpack interprets its code. This is a practical
-		// solution that requires the user to opt into importing specific locales.
-		// https://github.com/jmblog/how-to-optimize-momentjs-with-webpack
-		// You can remove this if you don't use Moment.js:
-		new webpack.IgnorePlugin(/^\.\/locale$/, /moment$/),
 	],
 	resolve: {
 		extensions: ['.js', '.jsx'],

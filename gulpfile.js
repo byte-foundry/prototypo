@@ -4,16 +4,8 @@ const gulp = require('gulp');
 const webpack = require('webpack');
 const WebpackDevServer = require('webpack-dev-server');
 
-// CSS Dep
-const sass = require('gulp-sass');
-const cssnano = require('gulp-cssnano');
-
 // Utils
 const del = require('del');
-const concat = require('gulp-concat');
-const sourcemaps = require('gulp-sourcemaps');
-const filter = require('gulp-filter');
-const autoprefixer = require('gulp-autoprefixer');
 const gutil	= require('gulp-util');
 
 // Tests
@@ -46,26 +38,6 @@ gulp.task('cp-genese', () => {
 gulp.task('cp-static', () => {
 	gulp.src(['./app/index.html', './app/iframe.html', './app/robots.txt', './app/favicon.ico', './app/404.html'])
 		.pipe(gulp.dest('./dist/'));
-});
-
-gulp.task('css-vendor', () => {
-	// This is a bit hackish but right now i don't care
-	gulp.src(['./node_modules/normalize.css/normalize.css',
-		'./node_modules/please-wait/build/please-wait.css'])
-		.pipe(concat('vendor.css'))
-		.pipe(gulp.dest('./dist/assets/'));
-});
-
-
-gulp.task('css-app', () => {
-	gulp.src('./app/styles/**/*.scss')
-		.pipe(sourcemaps.init())
-		.pipe(sass())
-		.pipe(concat('app.css'))
-		.pipe(autoprefixer())
-		.pipe(sourcemaps.write())
-		.pipe(gulp.dest('./dist/assets/'))
-		.pipe(filter('**/*.css'));
 });
 
 gulp.task('clean', () => {

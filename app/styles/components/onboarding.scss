@@ -14,7 +14,7 @@
 		background-color: $white;
         border-radius: 8px;
 
-		.onboarding-content {			
+		.onboarding-content {
 			padding: 60px 120px;
 			padding-bottom: 65px;
 			flex-grow:1;
@@ -141,7 +141,7 @@
 					display: block;
 				}
 			}
-			
+
 			.step-sliders {
 				display: flex;
 				flex-direction: row;
@@ -187,8 +187,6 @@
 					font-size: 68px;
 					cursor: pointer;
 
-					-webkit-box-shadow:inset 0px 0px 0px 1px $white;
-				    -moz-box-shadow:inset 0px 0px 0px 1px $white;
 				    box-shadow:inset 0px 0px 0px 1px $white;
 					transition: all 200ms ease;
 
@@ -205,8 +203,6 @@
 					}
 
                     &.selected {
-						-webkit-box-shadow:inset 0px 0px 0px 2px $light-green;
-					    -moz-box-shadow:inset 0px 0px 0px 2px $light-green;
 					    box-shadow:inset 0px 0px 0px 2px $light-green;
 						.text {
 							opacity: 1;
@@ -215,8 +211,6 @@
 
 					&:hover, &:focus {
 						outline: none;
-						-webkit-box-shadow:inset 0px 0px 0px 2px $green;
-					    -moz-box-shadow:inset 0px 0px 0px 2px $green;
 					    box-shadow:inset 0px 0px 0px 2px $green;
 						transition: all 200ms ease;
 					}

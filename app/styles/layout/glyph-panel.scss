@@ -7,9 +7,7 @@
 	z-index:10;
 	width:201px;
 	height:100%;
-	-webkit-transform: translateX(calc(100%));
 	transform: translateX(calc(100%));
-	transition: -webkit-transform .2s ease;
 	transition: transform .2s ease;
 	background-color:$dark-grey;
 
