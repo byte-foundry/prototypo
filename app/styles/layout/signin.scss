@@ -164,3 +164,13 @@ _:-ms-fullscreen, #notloggedin {
 .forgotten-password {
 	margin:auto;
 }
+
+@media all and (max-width: 600px) {
+	.sign-in {
+		width: auto;
+	}
+
+	.sign-up {
+		width: auto;
+	}
+}
