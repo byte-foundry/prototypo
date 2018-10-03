@@ -1,6 +1,3 @@
-const Promise = require('bluebird'); // Bluebird promise are way better than native,
-const fs = Promise.promisifyAll(require('fs')); // We just want promise seriously
-
 const gulp = require('gulp');
 
 // webpack Dep

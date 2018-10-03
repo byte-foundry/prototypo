@@ -15,6 +15,7 @@
 		background-color: $white;
 		border-radius:8px;
 		padding:30px;
+		align-self: flex-start;
 
 		&-card {
 			font-family: 'Cutive Mono', monospace;
@@ -25,6 +26,7 @@
 			font-size: 37px;
 			border-radius: 19.7px;
 			padding: 90px 50px 50px 50px;
+			margin: auto;
 			margin-bottom: 20px;
 
 			&-chip {
@@ -97,19 +99,16 @@
 
 		&-buttons {
 			margin-bottom:20px;
+			display: flex;
 		}
 
 		&-switch {
 			color: $green;
-			font-size:17px;
-			cursor:pointer;
-
-			&:hover {
-				color: #188259;
-			}
+			font-size: 17px;
+			font-weight: normal;
 
 			&.is-right {
-				text-align:right;
+				margin-left: auto;
 			}
 		}
 
@@ -132,6 +131,8 @@
 		position: relative;
 		transition: opacity 0.3s ease;
 		opacity: 1;
+		padding-bottom: 20px;
+
 		&.disabled {
 			opacity: 0.35;
 			input {

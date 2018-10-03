@@ -32,19 +32,6 @@ export class Sliders extends React.PureComponent {
 			.onDelete(() => {
 				this.setState({values: undefined});
 			});
-
-		this.client
-			.getStore('/userStore', this.lifespan)
-			.onUpdate((head) => {
-				const {subscription} = head.toJS().d;
-
-				this.setState({
-					subscription,
-				});
-			})
-			.onDelete(() => {
-				this.setState(undefined);
-			});
 	}
 
 	componentWillUnmount() {

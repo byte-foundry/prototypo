@@ -1,4 +1,4 @@
-import {gql} from 'react-apollo';
+import gql from 'graphql-tag';
 import {AppValues} from '../services/values.services.js';
 import LocalClient from '../stores/local-client.stores.jsx';
 import apolloClient from '../services/graphcool.services';
@@ -117,13 +117,11 @@ export async function loadStuff() {
 				name: variantSelected.name,
 			};
 		}
+
+		localClient.dispatchAction('/load-app-values', appValues);
 	}
 	catch (err) {
 		appValues = defaultValues;
 		console.error(err);
 	}
-
-	localClient.dispatchAction('/load-app-values', appValues);
-
-	localClient.dispatchAction('/load-font-instance', {appValues});
 }

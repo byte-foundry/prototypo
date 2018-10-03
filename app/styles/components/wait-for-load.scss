@@ -1,9 +1,35 @@
 @import '../variables';
 
 .wait-for-load {
-	display:flex;
-	align-items:center;
-	height:100%;
+	height: 100%;
+	position: relative;
+
+	&::after {
+		content: 'M'; // prevents the element from collapsing
+		width: 2em; // min-width of the container
+		display: block;
+		opacity: 0;
+	}
+
+	&--tiny {
+		font-size: 11px;
+	}
+
+	&--small {
+		font-size: 14px;
+	}
+
+	&--medium {
+		font-size: 16px;
+	}
+
+	&--big {
+		font-size: 18px;
+	}
+
+	&--large {
+		font-size: 24px;
+	}
 }
 
 .sk-secondary-color {

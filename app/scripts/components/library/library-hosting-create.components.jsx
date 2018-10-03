@@ -1,8 +1,9 @@
+import gql from 'graphql-tag';
 import React from 'react';
-import {Link} from 'react-router';
+import {withRouter} from 'react-router-dom';
 import Lifespan from 'lifespan';
 import cloneDeep from 'lodash/cloneDeep';
-import {graphql, gql, compose} from 'react-apollo';
+import {graphql, compose} from 'react-apollo';
 import {LibrarySidebarRight} from './library-sidebars.components';
 import {tmpUpload} from '../../services/graphcool.services';
 import LocalClient from '../../stores/local-client.stores';
@@ -58,9 +59,11 @@ class LibraryHostingCreate extends React.Component {
 		const templatesData = await prototypoStore.head.toJS().templatesData;
 		let hostedDomainMetadata;
 
-		if (this.props.params && this.props.params.hostedDomainId) {
+		const {params} = this.props.match;
+
+		if (params && params.hostedDomainId) {
 			const hostedDomain = this.props.hostedDomains.find(
-				e => e.id === this.props.params.hostedDomainId,
+				e => e.id === params.hostedDomainId,
 			);
 
 			let template;
@@ -237,10 +240,9 @@ class LibraryHostingCreate extends React.Component {
 
 			console.log('Buffers recieved:');
 			this.setState({status: 'uploading'});
-			const buffers = [...this.state.buffers];
 			const exportedFonts = [];
 
-			buffers.forEach(b =>
+			this.state.buffers.forEach(b =>
 				exportedFonts.push({
 					buffer: b.buffer,
 					...addedFonts.find(f => f.id === b.id),
@@ -304,15 +306,10 @@ class LibraryHostingCreate extends React.Component {
 					...addedFonts.filter(f => f.isOld).map(f => f.hostedId),
 				];
 
-				console.log('all hosted fonts');
-				console.log(allHostedFonts);
-				console.log('---');
-				console.log(hostedFonts);
-				console.log(addedFonts);
 				this.props
 					.updateHostedDomain(this.state.domain, allHostedFonts)
 					.then(() => {
-						this.props.router.push('/library/hosting');
+						this.props.history.push('/library/hosting');
 						clearTimeout(this.state.hostingTimeout);
 						this.setState({
 							errors: {
@@ -332,7 +329,7 @@ class LibraryHostingCreate extends React.Component {
 						hostedFonts.map(({data}) => data.hostFont.id),
 					)
 					.then(() => {
-						this.props.router.push('/library/hosting');
+						this.props.history.push('/library/hosting');
 						clearTimeout(this.state.hostingTimeout);
 						this.setState({
 							errors: {
@@ -780,6 +777,8 @@ class LibraryHostingCreate extends React.Component {
 	}
 
 	render() {
+		const {params} = this.props.match;
+
 		return (
 			<div className="library-content-wrapper">
 				<div className="library-see">
@@ -787,7 +786,9 @@ class LibraryHostingCreate extends React.Component {
 						Free plan: 1000 views / month / website
 					</div> */}
 					<div className="library-hosting">
-						<div className="library-see-title">Add a new website</div>
+						<div className="library-see-title">
+							{params && params.hostedDomainId ? 'Update' : 'Add a new'} website
+						</div>
 						<div className="library-hosting-form">
 							<div className="library-hosting-form-elem">
 								<label htmlFor="domain">
@@ -954,7 +955,7 @@ class LibraryHostingCreate extends React.Component {
 								)}
 								<LibraryButton
 									name={
-										this.props.params && this.props.params.hostedDomainId
+										params && params.hostedDomainId
 											? 'Update domain'
 											: 'Add domain'
 									}
@@ -972,7 +973,7 @@ class LibraryHostingCreate extends React.Component {
 										) {
 											this.hostFonts(
 												!!(
-													this.props.params && this.props.params.hostedDomainId
+													params && params.hostedDomainId
 												),
 											);
 										}
@@ -987,9 +988,7 @@ class LibraryHostingCreate extends React.Component {
 						name="Back to the list"
 						bold
 						full
-						onClick={() => {
-							this.props.router.push('/library/hosting');
-						}}
+						onClick={() => this.props.history.push('/library/hosting')}
 					/>
 				</LibrarySidebarRight>
 			</div>
@@ -1109,6 +1108,7 @@ const createAbstractedFontMutation = gql`
 `;
 
 export default compose(
+	withRouter,
 	graphql(hostVariantMutation, {
 		props: ({mutate}) => ({
 			hostFont: (id, tmpFileUrl) =>
@@ -1148,7 +1148,7 @@ export default compose(
 			updateHostedDomain: (domain, hostedVariantsIds) =>
 				mutate({
 					variables: {
-						hostedDomainId: ownProps.params.hostedDomainId,
+						hostedDomainId: ownProps.match.params.hostedDomainId,
 						domain,
 						hostedVariantsIds,
 						creatorId: ownProps.user.id,

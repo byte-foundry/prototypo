@@ -1,6 +1,8 @@
+import gql from 'graphql-tag';
 import React from 'react';
-import {graphql, gql, compose} from 'react-apollo';
+import {graphql, compose} from 'react-apollo';
 
+import Dashboard from './account-dashboard.components';
 import InputWithLabel from '../shared/input-with-label.components';
 import DisplayWithLabel from '../shared/display-with-label.components';
 import SelectWithLabel from '../shared/select-with-label.components';
@@ -81,85 +83,89 @@ class AccountProfilePanel extends React.PureComponent {
 
 		if (loading) {
 			return (
-				<div className="account-base account-profile-panel">
-					<WaitForLoad loading />
-				</div>
+				<Dashboard title="My Profile">
+					<div className="account-base account-profile-panel">
+						<WaitForLoad loading />
+					</div>
+				</Dashboard>
 			);
 		}
 
 		return (
-			<form
-				className="account-base account-profile-panel"
-				onSubmit={this.changeAccount}
-			>
-				<DisplayWithLabel label="My email">{email}</DisplayWithLabel>
-				<div className="columns">
-					<div className="half-column">
-						<InputWithLabel
-							ref="firstName"
-							label="First name"
-							required
-							inputValue={firstName}
-						/>
+			<Dashboard title="My Profile">
+				<form
+					className="account-base account-profile-panel"
+					onSubmit={this.changeAccount}
+				>
+					<DisplayWithLabel label="My email">{email}</DisplayWithLabel>
+					<div className="columns">
+						<div className="half-column">
+							<InputWithLabel
+								ref="firstName"
+								label="First name"
+								required
+								inputValue={firstName}
+							/>
+						</div>
+						<div className="half-column">
+							<InputWithLabel
+								ref="lastName"
+								label="Last name"
+								placeholder="Doe"
+								required={false}
+								inputValue={lastName}
+							/>
+						</div>
 					</div>
-					<div className="half-column">
-						<InputWithLabel
-							ref="lastName"
-							label="Last name"
-							placeholder="Doe"
-							required={false}
-							inputValue={lastName}
-						/>
+					<SelectWithLabel
+						ref="occupation"
+						label="I am"
+						name="occupation"
+						className="input-with-label-input"
+						placeholder="an architect"
+						options={this.jobtitles}
+						inputValue={occupation}
+					/>
+					<div className="columns">
+						<div className="half-column">
+							<InputWithLabel
+								ref="website"
+								label="My website"
+								placeholder="www.domain.com"
+								required={false}
+								inputValue={website}
+							/>
+						</div>
+						<div className="half-column">
+							<InputWithLabel
+								ref="twitter"
+								label="Twitter account"
+								placeholder="@johnDoe"
+								required={false}
+								inputValue={twitter}
+							/>
+						</div>
 					</div>
-				</div>
-				<SelectWithLabel
-					ref="occupation"
-					label="I am"
-					name="occupation"
-					className="input-with-label-input"
-					placeholder="an architect"
-					options={this.jobtitles}
-					inputValue={occupation}
-				/>
-				<div className="columns">
-					<div className="half-column">
-						<InputWithLabel
-							ref="website"
-							label="My website"
-							placeholder="www.domain.com"
-							required={false}
-							inputValue={website}
-						/>
+					<div className="columns">
+						<div className="half-column">
+							<InputWithLabel
+								label="Phone number"
+								type="tel"
+								ref="phone"
+								inputValue={phone}
+							/>
+						</div>
+						<div className="half-column">
+							<InputWithLabel label="Skype ID" ref="skype" inputValue={skype} />
+						</div>
 					</div>
-					<div className="half-column">
-						<InputWithLabel
-							ref="twitter"
-							label="Twitter account"
-							placeholder="@johnDoe"
-							required={false}
-							inputValue={twitter}
-						/>
-					</div>
-				</div>
-				<div className="columns">
-					<div className="half-column">
-						<InputWithLabel
-							label="Phone number"
-							type="tel"
-							ref="phone"
-							inputValue={phone}
-						/>
-					</div>
-					<div className="half-column">
-						<InputWithLabel label="Skype ID" ref="skype" inputValue={skype} />
-					</div>
-				</div>
-				{success && (
-					<FormSuccess successText="You've successfully updated your profile." />
-				)}
-				{errors && <FormError errorText={errors} />}
-				<AccountValidationButton label="Save infos" />
-			</form>
+					{success && (
+						<FormSuccess successText="You've successfully updated your profile." />
+					)}
+					{errors && <FormError errorText={errors} />}
+					<AccountValidationButton label="Save infos" />
+				</form>
+			</Dashboard>
 		);
 	}
 }

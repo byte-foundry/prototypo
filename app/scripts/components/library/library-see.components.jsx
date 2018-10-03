@@ -1,12 +1,13 @@
 import React from 'react';
-import {graphql, gql, compose} from 'react-apollo';
+import {Link, withRouter} from 'react-router-dom';
+import onClickOutside from 'react-onclickoutside';
+
 import {
 	LibrarySidebarRight,
 	FamilySidebarActions,
 	FamilySidebarGlyphs,
 	SidebarTags,
 } from './library-sidebars.components';
-import {Link} from 'react-router';
 import Lifespan from 'lifespan';
 import FontUpdater from '../font-updater.components';
 import LocalClient from '../../stores/local-client.stores';
@@ -27,22 +28,21 @@ const isUrl = new RegExp(
 class LibrarySee extends React.Component {
 	constructor(props) {
 		super(props);
-		const family = this.props.families.find(
-			e => e.id === this.props.params.projectID,
-		);
+
+		const {projectID} = props.match.params;
+
+		const family = props.families.find(e => e.id === projectID);
 
 		let teamProject;
 
-		if (this.props.subUsers && this.props.subUsers.length > 0) {
-			teamProject = this.props.subUsers
-				.find(u =>
-					u.library.find(f => f.id === this.props.params.projectID),
-				)
-				.library.find(f => f.id === this.props.params.projectID);
+		if (props.subUsers && props.subUsers.length > 0) {
+			teamProject = props.subUsers
+				.find(u => u.library.find(f => f.id === projectID))
+				.library.find(f => f.id === projectID);
 		}
 
 		if (!family && !teamProject) {
-			props.router.push('/library/home');
+			props.history.push('/library');
 		}
 
 		this.state = {
@@ -54,7 +54,7 @@ class LibrarySee extends React.Component {
 		this.exportFamily = this.exportFamily.bind(this);
 	}
 	goToDashboard() {
-		this.props.router.push('/dashboard');
+		this.props.history.push('/dashboard');
 	}
 	exportFamily() {
 		const valueArray = this.state.family.variants.map(variant => ({
@@ -153,6 +153,9 @@ class LibrarySee extends React.Component {
 	}
 
 	componentWillReceiveProps(newProps) {
+		const {projectID: oldProjectID} = this.props.match.params;
+		const {projectID} = newProps.match.params;
+
 		if (this.props.families !== newProps.families) {
 			const family = newProps.families.find(
 				e => e.id === newProps.params.projectID,
@@ -162,14 +165,12 @@ class LibrarySee extends React.Component {
 
 			if (newProps.subUsers && newProps.subUsers.length > 0) {
 				teamProject = newProps.subUsers
-					.find(u =>
-						u.library.find(f => f.id === newProps.params.projectID),
-					)
-					.library.find(f => f.id === newProps.params.projectID);
+					.find(u => u.library.find(f => f.id === projectID))
+					.library.find(f => f.id === projectID);
 			}
 
 			if (!family && !teamProject) {
-				this.props.router.push('/library/home');
+				this.props.history.push('/library');
 			}
 			this.setState({
 				family: family || teamProject,
@@ -178,22 +179,18 @@ class LibrarySee extends React.Component {
 
 			this.generateVariants(family || teamProject);
 		}
-		if (this.props.params.projectID !== newProps.params.projectID) {
-			const family = this.props.families.find(
-				e => e.id === newProps.params.projectID,
-			);
+		if (oldProjectID !== projectID) {
+			const family = this.props.families.find(e => e.id === projectID);
 			let teamProject;
 
 			if (newProps.subUsers && newProps.subUsers.length > 0) {
 				teamProject = newProps.subUsers
-					.find(u =>
-						u.library.find(f => f.id === newProps.params.projectID),
-					)
-					.library.find(f => f.id === newProps.params.projectID);
+					.find(u => u.library.find(f => f.id === projectID))
+					.library.find(f => f.id === projectID);
 			}
 
 			if (!family && !teamProject) {
-				this.props.router.push('/library/home');
+				this.props.history.push('/library');
 			}
 			this.setState({
 				family: family || teamProject,
@@ -204,6 +201,8 @@ class LibrarySee extends React.Component {
 	}
 
 	render() {
+		const {projectID} = this.props.match.params;
+
 		const fontInUses = this.props.fontInUses.filter(
 			fontInUse =>
 				!!fontInUse.fontUsed.find(
@@ -298,15 +297,14 @@ class LibrarySee extends React.Component {
 							))}
 					</div>
 				</div>
-				<LibrarySidebarRight router={this.props.router}>
+				<LibrarySidebarRight>
 					<FamilySidebarActions
 						glyphs={this.state.family.glyphs}
 						family={this.state.family}
-						familyId={this.props.params.projectID}
+						familyId={projectID}
 						exportFamily={this.exportFamily}
 						mode="see"
 						isPersonal={this.state.isPersonal}
-						router={this.props.router}
 						exporting={this.state.exporting}
 						errorExport={this.state.errorExport}
 					/>
@@ -315,7 +313,7 @@ class LibrarySee extends React.Component {
 						bold
 						full
 						onClick={() => {
-							this.props.router.push('/library/fontinuse/create');
+							this.props.history.push('/library/fontinuse/create');
 						}}
 					/>
 					{this.state.templateValues && (
@@ -334,7 +332,8 @@ class LibrarySee extends React.Component {
 	}
 }
 
-export class VariantItem extends React.Component {
+/* eslint-disable-next-line */
+export class VariantItemRaw extends React.Component {
 	constructor(props) {
 		super(props);
 		this.state = {
@@ -348,18 +347,19 @@ export class VariantItem extends React.Component {
 		this.client = LocalClient.instance();
 	}
 
-	render() {
-		const subset = 'Hamburgefonstiv 123'
-			.split('')
-			.map(letter => letter.charCodeAt(0));
+	handleClickOutside() {
+		// this is a dirty hack
+		// we want other elements to open before this one close
+		setTimeout(() => {
+			this.setState({isOpen: false, confirmDelete: false});
+		}, 50);
+	}
 
+	render() {
 		return (
 			<div
 				className="library-item"
 				tabIndex={0}
-				onBlur={() => {
-					this.setState({isOpen: false, confirmDelete: false});
-				}}
 				onKeyDown={(e) => {
 					this.setState({keyDowns: this.state.keyDowns + e.keyCode});
 				}}
@@ -367,18 +367,21 @@ export class VariantItem extends React.Component {
 					this.setState({keyDowns: 0});
 				}}
 			>
-				<p className="library-item-name">
-					{this.props.family.name} {this.props.variant.name}
-				</p>
-				<p
-					className="library-item-preview"
-					style={{fontFamily: `variant${this.props.variant.id}`}}
+				<div
 					onClick={() => {
 						this.setState({isOpen: !this.state.isOpen});
 					}}
 				>
-					Hamburgefonstiv 123
-				</p>
+					<p className="library-item-name">
+						{this.props.family.name} {this.props.variant.name}
+					</p>
+					<p
+						className="library-item-preview"
+						style={{fontFamily: `variant${this.props.variant.id}`}}
+					>
+						Hamburgefonstiv 123
+					</p>
+				</div>
 				<div
 					className={`library-item-variant-actions ${
 						this.state.isOpen ? 'opened' : ''
@@ -423,44 +426,46 @@ export class VariantItem extends React.Component {
 							}}
 						/>
 						{this.props.isPersonal && (
-							<LibraryButton
-								name="Rename variant"
-								dark
-								onClick={() => {
-									this.props.rename(this.props.variant, this.props.family);
-								}}
-							/>
-						)}
-						{this.props.isPersonal && (
-							<LibraryButton
-								name="Duplicate variant"
-								dark
-								onClick={() => {
-									this.props.duplicate(this.props.variant, this.props.family);
-								}}
-							/>
-						)}
-						{this.props.isPersonal
-							&& this.props.family.variants.length > 1 && (
-							<LibraryButton
-								name={`${
-									this.state.confirmDelete ? 'Confirm' : 'Delete variant'
-								}`}
-								dark
-								error={this.state.confirmDelete}
-								onClick={(e) => {
-									if (this.state.confirmDelete) {
-										this.props.delete(this.props.variant, this.props.family);
-									}
-									else {
-										this.setState({confirmDelete: true});
-									}
-									setTimeout(() => {
-										this.setState({confirmDelete: false});
-									}, 600);
-									e.preventDefault();
-								}}
-							/>
+							<React.Fragment>
+								<LibraryButton
+									name="Rename variant"
+									dark
+									onClick={() => {
+										this.props.rename(this.props.variant, this.props.family);
+									}}
+								/>
+								<LibraryButton
+									name="Duplicate variant"
+									dark
+									onClick={() => {
+										this.props.duplicate(this.props.variant, this.props.family);
+									}}
+								/>
+								{this.props.family.variants.length > 1 && (
+									<LibraryButton
+										name={`${
+											this.state.confirmDelete ? 'Confirm' : 'Delete variant'
+										}`}
+										dark
+										error={this.state.confirmDelete}
+										onClick={(e) => {
+											if (this.state.confirmDelete) {
+												this.props.delete(
+													this.props.variant,
+													this.props.family,
+												);
+											}
+											else {
+												this.setState({confirmDelete: true});
+											}
+											setTimeout(() => {
+												this.setState({confirmDelete: false});
+											}, 600);
+											e.preventDefault();
+										}}
+									/>
+								)}
+							</React.Fragment>
 						)}
 						<FontUpdater
 							name={this.props.variant.fontName}
@@ -488,4 +493,6 @@ export class VariantItem extends React.Component {
 	}
 }
 
-export default LibrarySee;
+const VariantItem = onClickOutside(VariantItemRaw);
+
+export default withRouter(LibrarySee);

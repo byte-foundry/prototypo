@@ -1,65 +1,43 @@
+import gql from 'graphql-tag';
 import React from 'react';
-import Lifespan from 'lifespan';
-import moment from 'moment';
-import {Link} from 'react-router';
+import {Link} from 'react-router-dom';
 import uniqWith from 'lodash/uniqWith';
-import {graphql, gql} from 'react-apollo';
+import {graphql} from 'react-apollo';
 
-import LocalClient from '../../stores/local-client.stores.jsx';
-
-import getCurrency from '../../helpers/currency.helpers.js';
+import getCurrency from '../../helpers/currency.helpers';
 import HoodieApi from '../../services/hoodie.services';
 
-import DisplayWithLabel from '../shared/display-with-label.components.jsx';
-import FormSuccess from '../shared/form-success.components.jsx';
+import Dashboard from './account-dashboard.components';
+import DisplayWithLabel from '../shared/display-with-label.components';
+import FormSuccess from '../shared/form-success.components';
 import Price from '../shared/price.components';
 import Button from '../shared/new-button.components';
+import WaitForLoad from '../wait-for-load.components';
 
 export class AccountSubscription extends React.PureComponent {
-	constructor(props) {
-		super(props);
-		this.state = {
-			cards: [],
-		};
-	}
-
-	componentWillMount() {
-		this.client = LocalClient.instance();
-		this.lifespan = new Lifespan();
-
-		this.client
-			.getStore('/userStore', this.lifespan)
-			.onUpdate((head) => {
-				const {subscription, cards} = head.toJS().d;
-
-				this.setState({
-					subscription,
-					cards,
-				});
-			})
-			.onDelete(() => {
-				this.setState(undefined);
-			});
-
-		this.client
-			.getStore('/prototypoStore', this.lifespan)
-			.onUpdate((head) => {
-				this.setState({
-					credits: head.toJS().d.credits,
-				});
-			})
-			.onDelete(() => {
-				this.setState(undefined);
-			});
-	}
-
-	componentWillUnmount() {
-		this.lifespan.release();
-	}
-
 	render() {
-		const {cards, subscription, credits} = this.state;
-		const {manager, acceptManager, removeManager} = this.props;
+		const {
+			loading,
+			cards,
+			credits,
+			subscription,
+			manager,
+			acceptManager,
+			removeManager,
+			location,
+		} = this.props;
+
+		if (loading) {
+			return (
+				<Dashboard title="My account settings">
+					<div className="account-dashboard-container-main">
+						<div className="account-base account-subscription">
+							<WaitForLoad loading />
+						</div>
+					</div>
+				</Dashboard>
+			);
+		}
 
 		const noCard = (
 			<div>
@@ -68,14 +46,14 @@ export class AccountSubscription extends React.PureComponent {
 				</h3>
 				{subscription && !subscription.cancel_at_period_end ? (
 					<p>
-						<Link className="account-link" to="/account/details/add-card">
+						<Link className="account-link" to="details/add-card">
 							Add a card
 						</Link>{' '}
 						to set up your renewal automatically.
 					</p>
 				) : (
 					<p>
-						<Link className="account-link" to="/account/details/add-card">
+						<Link className="account-link" to="details/add-card">
 							Add a card
 						</Link>{' '}
 						before subscribing.
@@ -95,22 +73,23 @@ export class AccountSubscription extends React.PureComponent {
 		const cardDetail
 			= cards.length > 0 ? (
 				<DisplayWithLabel label="Your card">
-					{uniqWith(cards, (first, sec) => first.fingerprint === sec.fingerprint).map(card =>
+					{uniqWith(
+						cards,
+						(first, sec) => first.fingerprint === sec.fingerprint,
+					).map(card => (
 						// dedupe cards
-						 (
-							<div className="account-subscription-card" key={card.id}>
-								<div className="account-subscription-card-number">
-									**** **** **** {card.last4}
-								</div>
-								<div className="account-subscription-name">{card.name}</div>
-								<div className="account-subscription-card-expiry">
-									Expires on {String(card.exp_month).padStart(2, 0)}/{
-										card.exp_year
-									}
-								</div>
+						<div className="account-subscription-card" key={card.id}>
+							<div className="account-subscription-card-number">
+								**** **** **** {card.last4}
 							</div>
-						),
-					)}
+							<div className="account-subscription-name">{card.name}</div>
+							<div className="account-subscription-card-expiry">
+								Expires on {String(card.exp_month).padStart(2, 0)}/{
+									card.exp_year
+								}
+							</div>
+						</div>
+					))}
 				</DisplayWithLabel>
 			) : (
 				noCard
@@ -126,10 +105,9 @@ export class AccountSubscription extends React.PureComponent {
 			</div>
 		);
 
-		const successCard = this.props.location.query.newCard ? (
+		const query = new URLSearchParams(location.search);
+		const successCard = query.has('newCard') && (
 			<FormSuccess successText="You've successfully added a card" />
-		) : (
-			false
 		);
 
 		const noPlan = (
@@ -142,7 +120,7 @@ export class AccountSubscription extends React.PureComponent {
 				</p>
 				<p>
 					Subscribe to our{' '}
-					<Link className="account-link" to="account/subscribe">
+					<Link className="account-link" to="subscribe">
 						pro plan
 					</Link>{' '}
 					to benefit of the full power of Prototypo without restrictions to
@@ -152,6 +130,20 @@ export class AccountSubscription extends React.PureComponent {
 		);
 
 		const {plan} = subscription || {};
+		const formatter = new Intl.DateTimeFormat('en-US');
+
+		let trialEnd;
+		let currentPeriodEnd;
+
+		if (plan) {
+			trialEnd = formatter.format(
+				new Date(subscription.current_period_end * 1000),
+			);
+			currentPeriodEnd = formatter.format(
+				new Date(subscription.current_period_end * 1000),
+			);
+		}
+
 		const content = plan ? (
 			<div>
 				<div className="account-subscription-plan">
@@ -161,15 +153,12 @@ export class AccountSubscription extends React.PureComponent {
 							<span> x{subscription.quantity}</span>
 						)}
 						{subscription.status === 'trialing' && (
-							<span className="badge">
-								trial until {moment.unix(subscription.trial_end).format('L')}
-							</span>
+							<span className="badge">trial until {trialEnd}</span>
 						)}
 						{subscription.status !== 'trialing'
 							&& subscription.cancel_at_period_end && (
 							<span className="badge danger">
-									cancels on{' '}
-								{moment.unix(subscription.current_period_end).format('L')}
+									cancels on {currentPeriodEnd}
 							</span>
 						)}
 					</DisplayWithLabel>
@@ -177,29 +166,22 @@ export class AccountSubscription extends React.PureComponent {
 				{subscription.cancel_at_period_end && (
 					<p>
 						Your subscription has been canceled and will automatically end on{' '}
-						<strong>
-							{moment.unix(subscription.current_period_end).format('L')}
-						</strong>.
+						<strong>{currentPeriodEnd}</strong>.
 					</p>
 				)}
 				{!subscription.cancel_at_period_end
 					&& cards.length < 1 && (
 					<p>
 							Your subscription will be canceled on{' '}
-						<strong>
-							{moment.unix(subscription.current_period_end).format('L')}
-						</strong>{' '}
-							because you don't have any card registered.
+						<strong>{currentPeriodEnd}</strong> because you don't have any
+							card registered.
 					</p>
 				)}
 				{!subscription.cancel_at_period_end
 					&& cards.length > 1 && (
 					<p>
 							Your subscription will automatically renew on{' '}
-						<strong>
-							{moment.unix(subscription.current_period_end).format('L')}{' '}
-						</strong>
-							and you will be charged{' '}
+						<strong>{currentPeriodEnd}</strong> and you will be charged{' '}
 						<strong>
 							<Price amount={plan.amount / 100} currency={currency} />
 						</strong>.
@@ -234,14 +216,16 @@ export class AccountSubscription extends React.PureComponent {
 		);
 
 		return (
-			<div className="account-dashboard-container-main">
-				<div className="account-base account-subscription">
-					{content}
-					{!!credits && creditsDetails}
-					{cardDetail}
-					{successCard}
+			<Dashboard title="My account settings">
+				<div className="account-dashboard-container-main">
+					<div className="account-base account-subscription">
+						{content}
+						{!!credits && creditsDetails}
+						{cardDetail}
+						{successCard}
+					</div>
 				</div>
-			</div>
+			</Dashboard>
 		);
 	}
 }
@@ -250,6 +234,27 @@ const query = gql`
 	query getManager {
 		user {
 			id
+			subscription @client {
+				id
+				current_period_end
+				cancel_at_period_end
+				trial_end
+				quantity
+				plan {
+					id
+					name
+					currency
+				}
+			}
+			cards @client {
+				id
+				fingerprint
+				last4
+				exp_month
+				exp_year
+				country
+			}
+			credits @client
 			manager {
 				id
 				email
@@ -264,15 +269,24 @@ const query = gql`
 
 export default graphql(query, {
 	props: ({data}) => {
-		if (data.loading || !data.user) {
-			// TMP: don't fail if there's no graphcool account
+		if (data.loading) {
 			return {loading: true};
 		}
 
-		const {id, manager, pendingManager} = data.user;
+		const {
+			id,
+			manager,
+			pendingManager,
+			subscription,
+			cards,
+			credits,
+		} = data.user;
 		const possibleManager = manager || pendingManager;
 
 		return {
+			cards,
+			credits,
+			subscription,
 			manager: possibleManager && {
 				email: possibleManager.email,
 				pending: !manager && !!pendingManager,

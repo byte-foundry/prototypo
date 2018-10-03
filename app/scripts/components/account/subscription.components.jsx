@@ -1,83 +1,79 @@
+import gql from 'graphql-tag';
 import React from 'react';
+import {Query} from 'react-apollo';
 import PropTypes from 'prop-types';
-import {Link, withRouter} from 'react-router';
-import Lifespan from 'lifespan';
+import {Redirect, Link, withRouter} from 'react-router-dom';
+import {Elements} from 'react-stripe-elements';
 
-import SubscriptionSidebar from './subscription-sidebar.components.jsx';
-import SubscriptionCardAndValidation from './subscription-card-and-validation.components.jsx';
-import LocalClient from '../../stores/local-client.stores.jsx';
+import WaitForLoad from '../wait-for-load.components';
+import SubscriptionSidebar from './subscription-sidebar.components';
+import SubscriptionCardAndValidation from './subscription-card-and-validation.components';
 import withCountry from '../shared/with-country.components';
 
+const GET_SUBSCRIPTION_AND_CARDS = gql`
+	query getSubscriptionAndCards {
+		user {
+			id
+			subscription @client {
+				id
+			}
+			cards @client {
+				id
+				name
+				last4
+				exp_month
+				exp_year
+				country
+			}
+		}
+	}
+`;
+
 class Subscription extends React.Component {
-	constructor(props) {
-		super(props);
+	state = {
+		validCoupon: null,
+	};
 
-		this.state = {};
+	handleChangePlan = ({plan, quantity, coupon}) => {
+		const {history, location} = this.props;
+		const query = new URLSearchParams(location.search);
 
-		this.handleChangePlan = this.handleChangePlan.bind(this);
-	}
+		if (plan) query.set('plan', plan);
+		if (quantity) query.set('quantity', quantity || undefined);
+		if (coupon) query.set('coupon', coupon);
+		else query.delete('coupon');
 
-	componentWillMount() {
-		this.client = LocalClient.instance();
-		this.lifespan = new Lifespan();
-
-		this.client
-			.getStore('/userStore', this.lifespan)
-			.onUpdate((head) => {
-				this.setState({
-					hasBeenSubscribing: head.toJS().d.hasBeenSubscribing,
-					validCoupon: head.toJS().d.choosePlanForm.validCoupon,
-				});
-			})
-			.onDelete(() => {
-				this.setState({hasBeenSubscribing: false});
-			});
-
-		// a "?fromWebsite=true" parameter must be added to the link
-		// on the pricing section of prototypo.io website to track the user
-		if (this.props.location.query.fromWebsite) {
-			this.client.dispatchAction('/store-value', {
-				newUserFromWebSite: String(this.props.location.query.fromWebsite),
-			});
-		}
-	}
-
-	componentWillUnmount() {
-		this.lifespan.release();
-	}
-
-	handleChangePlan({plan, quantity, coupon}) {
-		const {router, location} = this.props;
-		const query = {...location.query};
-
-		if (plan) query.plan = plan;
-		if (quantity) {query.quantity = (quantity && quantity.toString()) || undefined;}
-		if (coupon) {
-			query.coupon = coupon;
-		}
-		else delete query.coupon;
-		router.replace({
+		history.replace({
 			...location,
-			query,
+			search: query.toString(),
 		});
-	}
+	};
+
+	saveValidCoupon = validCoupon => this.setState({validCoupon});
 
 	render() {
-		const {hasBeenSubscribing} = this.state;
+		const {validCoupon} = this.state;
 		const {country, location} = this.props;
-		const {plan, quantity, coupon} = location.query;
 
-		if (!plan) {
-			this.props.router.replace({
-				...this.props.location,
-				query: {plan: 'personal_annual_99'},
-			});
-			return null;
+		const query = new URLSearchParams(location.search);
+
+		if (!query.has('plan')) {
+			query.set('plan', 'personal_annual_99');
+
+			return (
+				<Redirect
+					replace
+					to={{
+						...this.props.location,
+						search: query.toString(),
+					}}
+				/>
+			);
 		}
 		let percentPrice = 1;
 
-		if (this.state.validCoupon && this.state.validCoupon.percent_off) {
-			percentPrice = (100 - this.state.validCoupon.percent_off) / 100;
+		if (validCoupon && validCoupon.percent_off) {
+			percentPrice = (100 - validCoupon.percent_off) / 100;
 		}
 
 		return (
@@ -88,20 +84,38 @@ class Subscription extends React.Component {
 				/>
 				<div className="account-dashboard-container">
 					<SubscriptionSidebar
-						plan={plan}
-						quantity={parseInt(quantity, 10)}
+						plan={query.get('plan')}
+						quantity={parseInt(query.get('quantity'), 10)}
 						country={country}
 						onChangePlan={this.handleChangePlan}
-						hasBeenSubscribing={hasBeenSubscribing}
 						percentPrice={percentPrice}
 					/>
-					<SubscriptionCardAndValidation
-						plan={plan}
-						quantity={parseInt(quantity, 10)}
-						coupon={coupon}
-						country={country}
-						onChangePlan={this.handleChangePlan}
-					/>
+					<div className="subscription-card-and-validation normal">
+						<Query query={GET_SUBSCRIPTION_AND_CARDS}>
+							{({loading, data: {user}}) => {
+								if (loading) {
+									return <WaitForLoad loading />;
+								}
+								if (user.subscription) {
+									return <Redirect to="/account/details" />;
+								}
+
+								return (
+									<Elements>
+										<SubscriptionCardAndValidation
+											cards={user.cards}
+											plan={query.get('plan')}
+											quantity={parseInt(query.get('quantity'), 10)}
+											coupon={query.get('coupon')}
+											country={country}
+											onChangePlan={this.handleChangePlan}
+											onSelectCoupon={this.saveValidCoupon}
+										/>
+									</Elements>
+								);
+							}}
+						</Query>
+					</div>
 				</div>
 			</div>
 		);

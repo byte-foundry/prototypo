@@ -1,7 +1,6 @@
 import {
 	prototypoStore,
 	undoableStore,
-	userStore,
 } from '../stores/creation.stores.jsx';
 import LocalServer from '../stores/local-server.stores.jsx';
 import {valuesToLoad} from '../helpers/loadValues.helpers.js';

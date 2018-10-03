@@ -1,9 +1,9 @@
 import React from 'react';
 import PropTypes from 'prop-types';
 import {graphql} from 'react-apollo';
+import {withRouter} from 'react-router-dom';
 import Lifespan from 'lifespan';
 import classNames from 'classnames';
-import {withRouter} from 'react-router';
 
 import LocalClient from '../../stores/local-client.stores';
 
@@ -111,7 +111,7 @@ class ArianneThread extends React.PureComponent {
 	}
 
 	addFamily() {
-		this.props.router.push('/library/create');
+		this.props.history.push('/library/create');
 	}
 
 	addVariant() {
@@ -186,7 +186,6 @@ class ArianneThread extends React.PureComponent {
 		const {families} = this.props;
 
 		if (families.length === 0) {
-			// TODO: use <Redirect /> when migrating over React Router 4
 			return <p>Loading...</p>;
 		}
 
@@ -283,7 +282,7 @@ class ArianneThread extends React.PureComponent {
 			<div className="arianne-thread">
 				<RootArianneItem
 					click={() => {
-						this.props.router.push('/library/home');
+						this.props.history.push('/library');
 					}}
 				/>
 				{familyItem}

@@ -1,5 +1,5 @@
 /* global trackJs */
-import {gql} from 'react-apollo';
+import gql from 'graphql-tag';
 
 import apolloClient from './graphcool.services';
 
@@ -90,16 +90,7 @@ function values(prefix) {
 							.catch(e => trackJs.track(e));
 					});
 			}
-			// if (location.hash.indexOf('#/replay') === -1 && HoodieApi.isLoggedIn()) {
-			// 	return HoodieApi.instance.store.updateOrAdd(`${prefix}values`, `${params.typeface}`, {
-			// 		values: params.values,
-			// 	});
-			// }
 			return true;
-		},
-		deleteDb() {
-			// console.log('deleteDb values', prefix, params);
-			// return HoodieApi.instance.store.remove(`${prefix}values`, `${params.typeface}`);
 		},
 	};
 }

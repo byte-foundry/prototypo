@@ -1,7 +1,9 @@
+import gql from 'graphql-tag';
 import PropTypes from 'prop-types';
 import React from 'react';
-import {graphql, gql} from 'react-apollo';
+import {graphql} from 'react-apollo';
 
+import Dashboard from './account-dashboard.components';
 import InputWithLabel from '../shared/input-with-label.components';
 import AccountValidationButton from '../shared/account-validation-button.components';
 import FormError from '../shared/form-error.components';
@@ -54,46 +56,48 @@ class AccountChangePassword extends React.Component {
 		const {success, errors, loading} = this.state;
 
 		return (
-			<form
-				className="account-base account-change-password"
-				onSubmit={this.changePassword}
-			>
-				<InputWithLabel
-					ref={(node) => {
-						this.password = node;
-					}}
-					type="password"
-					label="My current password"
-					required
-				/>
-				<div className="account-change-password-line columns">
-					<div className="half-column">
-						<InputWithLabel
-							ref={(node) => {
-								this.newPassword = node;
-							}}
-							type="password"
-							label="New password"
-							required
-						/>
+			<Dashboard title="Change my password">
+				<form
+					className="account-base account-change-password"
+					onSubmit={this.changePassword}
+				>
+					<InputWithLabel
+						ref={(node) => {
+							this.password = node;
+						}}
+						type="password"
+						label="My current password"
+						required
+					/>
+					<div className="account-change-password-line columns">
+						<div className="half-column">
+							<InputWithLabel
+								ref={(node) => {
+									this.newPassword = node;
+								}}
+								type="password"
+								label="New password"
+								required
+							/>
+						</div>
+						<div className="half-column">
+							<InputWithLabel
+								ref={(node) => {
+									this.newPasswordConfirm = node;
+								}}
+								type="password"
+								label="New password, again"
+								required
+							/>
+						</div>
 					</div>
-					<div className="half-column">
-						<InputWithLabel
-							ref={(node) => {
-								this.newPasswordConfirm = node;
-							}}
-							type="password"
-							label="New password, again"
-							required
-						/>
-					</div>
-				</div>
-				{success && (
-					<FormSuccess successText="You've successfully changed your password." />
-				)}
-				{errors && <FormError errorText={errors} />}
-				<AccountValidationButton label="Change password" loading={loading} />
-			</form>
+					{success && (
+						<FormSuccess successText="You've successfully changed your password." />
+					)}
+					{errors && <FormError errorText={errors} />}
+					<AccountValidationButton label="Change password" loading={loading} />
+				</form>
+			</Dashboard>
 		);
 	}
 }

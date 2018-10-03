@@ -1,7 +1,7 @@
+import gql from 'graphql-tag';
 import React from 'react';
-import {graphql, gql, compose} from 'react-apollo';
-import {withRouter} from 'react-router';
-import pleaseWait from 'please-wait';
+import {graphql, compose} from 'react-apollo';
+import {Redirect, withRouter} from 'react-router-dom';
 import Lifespan from 'lifespan';
 import classNames from 'classnames';
 import ReactCSSTransitionGroup from 'react-addons-css-transition-group';
@@ -31,6 +31,7 @@ class Dashboard extends React.PureComponent {
 	constructor(props) {
 		super(props);
 		this.state = {
+			firstLoadDone: false,
 			joyrideSteps: [],
 			uiJoyrideTutorialValue: false,
 			firstTimeFile: undefined,
@@ -46,8 +47,6 @@ class Dashboard extends React.PureComponent {
 	}
 
 	async componentWillMount() {
-		pleaseWait.instance.finish();
-
 		this.client = LocalClient.instance();
 		this.lifespan = new Lifespan();
 
@@ -69,11 +68,6 @@ class Dashboard extends React.PureComponent {
 		this.client
 			.getStore('/prototypoStore', this.lifespan)
 			.onUpdate((head) => {
-				if (this.props.library && this.props.library.length <= 0) {
-					this.props.router.push('/library/home');
-					return;
-				}
-
 				if (!firstContactTimeoutMade && !this.props.firstContactMade) {
 					firstContactTimeoutMade = true;
 					setTimeout(() => {
@@ -85,6 +79,8 @@ class Dashboard extends React.PureComponent {
 				}
 
 				this.setState({
+					firstLoadDone: true,
+					variant: head.toJS().d.variant,
 					openVariantModal: head.toJS().d.openVariantModal,
 					familySelectedVariantCreation: head.toJS().d
 						.familySelectedVariantCreation,
@@ -129,19 +125,15 @@ class Dashboard extends React.PureComponent {
 	 *	@param {array} steps - an array containing joyride steps objects
 	 */
 	addSteps(steps) {
-		const joyride = this.refs.joyride;
-
 		if (!steps.length) {
-			return false;
+			return;
 		}
 
 		this.setState((currentState) => {
 			if (currentState.joyrideSteps) {
-				currentState.joyrideSteps = currentState.joyrideSteps.concat(
-					joyride.parseSteps(steps),
-				);
+				return {joyrideSteps: currentState.joyrideSteps.concat(steps)};
 			}
-			return currentState;
+			return {};
 		});
 	}
 
@@ -178,21 +170,11 @@ class Dashboard extends React.PureComponent {
 	}
 
 	render() {
-		/* These are some guidelines about css:
-		 * - All these guidelines have to be considered in the scope of SMACSS
-		 * - All the first descendant of dashboard are unique layout container
-		 * (i.e they have a unique id in there first element preferrably the
-		 * lowercased name of the component)
-		 * - Layout component should be named with a Capitalized name
-		 * (i.e Sidebar, Menubar or Workboard)
-		 * - All descendant of layout components are modules
-		 * - the modules should have a class that is the name of the component
-		 * in kebab-case (YoYoMa -> yo-yo-ma);
-		 * - layout styles are prefixed with "l-"
-		 * - state styles are prefixed with "is-"
-		*/
-		if (process.env.__SHOW_RENDER__) {
-			console.log('[RENDER] dashboard');
+		const {firstLoadDone, variant} = this.state;
+		const {location, library} = this.props;
+
+		if (firstLoadDone && ((library && library.length <= 0) || !variant)) {
+			return <Redirect to="/library" />;
 		}
 
 		const classes = classNames({
@@ -254,10 +236,12 @@ class Dashboard extends React.PureComponent {
 
 		const exportAs = this.state.exportAs && <ExportAs propName="exportAs" />;
 
-		if (this.props.location.query.showModal) {
+		const query = new URLSearchParams(location.search);
+
+		if (query.has('showModal')) {
 			this.client.dispatchAction('/store-value', {
 				openGoProModal: true,
-				goProModalBilling: this.props.location.query.showModal,
+				goProModalBilling: query.get('showModal'),
 			});
 		}
 

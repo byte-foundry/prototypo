@@ -1,7 +1,7 @@
 import classNames from 'classnames';
 import PropTypes from 'prop-types';
 import React from 'react';
-import {Link} from 'react-router';
+import {Link} from 'react-router-dom';
 import ReactMarkdown from 'react-markdown';
 
 class AcademyCourseCard extends React.PureComponent {
@@ -27,15 +27,14 @@ class AcademyCourseCard extends React.PureComponent {
 							className="header-image"
 							src={tutorial.headerImage}
 							alt={`${tutorial.title} header`}
-						/>{' '}
-						<Link
+						/>
+						<span
 							className={`academy-startcourse ${
 								reading ? 'currentlyreading' : ''
 							}`}
-							to={`/academy/course/${tutorial.slug}`}
 						>
 							{reading ? 'Currently reading' : 'Start course'}
-						</Link>{' '}
+						</span>
 					</div>
 					<div className="academy-course-list-elem-content">
 						<h2>{tutorial.title}</h2>

@@ -2,7 +2,7 @@
 import _throttle from 'lodash/throttle';
 import _forOwn from 'lodash/forOwn';
 import _cloneDeep from 'lodash/cloneDeep';
-import {gql} from 'react-apollo';
+import gql from 'graphql-tag';
 
 import {
 	prototypoStore,
@@ -75,30 +75,6 @@ export default {
 		localClient.dispatchAction('/load-params', {controls, presets});
 		localClient.dispatchAction('/load-tags', tags);
 		loadFontValues(typedata, templateToLoad, db);
-	},
-	'/load-font-instance': async ({appValues}) => {
-		if (!appValues.values.variantSelected) {
-			const event = new CustomEvent('values.loaded');
-
-			window.dispatchEvent(event);
-		}
-		else {
-			try {
-				const template = appValues.values.familySelected
-					? appValues.values.familySelected.template
-					: 'venus.ptf';
-				const typedataJSON = await import(/* webpackChunkName: "ptfs" */ `../../../dist/templates/${template}/font.json`);
-
-				localClient.dispatchAction('/create-font-instance', {
-					typedataJSON,
-					appValues,
-					templateToLoad: template,
-				});
-			}
-			catch (err) {
-				trackJs.track(err);
-			}
-		}
 	},
 	'/create-font': (typedata) => {
 		const glyphs = {};

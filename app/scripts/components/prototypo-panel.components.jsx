@@ -2,7 +2,6 @@ import _without from 'lodash/without';
 import _xor from 'lodash/xor';
 import React from 'react';
 import Lifespan from 'lifespan';
-import PureRenderMixin from 'react-addons-pure-render-mixin';
 import InlineSVG from 'svg-inline-react';
 
 import LocalClient from '../stores/local-client.stores';
@@ -12,7 +11,7 @@ import PrototypoText from './prototypo-text.components';
 import PrototypoCanvas from './prototypo-canvas.components';
 import PrototypoWord from './prototypo-word.components';
 
-export default class PrototypoPanel extends React.Component {
+export default class PrototypoPanel extends React.PureComponent {
 	constructor(props) {
 		super(props);
 
@@ -20,9 +19,6 @@ export default class PrototypoPanel extends React.Component {
 			uiMode: [],
 		};
 
-		this.shouldComponentUpdate = PureRenderMixin.shouldComponentUpdate.bind(
-			this,
-		);
 		this.toggleView = this.toggleView.bind(this);
 		this.resetView = this.resetView.bind(this);
 		this.changePanelWidth = this.changePanelWidth.bind(this);

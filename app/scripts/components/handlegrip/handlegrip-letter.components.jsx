@@ -1,6 +1,5 @@
 import React from 'react';
 import ReactDOM from 'react-dom';
-import PureRenderMixin from 'react-addons-pure-render-mixin';
 import DOM from '../../helpers/dom.helpers.js';
 
 import HandlegripBar from './handlegrip-bar.components.jsx';
@@ -10,14 +9,7 @@ import HandlegripBar from './handlegrip-bar.components.jsx';
  *	With a drag'n'dropable handlegrip
  *	@extends React.Component
  */
-export default class HandlegripLetter extends React.Component {
-	constructor(props) {
-		super(props);
-		this.shouldComponentUpdate = PureRenderMixin.shouldComponentUpdate.bind(
-			this,
-		);
-	}
-
+export default class HandlegripLetter extends React.PureComponent {
 	/**
 	 *	get the current letter's clientWidth property
 	 *	@returns {number} the clientWidth property

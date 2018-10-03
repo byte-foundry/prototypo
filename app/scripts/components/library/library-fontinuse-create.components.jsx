@@ -1,6 +1,7 @@
+import gql from 'graphql-tag';
 import React from 'react';
 import Dropzone from 'react-dropzone';
-import {graphql, gql, compose} from 'react-apollo';
+import {graphql, compose} from 'react-apollo';
 import {LibrarySidebarRight} from './library-sidebars.components';
 import LocalClient from '../../stores/local-client.stores';
 import LibraryButton from './library-button.components';
@@ -16,9 +17,11 @@ class LibraryFontInUseCreate extends React.Component {
 
 		let fontInUseMetadata;
 
-		if (this.props.params && this.props.params.fontinuseID) {
-			const fontInUse = this.props.fontInUses.find(
-				e => e.id === this.props.params.fontinuseID,
+		const {params} = props.match;
+
+		if (params && params.fontinuseID) {
+			const fontInUse = props.fontInUses.find(
+				e => e.id === params.fontinuseID,
 			);
 
 			fontInUseMetadata = {
@@ -311,7 +314,7 @@ class LibraryFontInUseCreate extends React.Component {
 					this.state.fontInUseMetadata.images,
 				)
 				.then(() => {
-					this.props.router.push('/library/fontinuse');
+					this.props.history.push('/library/fontinuse');
 					this.setState({
 						loading: false,
 					});
@@ -338,7 +341,7 @@ class LibraryFontInUseCreate extends React.Component {
 					this.state.fontInUseMetadata.images,
 				)
 				.then(() => {
-					this.props.router.push('/library/fontinuse');
+					this.props.history.push('/library/fontinuse');
 					this.setState({
 						loading: false,
 					});
@@ -356,7 +359,7 @@ class LibraryFontInUseCreate extends React.Component {
 					this.state.fontInUseMetadata.fonts,
 				)
 				.then(() => {
-					this.props.router.push('/library/fontinuse');
+					this.props.history.push('/library/fontinuse');
 					this.setState({
 						loading: false,
 					});
@@ -514,7 +517,7 @@ class LibraryFontInUseCreate extends React.Component {
 						</form>
 					</div>
 				</div>
-				<LibrarySidebarRight router={this.props.router} />
+				<LibrarySidebarRight />
 			</div>
 		);
 	}

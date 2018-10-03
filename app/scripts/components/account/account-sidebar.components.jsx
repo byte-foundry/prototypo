@@ -1,17 +1,18 @@
+import gql from 'graphql-tag';
 import React from 'react';
 import classNames from 'classnames';
-import {Link, withRouter} from 'react-router';
-import Lifespan from 'lifespan';
-import {graphql, gql} from 'react-apollo';
-
-import LocalClient from '../../stores/local-client.stores';
+import {Link, matchPath, withRouter} from 'react-router-dom';
+import {graphql} from 'react-apollo';
 
 class AccountSidebarLinkRaw extends React.Component {
 	render() {
-		const {to, label, slug, children, router} = this.props;
+		const {to, label, slug, location, exact, children} = this.props;
 
 		const classes = classNames({
-			'is-active': router.isActive(to),
+			'is-active': matchPath(location.pathname, {
+				path: to,
+				exact,
+			}),
 			'account-sidebar-menu-item': true,
 			[`account-sidebar-menu-${slug}`]: true,
 		});
@@ -31,10 +32,10 @@ const AccountSidebarLink = withRouter(AccountSidebarLinkRaw);
 
 class AccountSidebarSubLinkRaw extends React.Component {
 	render() {
-		const {to, label, router} = this.props;
+		const {to, label, location} = this.props;
 
 		const classes = classNames({
-			'is-active': router.isActive(to),
+			'is-active': matchPath(location.pathname, to),
 			'account-sidebar-menu-item-options-item': true,
 		});
 
@@ -49,45 +50,20 @@ class AccountSidebarSubLinkRaw extends React.Component {
 const AccountSidebarSubLink = withRouter(AccountSidebarSubLinkRaw);
 
 class AccountSidebar extends React.Component {
-	constructor(props) {
-		super(props);
-
-		this.state = {};
-	}
-
-	componentWillMount() {
-		this.client = LocalClient.instance();
-		this.lifespan = new Lifespan();
-
-		this.client
-			.getStore('/userStore', this.lifespan)
-			.onUpdate((head) => {
-				this.setState({
-					subscription: head.toJS().d.subscription,
-				});
-			})
-			.onDelete(() => {
-				this.setState(undefined);
-			});
-	}
-
-	componentWillUnmount() {
-		this.lifespan.release();
-	}
-
 	render() {
-		const {subscription} = this.state;
-		const {managed} = this.props;
+		const {subscription, managed} = this.props;
 
 		const accountsLinks = [];
 
 		if (subscription || managed) {
 			accountsLinks.push([
 				<AccountSidebarSubLink
+					key="add-card"
 					to="/account/details/add-card"
 					label="Add a card"
 				/>,
 				<AccountSidebarSubLink
+					key="billing-address"
 					to="/account/details/billing-address"
 					label="My billing address"
 				/>,
@@ -97,6 +73,7 @@ class AccountSidebar extends React.Component {
 		if (subscription) {
 			accountsLinks.push(
 				<AccountSidebarSubLink
+					key="change-plan"
 					to="/account/details/change-plan"
 					label="Change plan"
 				/>,
@@ -106,7 +83,7 @@ class AccountSidebar extends React.Component {
 		return (
 			<div className="account-sidebar">
 				<ul className="account-sidebar-menu">
-					<AccountSidebarLink to="/account/home" slug="home" label="Home" />
+					<AccountSidebarLink to="/account" slug="home" label="Home" exact />
 					<AccountSidebarLink
 						to="/account/profile"
 						slug="profile"
@@ -126,10 +103,12 @@ class AccountSidebar extends React.Component {
 							? accountsLinks
 							: [
 								<AccountSidebarSubLink
+									key="subscribe"
 									to="/account/subscribe"
 									label="Subscribe to the pro plan"
 								/>,
 								<AccountSidebarSubLink
+									key="subscribe-team"
 									to="/account/subscribe?plan=team"
 									label="Subscribe to the team plan"
 								/>,
@@ -163,6 +142,10 @@ const query = gql`
 	query {
 		user {
 			id
+			subscription @client {
+				id
+				quantity
+			}
 			manager {
 				id
 			}
@@ -179,6 +162,7 @@ export default graphql(query, {
 		if (data.user) {
 			return {
 				managed: !!data.user.manager,
+				subscription: data.user.subscription,
 			};
 		}
 

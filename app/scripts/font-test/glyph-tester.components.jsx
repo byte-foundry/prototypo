@@ -1,6 +1,5 @@
 import React from 'react';
 import Lifespan from 'lifespan';
-import pleaseWait from 'please-wait';
 
 import LocalClient from '../stores/local-client.stores';
 import GlyphCanvas from '../components/glyph-canvas.components';
@@ -13,7 +12,6 @@ export default class GlyphTester extends React.Component {
 	}
 
 	componentWillMount() {
-		pleaseWait.instance.finish();
 		this.client = LocalClient.instance();
 		this.lifespan = new Lifespan();
 		this.client.dispatchAction('/select-glyph', {

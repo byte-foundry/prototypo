@@ -42,6 +42,10 @@ class TopBarMenu extends React.PureComponent {
 						return child;
 					}
 
+					if (child.props.ignoreParent) {
+						return child;
+					}
+
 					const {
 						alignRight,
 						action,
@@ -79,9 +83,6 @@ class TopBarMenu extends React.PureComponent {
 							onMouseLeave={child && child.props.leave}
 							onSelectItem={this.onSelectItem}
 						>
-							{child
-								&& child.type.getHeader
-								&& child.type.getHeader(child.props)}
 							{child}
 						</TopBarMenuItem>
 					);
@@ -93,14 +94,14 @@ class TopBarMenu extends React.PureComponent {
 
 TopBarMenu.defaultProps = {
 	className: '',
-	topbarItemDisplayed: -1,
+	topbarItemDisplayed: null,
 	noHover: false,
 	count: 0,
 };
 
 TopBarMenu.propTypes = {
 	className: PropTypes.string,
-	topbarItemDisplayed: PropTypes.number.isRequired,
+	topbarItemDisplayed: PropTypes.number,
 	noHover: PropTypes.bool,
 	count: PropTypes.number,
 };

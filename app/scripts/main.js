@@ -2,7 +2,10 @@ import 'babel-polyfill';
 import pleaseWait from 'please-wait';
 
 import React from 'react';
+import {ApolloProvider} from 'react-apollo';
 import ReactDOM from 'react-dom';
+import {Router, Route} from 'react-router-dom';
+import {StripeProvider} from 'react-stripe-elements';
 
 import _forOwn from 'lodash/forOwn';
 
@@ -12,10 +15,12 @@ import NotABrowser from './components/not-a-browser.components';
 import IAmMobile from './components/i-am-mobile.components';
 import App from './app';
 
+import apolloClient from './services/graphcool.services';
 import HoodieApi from './services/hoodie.services';
 import LocalClient from './stores/local-client.stores';
 import LocalServer from './stores/local-server.stores';
 import Stores from './stores/creation.stores';
+import history from './services/history.services';
 
 import selectRenderOptions from './helpers/userAgent.helpers';
 import {loadStuff} from './helpers/appSetup.helpers';
@@ -37,32 +42,28 @@ import tagStoreAction from './actions/tagStore.actions';
 import undoStackAction from './actions/undoStack.actions';
 import userLifecycleAction from './actions/user-lifecycle.actions';
 
-import EventDebugger, {debugActions} from './debug/eventLogging.debug';
-
-pleaseWait.instance = pleaseWait.pleaseWait({
+const loader = pleaseWait.pleaseWait({
 	logo: '/assets/images/prototypo-loading.svg',
 	// backgroundColor: '#49e4a9',
 	loadingHtml: 'Hello Prototypo',
 });
 
+const STRIPE_PUBLISHABLE_KEY = isProduction()
+	? 'pk_live_CVrzdDZTEowrAZaRizc4G14c'
+	: 'pk_test_PkwKlOWOqSoimNJo2vsT21sE';
+
 selectRenderOptions(
 	() => {
-		const content = document.getElementById('content');
-
-		ReactDOM.render(<IAmMobile />, content);
+		ReactDOM.render(<IAmMobile />, document.getElementById('content'), () => {
+			loader.finish();
+		});
 	},
 	() => {
-		const content = document.getElementById('content');
-
-		ReactDOM.render(<NotABrowser />, content);
+		ReactDOM.render(<NotABrowser />, document.getElementById('content'), () => {
+			loader.finish();
+		});
 	},
 	async () => {
-		const stripeKey = isProduction()
-			? 'pk_live_CVrzdDZTEowrAZaRizc4G14c'
-			: 'pk_test_PkwKlOWOqSoimNJo2vsT21sE';
-
-		window.Stripe && window.Stripe.setPublishableKey(stripeKey);
-
 		const stores = Stores;
 
 		window.prototypoStores = Stores;
@@ -97,7 +98,6 @@ selectRenderOptions(
 			searchAction,
 			tagStoreAction,
 			undoStackAction,
-			debugActions,
 			userLifecycleAction,
 			{
 				'/load-intercom-info': (data) => {
@@ -113,7 +113,6 @@ selectRenderOptions(
 		localServer.on(
 			'action',
 			({path, params}) => {
-				// eventDebugger.storeEvent(path, params);
 				if (process.env.__SHOW_ACTION__) {
 					// eslint-disable-line
 					console.log(`[ACTION] ${path}`);
@@ -129,8 +128,6 @@ selectRenderOptions(
 		const fluxEvent = new Event('fluxServer.setup');
 
 		window.dispatchEvent(fluxEvent);
-
-		const eventDebugger = new EventDebugger();
 
 		const templates = await Promise.all(
 			prototypoStore.get('templateList').map(async ({templateName}) => {
@@ -165,60 +162,29 @@ selectRenderOptions(
 
 		localServer.dispatchUpdate('/prototypoStore', patch);
 
-		const content = document.getElementById('content');
-
-		HoodieApi.setup()
-			.then(() => {
-				if (
-					location.hash.indexOf('signin') === -1
-					&& location.hash.indexOf('account') === -1
-					&& location.hash.indexOf('signup') === -1
-					&& location.hash.indexOf('testfont') === -1
-				) {
-					location.href = '#/library/home';
-				}
-			})
-			.catch(() => {
-				if (
-					location.hash.indexOf('signin') === -1
-					&& location.hash.indexOf('account') === -1
-					&& location.hash.indexOf('signup') === -1
-				) {
-					location.href = '#/library/home';
-				}
-				const event = new CustomEvent('values.loaded');
-
-				window.dispatchEvent(event);
-			});
-
-		window.addEventListener('values.loaded', () => {
-			ReactDOM.render(<App />, content);
-		});
-
-		/* #if debug */
-		if (location.hash.indexOf('#/replay') === -1) {
-			await loadStuff();
-		}
-		else {
-			await eventDebugger.replayEventFromFile();
-		}
-		/* #end */
-		/* #if prod,dev */
 		try {
 			await HoodieApi.setup();
 
 			await loadStuff();
 		}
 		catch (err) {
-			if (err.message.includes('Not authenticated')) {
-				localServer.dispatchAction('/clean-data');
+			if (!err.message.includes('Not authenticated yet')) {
+				console.error(err);
 			}
-
-			console.log(err);
-			const fontInstanceLoaded = new Event('fontInstance.loaded');
-
-			window.dispatchEvent(fontInstanceLoaded);
 		}
-		/* #end */
+
+		ReactDOM.render(
+			<ApolloProvider client={apolloClient}>
+				<StripeProvider apiKey={STRIPE_PUBLISHABLE_KEY}>
+					<Router history={history}>
+						<Route component={App} />
+					</Router>
+				</StripeProvider>
+			</ApolloProvider>,
+			document.getElementById('content'),
+			() => {
+				loader.finish();
+			},
+		);
 	},
 );

@@ -7,42 +7,21 @@ import classNames from 'classnames';
  *	meaning that you can put a TopBarMenuDropdown inside a TopBarMenuDropdownItem
  */
 class TopBarMenuDropdown extends React.PureComponent {
-	static getHeader({name, img}) {
-		const content = {
-			title: name ? (
-				<span className="top-bar-menu-item-title" key={`titleheader${name}`}>
-					{name}
-				</span>
-			) : (
-				false
-			),
-			img: img ? (
-				<img
-					className="top-bar-menu-item-img"
-					src={img}
-					key={`imgheader${name}`}
-				>
-					{name}
-				</img>
-			) : (
-				false
-			),
-		};
-
-		return [content.title, content.img];
-	}
-
 	render() {
-		const {small, idMenu, children} = this.props;
+		const {small, idMenu, name, img, children} = this.props;
 		const classes = classNames({
 			'top-bar-menu-item-dropdown': true,
 			'is-small': small,
 		});
 
 		return (
-			<ul className={classes} id={idMenu}>
-				{children}
-			</ul>
+			<React.Fragment>
+				{name}
+				{img && <img className="top-bar-menu-item-img" src={img} alt={name} />}
+				<ul className={classes} id={idMenu}>
+					{children}
+				</ul>
+			</React.Fragment>
 		);
 	}
 }

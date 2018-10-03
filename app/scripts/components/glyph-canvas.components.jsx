@@ -2,7 +2,6 @@
 import _get from 'lodash/get';
 import _slice from 'lodash/slice';
 import React from 'react';
-import pleaseWait from 'please-wait';
 import Lifespan from 'lifespan';
 
 import Toile, {
@@ -405,7 +404,6 @@ export default class GlyphCanvas extends React.PureComponent {
 	}
 
 	componentWillMount() {
-		pleaseWait.instance.finish();
 		this.client = LocalClient.instance();
 		this.manualChangeBatcher = new ManualChangeBatcher(this.client);
 		this.lifespan = new Lifespan();

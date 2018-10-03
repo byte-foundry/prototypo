@@ -1,5 +1,6 @@
 import PropTypes from 'prop-types';
 import React from 'react';
+import {Link} from 'react-router-dom';
 
 import {
 	monthlyConst,
@@ -25,13 +26,7 @@ export default class SubscriptionSidebar extends React.PureComponent {
 	}
 
 	render() {
-		const {
-			country,
-			plan,
-			quantity,
-			hasBeenSubscribing,
-			percentPrice,
-		} = this.props;
+		const {country, plan, quantity, percentPrice} = this.props;
 
 		const plans = {
 			[monthlyConst.prefix]: {
@@ -55,6 +50,7 @@ export default class SubscriptionSidebar extends React.PureComponent {
 				link: {
 					text: 'Want Prototypo cheaper, check out our annual offer',
 					onClick: this.handleChangePlan({plan: annualConst.prefix}),
+					plan: annualConst.prefix,
 				},
 			},
 			[annualConst.prefix]: {
@@ -83,6 +79,7 @@ export default class SubscriptionSidebar extends React.PureComponent {
 				link: {
 					text: 'Want less commitment, try our monthly offer',
 					onClick: this.handleChangePlan({plan: monthlyConst.prefix}),
+					plan: monthlyConst.prefix,
 				},
 			},
 			[teamMonthlyConst.prefix]: {
@@ -126,6 +123,7 @@ export default class SubscriptionSidebar extends React.PureComponent {
 				link: {
 					text: 'Want Prototypo cheaper, check out our annual offer',
 					onClick: this.handleChangePlan({plan: teamAnnualConst.prefix}),
+					plan: teamAnnualConst.prefix,
 				},
 			},
 			[teamAnnualConst.prefix]: {
@@ -169,6 +167,7 @@ export default class SubscriptionSidebar extends React.PureComponent {
 				link: {
 					text: 'Want less commitment, try our monthly offer',
 					onClick: this.handleChangePlan({plan: teamMonthlyConst.prefix}),
+					plan: teamMonthlyConst.prefix,
 				},
 			},
 		};
@@ -190,13 +189,16 @@ export default class SubscriptionSidebar extends React.PureComponent {
 					<div className="subscription-sidebar-separator" />
 					<div className="subscription-sidebar-cta">{cta}</div>
 					<div className="subscription-sidebar-subcta">{subcta}</div>
-					<a
-						href="/account/subscribe"
+					<Link
+						to={{
+							pathname: 'subscribe',
+							search: new URLSearchParams({plan: link.plan}).toString(),
+						}}
 						className="subscription-sidebar-link"
 						onClick={link.onClick}
 					>
 						{link.text}
-					</a>
+					</Link>
 				</div>
 			);
 		}
@@ -208,14 +210,12 @@ export default class SubscriptionSidebar extends React.PureComponent {
 SubscriptionSidebar.propTypes = {
 	plan: PropTypes.string.isRequired,
 	quantity: PropTypes.number,
-	hasBeenSubscribing: PropTypes.bool,
 	percentPrice: PropTypes.number,
 	onChangePlan: PropTypes.func,
 };
 
 SubscriptionSidebar.defaultProps = {
 	quantity: 1,
-	hasBeenSubscribing: false,
 	percentPrice: 1,
 	onChangePlan: () => {},
 };

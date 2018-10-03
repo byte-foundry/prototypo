@@ -1,9 +1,10 @@
+import gql from 'graphql-tag';
 import PropTypes from 'prop-types';
 import React from 'react';
 import FacebookLogin from 'react-facebook-login/dist/facebook-login-render-props';
 import TwitterLogin from 'react-twitter-auth';
 import GoogleLogin from 'react-google-login';
-import {compose, graphql, gql} from 'react-apollo';
+import {compose, graphql} from 'react-apollo';
 
 import isProduction from '../helpers/is-production.helpers';
 import {TWITTER_REQUEST_TOKEN_URL} from '../services/hoodie.services';

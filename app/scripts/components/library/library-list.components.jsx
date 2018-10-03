@@ -1,11 +1,8 @@
 import React from 'react';
-import _uniq from 'lodash/uniq';
-import pleaseWait from 'please-wait';
-import {Link} from 'react-router';
+import {Link, withRouter} from 'react-router-dom';
 import PropTypes from 'prop-types';
 import Lifespan from 'lifespan';
 import ScrollArea from 'react-scrollbar/dist/no-css';
-import {graphql, gql, compose} from 'react-apollo';
 
 import FontUpdater from '../font-updater.components';
 import LocalClient from '../../stores/local-client.stores';
@@ -22,14 +19,11 @@ import LibraryButton from './library-button.components';
 class LibraryList extends React.Component {
 	constructor(props) {
 		super(props);
+
 		this.state = {
-			search: '',
-			activeFilters: [],
-			librarySelectedTags: [],
-			mode: '',
 			displayedText: 'Hamburgefonstiv 123',
 		};
-		this.generateFonts = this.generateFonts.bind(this);
+
 		this.filterFonts = this.filterFonts.bind(this);
 		this.createProject = this.createProject.bind(this);
 		this.selectFont = this.selectFont.bind(this);
@@ -62,7 +56,11 @@ class LibraryList extends React.Component {
 					exporting: head.toJS().d.export,
 					errorExport: head.toJS().d.errorExport,
 				});
-				this.generateFonts();
+				this.generateFonts(
+					this.props.families,
+					this.props.presets,
+					this.props.favourites,
+				);
 			})
 			.onDelete(() => {
 				this.setState(undefined);
@@ -74,7 +72,7 @@ class LibraryList extends React.Component {
 	}
 
 	createProject(template, values, abstractedFontMeta) {
-		this.props.router.push({
+		this.props.history.push({
 			pathname: '/onboarding',
 			state: {template, values, abstractedFontMeta},
 		});
@@ -190,7 +188,6 @@ class LibraryList extends React.Component {
 				template: templateInfo,
 				user: this.props.user,
 				background: userColor,
-				router: this.props.router,
 				variantToLoad,
 				open: this.props.open,
 				export: this.props.export,
@@ -225,10 +222,7 @@ class LibraryList extends React.Component {
 			};
 	}
 
-	generateFonts(f, p, fa) {
-		const families = f || this.props.families;
-		const presets = p || this.props.presets;
-		const favourites = fa || this.props.favourites || [];
+	generateFonts(families, presets, favourites = []) {
 		const customBadgesColor = [
 			'#003049',
 			'#D62828',
@@ -417,17 +411,9 @@ class LibraryList extends React.Component {
 
 		this.setState({
 			baseFontData: fontData,
-			fontsToDisplay: fontData,
 			isBaseValueLoaded: true,
 			tags: tagsDedup.slice(0, 10),
 		});
-		this.filterFonts(
-			this.props.activeFilters,
-			this.state.librarySelectedTags,
-			this.state.search,
-			this.state.mode,
-			fontData,
-		);
 	}
 
 	filterFonts(
@@ -435,12 +421,10 @@ class LibraryList extends React.Component {
 		selectedTags = [],
 		searchString = '',
 		mode = '',
-		newBaseFontData,
+		newBaseFontData = [],
 	) {
-		const baseFontData = newBaseFontData || this.state.baseFontData;
-
 		// Filter
-		let fontsToDisplay = baseFontData;
+		let fontsToDisplay = newBaseFontData;
 
 		Object.keys(activeFilters).forEach((filterBy) => {
 			fontsToDisplay = fontsToDisplay.filter(
@@ -536,60 +520,15 @@ class LibraryList extends React.Component {
 				&& fontsToDisplay.filter(font => !!font.props().favourite);
 		}
 
-		this.setState({fontsToDisplay});
+		return fontsToDisplay;
 	}
 
-	componentWillReceiveProps(newProps) {
-		if (newProps.activeFilters !== this.props.activeFilters) {
-			this.setState({activeFilters: newProps.activeFilters});
-			this.filterFonts(
-				newProps.activeFilters,
-				this.state.librarySelectedTags,
-				this.state.search,
-				this.state.mode,
-			);
-		}
+	componentWillReceiveProps({families, favourites, presets}) {
 		if (
-			newProps.families !== this.props.families
-			|| newProps.favourites !== this.props.favourites
+			families !== this.props.families
+			|| favourites !== this.props.favourites
 		) {
-			this.generateFonts(
-				newProps.families,
-				newProps.presets,
-				newProps.favourites,
-			);
-		}
-		if (newProps.search !== this.props.search) {
-			this.setState({search: newProps.search});
-			this.filterFonts(
-				this.state.activeFilters,
-				this.state.librarySelectedTags,
-				newProps.search,
-				this.state.mode,
-			);
-		}
-		if (
-			JSON.stringify(newProps.librarySelectedTags)
-			!== JSON.stringify(this.props.librarySelectedTags)
-		) {
-			this.setState({librarySelectedTags: newProps.librarySelectedTags});
-			this.filterFonts(
-				this.state.activeFilters,
-				newProps.librarySelectedTags,
-				this.state.search,
-				this.state.mode,
-			);
-		}
-		if (newProps.location.query !== this.props.location.query) {
-			this.setState({
-				mode: newProps.location.query && newProps.location.query.mode,
-			});
-			this.filterFonts(
-				this.state.activeFilters,
-				this.state.librarySelectedTags,
-				this.state.search,
-				newProps.location.query && newProps.location.query.mode,
-			);
+			this.generateFonts(families, presets, favourites);
 		}
 	}
 
@@ -600,9 +539,9 @@ class LibraryList extends React.Component {
 	}
 
 	getEmptyMessage() {
-		const mode = this.props.location.query && this.props.location.query.mode;
+		const query = new URLSearchParams(this.props.location.search);
 
-		if (mode === 'personal') {
+		if (query.get('mode') === 'personal') {
 			return (
 				<div className="library-see-description">
 					<p>
@@ -617,7 +556,7 @@ class LibraryList extends React.Component {
 				</div>
 			);
 		}
-		if (mode === 'favorites') {
+		if (query.get('mode') === 'favorites') {
 			return (
 				<div className="library-see-description">
 					<p>
@@ -627,7 +566,7 @@ class LibraryList extends React.Component {
 						</span>
 					</p>
 					<p>
-						<Link to="/library/home">Back to the list</Link>
+						<Link to="/library">Back to the list</Link>
 					</p>
 				</div>
 			);
@@ -641,7 +580,6 @@ class LibraryList extends React.Component {
 					<Link
 						to="/library"
 						onClick={() => {
-							this.filterFonts();
 							this.client.dispatchAction('/store-value', {
 								librarySearchString: '',
 								librarySelectedTags: [],
@@ -656,20 +594,31 @@ class LibraryList extends React.Component {
 	}
 
 	render() {
+		const {baseFontData} = this.state;
+		const {activeFilters, librarySelectedTags, search, location} = this.props;
+
+		const query = new URLSearchParams(location.search);
+		const fontsToDisplay = this.filterFonts(
+			activeFilters,
+			librarySelectedTags,
+			search,
+			query.get('mode'),
+			baseFontData,
+		);
+
 		return (
 			<div className="library-content-wrapper">
 				<div className="library-list library-see">
-					{this.state.fontsToDisplay
-					&& this.state.fontsToDisplay.length === 0 ? (
-							<div>
-								<div className="library-see-title">There is nothing here!</div>
-								{this.getEmptyMessage()}
-							</div>
-						) : (
-							<FamilyList fontsToDisplay={this.state.fontsToDisplay} />
-						)}
+					{fontsToDisplay.length === 0 ? (
+						<div>
+							<div className="library-see-title">There is nothing here!</div>
+							{this.getEmptyMessage()}
+						</div>
+					) : (
+						<FamilyList fontsToDisplay={fontsToDisplay} />
+					)}
 				</div>
-				<LibrarySidebarRight router={this.props.router}>
+				<LibrarySidebarRight>
 					<LibrarySearch />
 					<SidebarFilters setActiveFilters={this.props.setActiveFilters} />
 					<SidebarTags tags={this.state.tags} mode="interactive" />
@@ -678,7 +627,7 @@ class LibraryList extends React.Component {
 						bold
 						full
 						onClick={() => {
-							this.props.router.push('/library/fontinuse/create');
+							this.props.history.push('/library/fontinuse/create');
 						}}
 					/>
 				</LibrarySidebarRight>
@@ -701,7 +650,7 @@ LibraryList.defaultProps = {
 	families: [],
 };
 
-export default LibraryList;
+export default withRouter(LibraryList);
 
 class FamilyList extends React.Component {
 	render() {
@@ -845,7 +794,7 @@ export class TemplateItem extends React.Component {
 	}
 }
 
-export class FamilyItem extends React.Component {
+class FamilyItemRaw extends React.Component {
 	constructor(props) {
 		super(props);
 		this.selectFont = this.selectFont.bind(this);
@@ -955,10 +904,9 @@ export class FamilyItem extends React.Component {
 						floated
 						dark
 						onClick={() => {
-							this.props.router
-								&& this.props.router.push(
-									`/library/project/${this.props.family.id}`,
-								);
+							this.props.history.push(
+								`/library/project/${this.props.family.id}`,
+							);
 						}}
 					/>
 					<input
@@ -979,6 +927,8 @@ export class FamilyItem extends React.Component {
 		);
 	}
 }
+
+export const FamilyItem = withRouter(FamilyItemRaw);
 
 export class PresetItem extends React.Component {
 	constructor(props) {

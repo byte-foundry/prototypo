@@ -1,12 +1,9 @@
 import React from 'react';
-import pleaseWait from 'please-wait';
-import {Link} from 'react-router';
 import PropTypes from 'prop-types';
 import Lifespan from 'lifespan';
 import LocalClient from '../../stores/local-client.stores';
 import ScrollArea from 'react-scrollbar/dist/no-css';
 import FontUpdater from '../font-updater.components';
-import {graphql, gql, compose} from 'react-apollo';
 import {
 	LibrarySidebarRight,
 	SidebarFilters,
@@ -46,7 +43,7 @@ class LibraryCreate extends React.Component {
 	}
 
 	createProject(template, values, abstractedFontMeta) {
-		this.props.router.push({
+		this.props.history.push({
 			pathname: '/onboarding',
 			state: {template, values, abstractedFontMeta},
 		});
@@ -96,7 +93,6 @@ class LibraryCreate extends React.Component {
 			template: templateInfo,
 			user: this.props.user,
 			background: userColor,
-			router: this.props.router,
 			variantToLoad,
 			createProject: this.createProject,
 			open: this.props.open,
@@ -278,7 +274,7 @@ class LibraryCreate extends React.Component {
 					</h1>
 					<FamilyList fontsToDisplay={this.state.fontsToDisplay} />
 				</div>
-				<LibrarySidebarRight router={this.props.router}>
+				<LibrarySidebarRight>
 					<SidebarFilters setActiveFilters={this.props.setActiveFilters} />
 				</LibrarySidebarRight>
 			</div>

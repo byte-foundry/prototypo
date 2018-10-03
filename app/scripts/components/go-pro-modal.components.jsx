@@ -1,7 +1,6 @@
 import React from 'react';
 import PropTypes from 'prop-types';
-import {withRouter} from 'react-router';
-import Lifespan from 'lifespan';
+import {withRouter} from 'react-router-dom';
 import {
 	monthlyConst,
 	annualConst,
@@ -9,12 +8,10 @@ import {
 	teamAnnualConst,
 } from '../data/plans.data';
 
-import LocalClient from '../stores/local-client.stores';
 import Log from '../services/log.services';
 
 import InputNumber from './shared/input-number.components';
 import PricingItem from './shared/pricing-item.components';
-import Price from './shared/price.components';
 import Modal from './shared/modal.components';
 import getCurrency from '../helpers/currency.helpers';
 import withCountry from './shared/with-country.components';
@@ -41,48 +38,16 @@ class GoProModal extends React.PureComponent {
 		this.openIntercomChat = this.openIntercomChat.bind(this);
 	}
 
-	async componentWillMount() {
-		this.client = LocalClient.instance();
-		this.lifespan = new Lifespan();
-
-		this.client
-			.getStore('/prototypoStore', this.lifespan)
-			.onUpdate((head) => {
-				this.setState({
-					billing: head.toJS().d.goProModalBilling
-						? head.toJS().d.goProModalBilling
-						: 'annually',
-				});
-			})
-			.onDelete(() => {
-				this.setState({billing: 'annually'});
-			});
-		this.client
-			.getStore('/userStore', this.lifespan)
-			.onUpdate((head) => {
-				this.setState({
-					hasBeenSubscribing: head.toJS().d.hasBeenSubscribing,
-				});
-			})
-			.onDelete(() => {
-				this.setState({hasBeenSubscribing: false});
-			});
-	}
-
-	componentWillUnmount() {
-		this.lifespan.release();
-	}
-
 	goSubscribe() {
 		this.client.dispatchAction('/store-value', {openGoProModal: false});
-		this.props.router.push({
+		this.props.history.push({
 			pathname: '/account/subscribe',
-			query: {
+			search: new URLSearchParams({
 				plan:
 					this.state.billing === 'monthly'
 						? monthlyConst.prefix
 						: annualConst.prefix,
-			},
+			}).toString(),
 		});
 		window.Intercom('trackEvent', 'openSubscribeFromGoPro');
 		Log.ui('Subscribe.FromFile');
@@ -92,28 +57,28 @@ class GoProModal extends React.PureComponent {
 		const {billing, teamCount} = this.state;
 
 		this.client.dispatchAction('/store-value', {openGoProModal: false});
-		this.props.router.push({
+		this.props.history.push({
 			pathname: '/account/subscribe',
-			query: {
+			search: new URLSearchParams({
 				plan:
 					billing === 'monthly'
 						? teamMonthlyConst.prefix
 						: teamAnnualConst.prefix,
 				quantity: teamCount,
-			},
+			}).toString(),
 		});
 		window.Intercom('trackEvent', 'openSubscribeFromGoPro');
 		Log.ui('Subscribe.FromFile');
 	}
 
 	switchMonthlyBilling() {
-		this.client.dispatchAction('/store-value', {
+		this.setState({
 			goProModalBilling: 'monthly',
 		});
 	}
 
 	switchAnnualBilling() {
-		this.client.dispatchAction('/store-value', {
+		this.setState({
 			goProModalBilling: 'annually',
 		});
 	}
@@ -130,7 +95,7 @@ class GoProModal extends React.PureComponent {
 	}
 
 	render() {
-		const {billing, teamCount, hasBeenSubscribing} = this.state;
+		const {billing, teamCount} = this.state;
 		const teamPrice
 			= billing === 'annually'
 				? teamAnnualConst.monthlyPrice * teamCount
@@ -268,9 +233,5 @@ class GoProModal extends React.PureComponent {
 		);
 	}
 }
-
-GoProModal.propTypes = {
-	router: PropTypes.object.isRequired,
-};
 
 export default withRouter(withCountry(GoProModal));

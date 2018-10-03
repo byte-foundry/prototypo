@@ -1,6 +1,7 @@
+import gql from 'graphql-tag';
 import PropTypes from 'prop-types';
 import React from 'react';
-import {graphql, gql} from 'react-apollo';
+import {graphql} from 'react-apollo';
 
 import LocalClient from '../../stores/local-client.stores';
 
@@ -55,12 +56,6 @@ class DuplicateVariant extends React.PureComponent {
 		catch (err) {
 			this.setState({error: err.message});
 		}
-		// this.client.dispatchAction('/create-variant', {
-		// 	name: this.refs.newName.inputValue,
-		// 	familyId: this.props.family.id,
-		// 	variantBaseId: this.props.variant.id,
-		// 	noSwitch: true,
-		// });
 	}
 
 	saveName(e) {

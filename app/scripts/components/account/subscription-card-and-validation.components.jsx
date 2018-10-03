@@ -1,5 +1,9 @@
+import gql from 'graphql-tag';
 import React from 'react';
-import Lifespan from 'lifespan';
+import {graphql} from 'react-apollo';
+import {withRouter} from 'react-router-dom';
+import {injectStripe} from 'react-stripe-elements';
+import debounce from 'lodash/debounce';
 
 import {
 	monthlyConst,
@@ -8,26 +12,29 @@ import {
 	teamAnnualConst,
 } from '../../data/plans.data';
 
-import LocalClient from '../../stores/local-client.stores';
+import HoodieApi from '../../services/hoodie.services';
 
+import FakeCard from '../shared/fake-card.components';
 import AddCard from '../shared/add-card.components';
-import Button from '../shared/button.components';
 import InputNumber from '../shared/input-number.components';
 import InputWithLabel from '../shared/input-with-label.components';
 import Price from '../shared/price.components';
 import FormError from '../shared/form-error.components';
+import Button from '../shared/new-button.components';
+import LoadingButton from '../shared/loading-button.components';
+import getCurrency from '../../helpers/currency.helpers';
+import WaitForLoad from '../wait-for-load.components';
 
-export default class SubscriptionCardAndValidation extends React.PureComponent {
+class SubscriptionCardAndValidation extends React.PureComponent {
 	constructor(props) {
 		super(props);
 
 		this.state = {
-			card: [],
-			couponValue: undefined,
+			showCoupon: !!props.coupon,
+			couponValue: props.coupon,
+			couponError: null,
 			inError: {},
 			errors: [],
-			hasBeenSubscribing: false,
-			isFormSubmitted: false,
 			firstTimeCheck: false,
 		};
 
@@ -36,54 +43,60 @@ export default class SubscriptionCardAndValidation extends React.PureComponent {
 		this.keepCard = this.keepCard.bind(this);
 		this.addCoupon = this.addCoupon.bind(this);
 		this.handleCouponChange = this.handleCouponChange.bind(this);
-		this.handleCouponSubmit = this.handleCouponSubmit.bind(this);
 		this.subscribe = this.subscribe.bind(this);
 		this.checkPlan = this.checkPlan.bind(this);
 	}
 
 	componentWillMount() {
-		this.client = LocalClient.instance();
-		this.lifespan = new Lifespan();
-
 		this.checkPlan(this.props.plan, this.props.quantity, this.props.coupon);
-
-		this.client
-			.getStore('/userStore', this.lifespan)
-			.onUpdate((head) => {
-				const {
-					cards,
-					choosePlanForm,
-					confirmation,
-					hasBeenSubscribing,
-				} = head.toJS().d;
-
-				this.setState(state => ({
-					card: cards || [],
-					couponValue: choosePlanForm.couponValue || this.props.coupon,
-					validCoupon: choosePlanForm.validCoupon,
-					wasValidCoupon: choosePlanForm.validCoupon || state.wasValidCoupon,
-					loading: confirmation.loading,
-					inError: confirmation.inError || {},
-					errors: confirmation.errors,
-					hasBeenSubscribing,
-				}));
-			})
-			.onDelete(() => {
-				this.setState(undefined);
-			});
 	}
 
 	componentWillReceiveProps({plan, quantity, coupon}) {
 		this.checkPlan(plan, quantity, coupon);
 	}
 
-	componentWillUnmount() {
-		this.lifespan.release();
-	}
+	choosePlan = ({plan, coupon}) => {
+		if (plan) {
+			this.setState({plan});
+			window.Intercom('trackEvent', `chosePlan${plan}`);
+		}
+
+		this.setState({couponValue: coupon});
+
+		if (plan) {
+			this.validateCoupon({
+				plan,
+				coupon,
+			});
+		}
+	};
+
+	validateCoupon = debounce(async ({plan, coupon}) => {
+		try {
+			this.setState({validCoupon: null, couponError: null});
+
+			if (!coupon) {
+				this.props.onSelectCoupon(null);
+				return;
+			}
+
+			const validCoupon = await HoodieApi.validateCoupon({
+				coupon,
+				plan,
+			});
+
+			this.setState({validCoupon});
+			this.props.onSelectCoupon(validCoupon);
+		}
+		catch (err) {
+			this.setState({couponError: err.message});
+			this.props.onSelectCoupon(null);
+		}
+	}, 500);
 
 	checkPlan(plan, quantity, coupon) {
 		if (this.props.coupon !== coupon || !this.state.firstTimeCheck) {
-			this.client.dispatchAction('/choose-plan', {
+			this.choosePlan({
 				plan,
 				quantity,
 				coupon,
@@ -93,6 +106,11 @@ export default class SubscriptionCardAndValidation extends React.PureComponent {
 
 		if (!coupon || coupon === '') {
 			this.setState({couponValue: undefined});
+		}
+
+		// remove the coupon field when changing plan
+		if (this.props.plan !== plan) {
+			this.setState({validCoupon: null, showCoupon: false});
 		}
 
 		const newPlan = {};
@@ -121,32 +139,86 @@ export default class SubscriptionCardAndValidation extends React.PureComponent {
 	}
 
 	changeCard() {
-		this.setState({
-			changeCard: true,
-		});
+		this.setState({changeCard: true});
 	}
 
 	keepCard() {
-		this.setState({
-			changeCard: false,
-		});
+		this.setState({changeCard: false});
 	}
 
 	addCoupon() {
-		this.setState({couponValue: ''});
+		this.setState({showCoupon: true});
 	}
 
-	subscribe() {
-		const {plan, quantity} = this.props;
-		const {couponValue, card} = this.state;
+	addCard = async (options) => {
+		this.setState({loadingAddCard: true});
 
-		this.client.dispatchAction('/confirm-buy', {
-			plan,
-			vat: '', // this.refs.vat.value,
+		const {token} = await this.props.stripe.createToken(options);
+
+		// This bit of code is there to analyze the need of 3D secure
+		// among our users and to know if the failing payment is due
+		// to their card requiring it.
+		// We shall fully move to Sources later.
+		try {
+			// eslint-disable-next-line no-shadow
+			const {source} = await this.props.stripe.createSource({
+				type: 'card',
+				owner: options,
+			});
+
+			window.Intercom('update', {
+				'3d-secure': source.card.three_d_secure,
+			});
+		}
+		catch (err) {
+			window.trackJs.track(err);
+		}
+
+		try {
+			await HoodieApi.updateCustomer({
+				source: token.id,
+			});
+
+			this.setState({loadingAddCard: false});
+
+			return token.card;
+		}
+		catch (err) {
+			this.setState({loadingAddCard: false, errors: [err.message]});
+			return err;
+		}
+	};
+
+	async subscribe(e) {
+		e.preventDefault();
+
+		const {plan, quantity, cards, history} = this.props;
+		const {couponValue} = this.state;
+
+		this.setState({loading: true});
+
+		let source;
+
+		if (cards.length > 0) {
+			source = cards[0];
+		}
+		else {
+			const fullname = e.target.fullname.value;
+
+			source = await this.addCard({name: fullname});
+		}
+
+		const currency = getCurrency(source.country);
+
+		await this.props.createSubscription({
+			plan: `${plan}_${currency}_taxfree`,
 			coupon: couponValue,
-			card: this.card && card.length < 1 ? this.card.data() : false,
 			quantity: (plan.startsWith('team') && quantity) || undefined,
 		});
+
+		this.setState({loading: false});
+
+		history.replace('/account/success');
 	}
 
 	handleChangeQuantity(value) {
@@ -163,19 +235,18 @@ export default class SubscriptionCardAndValidation extends React.PureComponent {
 			plan: this.props.plan,
 			quantity: this.props.quantity,
 		});
-		this.setState({isFormSubmitted: false});
-	}
-
-	handleCouponSubmit() {
-		this.client.dispatchAction('/choose-plan', {
-			coupon: this.coupon.inputValue,
-		});
-		this.setState({isFormSubmitted: true});
 	}
 
 	render() {
-		const {couponValue} = this.state;
-		const {country, plan, quantity} = this.props;
+		const {
+			showCoupon,
+			couponValue,
+			validCoupon,
+			couponError,
+			loading,
+			loadingAddCard,
+		} = this.state;
+		const {country, plan, cards, quantity} = this.props;
 
 		let percentPrice = 1;
 
@@ -202,6 +273,7 @@ export default class SubscriptionCardAndValidation extends React.PureComponent {
 							every month until you cancel your subscription to Prototypo. You
 							also agree to respect Prototypo's{' '}
 							<a
+								className="account-link"
 								target="_blank"
 								rel="noopener noreferrer"
 								href="https://prototypo.io/cgu/"
@@ -226,6 +298,7 @@ export default class SubscriptionCardAndValidation extends React.PureComponent {
 							every month after that first until you cancel your subscription to
 							Prototypo. You also agree to respect Prototypo's{' '}
 							<a
+								className="account-link"
 								target="_blank"
 								rel="noopener noreferrer"
 								href="https://prototypo.io/cgu/"
@@ -250,6 +323,7 @@ export default class SubscriptionCardAndValidation extends React.PureComponent {
 							be charged every year of this amount until you cancel your
 							subscription to Prototypo. You also agree to respect Prototypo's{' '}
 							<a
+								className="account-link"
 								target="_blank"
 								rel="noopener noreferrer"
 								href="https://prototypo.io/cgu/"
@@ -274,6 +348,7 @@ export default class SubscriptionCardAndValidation extends React.PureComponent {
 							every year after that first until you cancel your subscription to
 							Prototypo. You also agree to respect Prototypo's{' '}
 							<a
+								className="account-link"
 								target="_blank"
 								rel="noopener noreferrer"
 								href="https://prototypo.io/cgu/"
@@ -297,6 +372,7 @@ export default class SubscriptionCardAndValidation extends React.PureComponent {
 						every month of this amount until you cancel your subscription to
 						Prototypo. You also agree to respect Prototypo's{' '}
 						<a
+							className="account-link"
 							target="_blank"
 							rel="noopener noreferrer"
 							href="https://prototypo.io/cgu/"
@@ -320,6 +396,7 @@ export default class SubscriptionCardAndValidation extends React.PureComponent {
 						be charged every year of this amount until you cancel your
 						subscription to Prototypo. You also agree to respect Prototypo's{' '}
 						<a
+							className="account-link"
 							target="_blank"
 							rel="noopener noreferrer"
 							href="https://prototypo.io/cgu/"
@@ -336,42 +413,30 @@ export default class SubscriptionCardAndValidation extends React.PureComponent {
 		}
 
 		const card
-			= this.state.card.length > 0 && !this.state.changeCard ? (
-				<div>
-					<div className="subscription-card-and-validation-card">
-						<div className="subscription-card-and-validation-card-chip">
-							<div className="subscription-card-and-validation-card-chip-left" />
-							<div className="subscription-card-and-validation-card-chip-right" />
-						</div>
-						<div className="subscription-card-and-validation-card-number">
-							**** **** **** {this.state.card[0].last4}
-						</div>
-						<div className="subscription-card-and-validation-card-date">
-							{this.state.card[0].exp_month}/{this.state.card[0].exp_year}
-						</div>
-						<div className="subscription-card-and-validation-card-name">
-							{this.state.card[0].name}
-						</div>
-					</div>
-					<div className="columns subscription-card-and-validation-buttons">
-						{couponValue === undefined && (
-							<div
-								className="subscription-card-and-validation-switch half-column"
+			= cards.length > 0 && !this.state.changeCard ? (
+				<React.Fragment>
+					<FakeCard card={cards[0]} />
+					<div className="subscription-card-and-validation-buttons">
+						{!showCoupon && (
+							<Button
+								className="subscription-card-and-validation-switch"
 								onClick={this.addCoupon}
+								link
 							>
 								I have a coupon
-							</div>
+							</Button>
 						)}
-						<div
-							className="subscription-card-and-validation-switch is-right half-column"
+						<Button
+							className="subscription-card-and-validation-switch is-right"
 							onClick={this.changeCard}
+							link
 						>
 							Change my card
-						</div>
+						</Button>
 					</div>
-				</div>
+				</React.Fragment>
 			) : (
-				<div>
+				<React.Fragment>
 					<AddCard
 						inError={this.state.inError}
 						ref={(item) => {
@@ -383,49 +448,51 @@ export default class SubscriptionCardAndValidation extends React.PureComponent {
 								: ''
 						}`}
 					/>
-					<div className="columns subscription-card-and-validation-buttons">
-						{couponValue === undefined && (
-							<div
-								className="subscription-card-and-validation-switch half-column"
-								onClick={this.addCoupon}
-							>
-								I have a coupon
-							</div>
-						)}
-						{this.state.card.length > 0 && (
-							<div
-								className="subscription-card-and-validation-switch is-right half-column"
-								onClick={this.keepCard}
-							>
-								Keep my card
-							</div>
-						)}
-					</div>
-				</div>
+					{(!showCoupon || cards.length > 0) && (
+						<div className="columns subscription-card-and-validation-buttons">
+							{!showCoupon && (
+								<Button
+									className="subscription-card-and-validation-switch"
+									onClick={this.addCoupon}
+									link
+								>
+									I have a coupon
+								</Button>
+							)}
+							{cards.length > 0 && (
+								<Button
+									className="subscription-card-and-validation-switch is-right"
+									onClick={this.keepCard}
+									link
+								>
+									Keep my card
+								</Button>
+							)}
+						</div>
+					)}
+				</React.Fragment>
 			);
-		const coupon = couponValue !== undefined && (
-			<div>
-				<form onSubmit={this.handleCouponSubmit}>
-					<InputWithLabel
-						ref={(item) => {
-							this.coupon = item;
-						}}
-						label="Coupon code"
-						error={false}
-						onChange={this.handleCouponChange}
-						value={this.state.couponValue}
-					/>
-				</form>
-				{this.state.validCoupon ? (
-					<div className="subscription-card-and-validation-valid-coupon">{`(ノ✿◕ᗜ◕)ノ━☆ﾟ.*･｡ﾟ ${
-						this.state.validCoupon.label
-					}`}</div>
-				) : this.state.wasValidCoupon || this.state.isFormSubmitted ? (
+		const coupon = showCoupon && (
+			<React.Fragment>
+				<InputWithLabel
+					ref={(item) => {
+						this.coupon = item;
+					}}
+					label="Coupon code"
+					error={false}
+					onChange={this.handleCouponChange}
+				/>
+				{validCoupon && (
+					<div className="subscription-card-and-validation-valid-coupon">
+						(ノ✿◕ᗜ◕)ノ━☆ﾟ.*･｡ﾟ {this.state.validCoupon.label}
+					</div>
+				)}
+				{couponError && (
 					<div className="subscription-card-and-validation-error-coupon">
 						ʕ ಡ╭╮ಡ ʔ This is not a valid coupon
 					</div>
-				) : null}
-			</div>
+				)}
+			</React.Fragment>
 		);
 
 		const errors = this.state.errors.map((error, index) => (
@@ -435,7 +502,7 @@ export default class SubscriptionCardAndValidation extends React.PureComponent {
 		const {blurb} = plans[plan];
 
 		return (
-			<div className="subscription-card-and-validation normal">
+			<form onSubmit={this.subscribe}>
 				{plan.startsWith('team') && (
 					<div className="input-with-label">
 						<label className="input-with-label-label" htmlFor="quantity">
@@ -451,17 +518,38 @@ export default class SubscriptionCardAndValidation extends React.PureComponent {
 						/>
 					</div>
 				)}
-				{card}
+				<WaitForLoad loading={loadingAddCard}>{card}</WaitForLoad>
 				{coupon}
 				<div className="subscription-card-and-validation-legal">{blurb}</div>
 				{errors}
-				<Button
-					big
-					label="Subscribe to prototypo"
-					click={this.subscribe}
-					loading={this.state.loading}
-				/>
-			</div>
+				<LoadingButton
+					type="submit"
+					size="big"
+					fluid
+					outline
+					loading={loading}
+					disabled={couponValue && !validCoupon}
+				>
+					Subscribe to prototypo
+				</LoadingButton>
+			</form>
 		);
 	}
 }
+
+SubscriptionCardAndValidation.defaultProps = {
+	onSelectCoupon: () => {},
+};
+
+const CREATE_SUBSCRIPTION = gql`
+	mutation createSubscription($plan: String!, $quantity: Int, $coupon: String) {
+		createSubscription(plan: $plan, quantity: $quantity, coupon: $coupon)
+			@client
+	}
+`;
+
+export default graphql(CREATE_SUBSCRIPTION, {
+	props: ({mutate}) => ({
+		createSubscription: variables => mutate({variables}),
+	}),
+})(withRouter(injectStripe(SubscriptionCardAndValidation)));

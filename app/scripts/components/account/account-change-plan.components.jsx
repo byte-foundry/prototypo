@@ -1,13 +1,15 @@
-import React from 'react';
+import gql from 'graphql-tag';
 import PropTypes from 'prop-types';
-import Lifespan from 'lifespan';
+import React from 'react';
+import {Query} from 'react-apollo';
+import {Redirect, withRouter} from 'react-router';
 
 import InputNumber from '../shared/input-number.components';
 import PricingItem from '../shared/pricing-item.components';
 import Button from '../shared/new-button.components';
 import WaitForLoad from '../wait-for-load.components';
+import Dashboard from './account-dashboard.components';
 
-import LocalClient from '../../stores/local-client.stores';
 import getCurrency from '../../helpers/currency.helpers';
 
 import {
@@ -23,12 +25,37 @@ Hi,
 I would like to cancel my subscription to Prototypo.
 `.trim();
 
-export default class AccountChangePlan extends React.Component {
+const GET_SUBSCRIPTION_AND_CARDS = gql`
+	query getSubscriptionAndCards {
+		user {
+			id
+			subscription @client {
+				id
+				quantity
+				plan {
+					id
+				}
+			}
+			cards @client {
+				id
+				name
+				last4
+				exp_month
+				exp_year
+				country
+			}
+		}
+	}
+`;
+
+class AccountChangePlan extends React.Component {
 	constructor(props) {
 		super(props);
 
 		this.state = {
-			loading: true,
+			selection: undefined,
+			selectedPlan: undefined,
+			numberOfUsers: undefined,
 		};
 
 		this.confirmChange = this.confirmChange.bind(this);
@@ -36,78 +63,41 @@ export default class AccountChangePlan extends React.Component {
 		this.changeNumberOfUsers = this.changeNumberOfUsers.bind(this);
 	}
 
-	componentWillMount() {
-		this.client = LocalClient.instance();
-		this.lifespan = new Lifespan();
+	confirmChange({subscription: {quantity, plan}}) {
+		const initialPlan = (plan.id.includes('monthly')
+			? teamMonthlyConst
+			: teamAnnualConst
+		).prefix;
+		const {selectedPlan = initialPlan, numberOfUsers = quantity} = this.state;
 
-		this.client
-			.getStore('/userStore', this.lifespan)
-			.onUpdate((head) => {
-				const {subscription, cards} = head.toJS().d;
-
-				if (!subscription) {
-					this.props.router.push('/account/subscribe');
-					return;
-				}
-
-				this.setState({
-					loading: false,
-					subscription,
-					plan: subscription.plan.id,
-					selectedPlan: subscription.plan.id.includes('monthly')
-						? teamMonthlyConst
-						: teamAnnualConst,
-					numberOfUsers: parseInt(
-						(subscription && subscription.quantity) || 0,
-						10,
-					),
-					selection: subscription.plan.id.includes('monthly')
-						? 'monthly'
-						: 'annual',
-					currency: getCurrency(cards[0].country),
-				});
-			})
-			.onDelete(() => {
-				this.setState(undefined);
-			});
-	}
-
-	componentWillUnmount() {
-		this.client.dispatchAction('/clean-form', 'choosePlanForm');
-		this.lifespan.release();
-	}
-
-	confirmChange() {
-		const {selectedPlan, numberOfUsers} = this.state;
-		const plan = selectedPlan.prefix;
-
-		Intercom('trackEvent', 'change-plan-select', {
-			plan,
-			quantity: numberOfUsers,
+		window.Intercom('trackEvent', 'change-plan-select', {
+			plan: selectedPlan.prefix,
+			quantity,
 		});
 
-		this.props.router.push({
+		this.props.history.push({
 			pathname: '/account/details/confirm-plan',
-			query: {
-				plan,
+			search: new URLSearchParams({
+				plan: selectedPlan.prefix,
 				quantity: numberOfUsers,
-			},
+			}).toString(),
 		});
 	}
 
 	downgrade(e) {
 		e.preventDefault();
-		Intercom('showNewMessage', UNSUBSCRIBE_MESSAGE);
+		window.Intercom('showNewMessage', UNSUBSCRIBE_MESSAGE);
 	}
 
 	changeNumberOfUsers(value) {
 		this.setState({numberOfUsers: parseInt(value, 10)});
 	}
 
-	renderChoices() {
-		const {subscription, numberOfUsers, selection, currency} = this.state;
+	renderChoices({subscription, currency}) {
+		const {plan, quantity} = subscription;
+		const initialSelection = plan.id.includes('monthly') ? 'monthly' : 'annual';
+		const {numberOfUsers = quantity, selection = initialSelection} = this.state;
 
-		const {plan} = subscription;
 		const hasTeamPlan
 			= plan.id.includes(teamMonthlyConst.prefix)
 			|| plan.id.includes(teamAnnualConst.prefix);
@@ -125,7 +115,10 @@ export default class AccountChangePlan extends React.Component {
 						amount={monthlyPlan.monthlyPrice * numberOfUsers}
 						current={plan.id.includes(monthlyPlan.prefix)}
 						onClick={() =>
-							this.setState({selection: 'monthly', selectedPlan: monthlyPlan})
+							this.setState({
+								selection: 'monthly',
+								selectedPlan: monthlyPlan,
+							})
 						}
 					/>
 
@@ -137,7 +130,10 @@ export default class AccountChangePlan extends React.Component {
 						amount={annualPlan.monthlyPrice * numberOfUsers}
 						current={plan.id.includes(annualPlan.prefix)}
 						onClick={() =>
-							this.setState({selection: 'annual', selectedPlan: annualPlan})
+							this.setState({
+								selection: 'annual',
+								selectedPlan: annualPlan,
+							})
 						}
 					/>
 				</div>
@@ -148,7 +144,7 @@ export default class AccountChangePlan extends React.Component {
 
 						<InputNumber
 							className="pricing-item-subtitle-price-info team"
-							min={subscription.quantity}
+							min={quantity}
 							max={100}
 							value={numberOfUsers}
 							onChange={this.changeNumberOfUsers}
@@ -159,11 +155,8 @@ export default class AccountChangePlan extends React.Component {
 
 				<div className="account-change-plan-actions">
 					<Button
-						onClick={this.confirmChange}
-						disabled={
-							plan.id.includes(selection)
-							&& numberOfUsers <= subscription.quantity
-						}
+						onClick={() => this.confirmChange({subscription})}
+						disabled={plan.id.includes(selection) && numberOfUsers <= quantity}
 					>
 						Apply change
 					</Button>
@@ -173,29 +166,52 @@ export default class AccountChangePlan extends React.Component {
 	}
 
 	render() {
-		const {loading} = this.state;
-
 		return (
-			<div className="account-base account-change-plan">
-				<header className="manage-sub-users-header">
-					<h1 className="manage-sub-users-title">Change Plan</h1>
-					<p className="manage-sub-users-sidephrase">
-						Want to downgrade?{' '}
-						<a
-							href={`mailto:account@prototypo.io?subject=Cancelling my subscription&body=${encodeURI(
-								UNSUBSCRIBE_MESSAGE,
-							)}`}
-							className="account-email"
-							onClick={this.downgrade}
-							title="If this link doesn't work, you may need to turn off your privacy blocker"
-						>
-							Contact us!
-						</a>
-					</p>
-				</header>
+			<Query query={GET_SUBSCRIPTION_AND_CARDS}>
+				{({loading, data: {user}}) => {
+					if (!loading && user && !user.subscription) {
+						return <Redirect to="/account/subscribe" />;
+					}
 
-				{loading ? <WaitForLoad loading /> : this.renderChoices()}
-			</div>
+					const currency = getCurrency(
+						user && user.cards[0] && user.cards[0].country,
+					);
+
+					return (
+						<Dashboard title="Change my plan">
+							<div className="account-base account-change-plan">
+								<header className="manage-sub-users-header">
+									<h1 className="manage-sub-users-title">Change Plan</h1>
+									<p className="manage-sub-users-sidephrase">
+										Want to downgrade?{' '}
+										<a
+											href={`mailto:account@prototypo.io?subject=Cancelling my subscription&body=${encodeURI(
+												UNSUBSCRIBE_MESSAGE,
+											)}`}
+											className="account-email"
+											onClick={this.downgrade}
+											title="If this link doesn't work, you may need to turn off your privacy blocker"
+										>
+											Contact us!
+										</a>
+									</p>
+								</header>
+
+								{loading ? (
+									<WaitForLoad loading />
+								) : (
+									this.renderChoices({
+										subscription: user.subscription,
+										currency,
+									})
+								)}
+							</div>
+						</Dashboard>
+					);
+				}}
+			</Query>
 		);
 	}
 }
+
+export default withRouter(AccountChangePlan);

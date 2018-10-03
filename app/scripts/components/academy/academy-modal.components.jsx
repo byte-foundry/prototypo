@@ -2,13 +2,13 @@ import React from 'react';
 import PropTypes from 'prop-types';
 import Lifespan from 'lifespan';
 import InlineSVG from 'svg-inline-react';
-import {Link} from 'react-router';
+import {withRouter} from 'react-router-dom';
 
 import {academyTutorialLabel} from '../../helpers/joyride.helpers.js';
 import Button from '../shared/button.components.jsx';
 import LocalClient from '../../stores/local-client.stores.jsx';
 
-export default class AcademyModal extends React.Component {
+class AcademyModal extends React.Component {
 	constructor(props) {
 		super(props);
 		this.showAcademy = this.showAcademy.bind(this);
@@ -26,10 +26,6 @@ export default class AcademyModal extends React.Component {
 		this.lifespan.release();
 	}
 
-	static contextTypes = {
-		router: PropTypes.object.isRequired,
-	};
-
 	exit() {
 		this.client.dispatchAction('/store-value', {
 			uiJoyrideTutorialValue: academyTutorialLabel,
@@ -43,8 +39,8 @@ export default class AcademyModal extends React.Component {
 		this.client.dispatchAction('/store-value', {
 			firstTimeAcademyModal: false,
 		});
-		this.context.router.push('/academy');
 		window.Intercom('trackEvent', 'clicked-yes-on-academy-modal');
+		this.props.history.push('/academy');
 	}
 
 	render() {
@@ -75,3 +71,5 @@ export default class AcademyModal extends React.Component {
 		);
 	}
 }
+
+export default withRouter(AcademyModal);

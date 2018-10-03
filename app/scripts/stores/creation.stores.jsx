@@ -134,7 +134,6 @@ const prototypoStore = new Remutable({
 	uiShadow: undefined,
 	uiText: '',
 	uiWord: '',
-	uiFontLoading: false,
 	uiCreatefamilySelectedTemplate: undefined,
 	canvasMode: 'move',
 	uiSliderTooltip: undefined,
@@ -202,30 +201,6 @@ const prototypoStore = new Remutable({
 	// end first time tutorial store values
 });
 
-const userStore = new Remutable({
-	subscription: false,
-	cards: [],
-	profileForm: {
-		errors: [],
-	},
-	signupForm: {
-		errors: [],
-		inError: {},
-	},
-	signinForm: {
-		errors: [],
-		inError: {},
-	},
-	choosePlanForm: {},
-	addcardForm: {
-		errors: [],
-		inError: {},
-	},
-	confirmation: {
-		errors: [],
-	},
-});
-
 const planStore = new Remutable({
 	personal_monthly: {
 		id: 'personal_monthly',
@@ -266,7 +241,6 @@ const stores = {
 	'/fontInstanceStore': fontInstanceStore,
 	'/undoableStore': undoableStore,
 	'/fastStuffStore': fastStuffStore,
-	'/userStore': userStore,
 	'/planStore': planStore,
 	'/creditStore': creditStore,
 };
@@ -277,7 +251,6 @@ export {
 	prototypoStore,
 	undoableStore,
 	fastStuffStore,
-	userStore,
 	planStore,
 	creditStore,
 };

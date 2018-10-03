@@ -1,16 +1,12 @@
-import cloneDeep from 'lodash/cloneDeep';
-import merge from 'lodash/merge';
+import gql from 'graphql-tag';
 import PropTypes from 'prop-types';
 import React from 'react';
-import {gql, graphql, compose} from 'react-apollo';
-import {Link} from 'react-router';
-import TutorialContent from 'tutorial-content';
+import {graphql, compose} from 'react-apollo';
+import {Link, withRouter} from 'react-router-dom';
 
 class AcademyDashboard extends React.Component {
 	constructor(props) {
 		super(props);
-
-		this.tutorials = new TutorialContent();
 
 		this.setCourseCurrentlyReading = this.setCourseCurrentlyReading.bind(this);
 		this.saveCourseProgress = this.saveCourseProgress.bind(this);
@@ -38,6 +34,24 @@ class AcademyDashboard extends React.Component {
 			});
 		}
 
+		// When the user isn't registered, we redirect him to signin
+		if (!this.props.userId) {
+			// no redirect for no parts courses
+			if (courseProgress.parts.length === 0) {
+				return;
+			}
+
+			const query = new URLSearchParams(this.props.location.search);
+
+			query.set('prevHash', this.props.location.pathname);
+
+			this.props.history.push({
+				pathname: '/signin',
+				search: query.toString(),
+			});
+			return;
+		}
+
 		await this.props.saveAcademyProgress({
 			...this.props.academyProgress,
 			[progress.slug]: progress,
@@ -63,45 +77,24 @@ class AcademyDashboard extends React.Component {
 	}
 
 	render() {
-		const {academyProgress, academyCompleted, routeParams, route} = this.props;
-
-		const titles = {
-			home: 'Academy',
-			course: 'academy',
-		};
-
-		this.tutorials.content.forEach((tutorial) => {
-			titles[tutorial.slug] = tutorial.title;
-		});
-
-		const backlinks = {
-			home: '/dashboard',
-			course: '/academy',
-		};
-
-		const backlinkTitle = {
-			home: 'App',
-			course: 'Academy homepage',
-		};
-		const curRoute = routeParams.courseSlug || route.name;
-		const title = titles.home;
-		const backlink = backlinks[this.props.route.name];
+		const {academyProgress, academyCompleted, isHomepage, title} = this.props;
 
 		return (
 			<div className="academy-dashboard">
-				<Link to={backlinks.home}>
+				<Link to="/dashboard">
 					<div className="academy-dashboard-icon" />
 				</Link>
-				<Link to={backlink} className="academy-dashboard-back">
-					{backlinkTitle[this.props.route.name]}
+				<Link
+					to={isHomepage ? '/dashboard' : '/academy'}
+					className="academy-dashboard-back"
+				>
+					{isHomepage ? 'App' : 'Academy Homepage'}
 				</Link>
 				<div className="academy-header">
-					<h1 className="academy-title">{title}</h1>
+					<h1 className="academy-title">Academy</h1>
 				</div>
-				{this.props.route.name === 'home' ? (
-					false
-				) : (
-					<h1 className="academy-dashboard-page-title">{titles[curRoute]}</h1>
+				{!isHomepage && (
+					<h1 className="academy-dashboard-page-title">{title}</h1>
 				)}
 				<div className="academy-dashboard-container">
 					{React.cloneElement(this.props.children, {
@@ -119,6 +112,8 @@ class AcademyDashboard extends React.Component {
 AcademyDashboard.defaultProps = {
 	academyProgress: {},
 	academyCompleted: false,
+	isHomepage: false,
+	title: '',
 	setCompletedAcademy: () => {},
 	saveAcademyProgress: () => {},
 };
@@ -128,8 +123,8 @@ AcademyDashboard.propTypes = {
 		lastCourse: PropTypes.string,
 	}),
 	academyCompleted: PropTypes.bool,
-	routeParams: PropTypes.object.isRequired,
-	route: PropTypes.object.isRequired,
+	isHomepage: PropTypes.bool,
+	title: PropTypes.string,
 	setCompletedAcademy: PropTypes.func,
 	saveAcademyProgress: PropTypes.func,
 };
@@ -170,6 +165,10 @@ export default compose(
 				return {loading: true};
 			}
 
+			if (!data.user) {
+				return {};
+			}
+
 			return {
 				userId: data.user.id,
 				academyProgress: data.user.academyProgress,
@@ -194,4 +193,4 @@ export default compose(
 				mutate({variables: {userId: ownProps.userId, values}}),
 		}),
 	}),
-)(AcademyDashboard);
+)(withRouter(AcademyDashboard));

@@ -26,9 +26,14 @@
 	&--disabled {
 		cursor: default;
 		background-color: $light-grey;
+		pointer-events: none;
 
 		&:hover {
 			background-color: $light-grey;
+		}
+
+		&:active {
+			box-shadow: none;
 		}
 	}
 
@@ -40,6 +45,11 @@
 	&--small {
 		font-size: 14px;
 		padding: 8px 12px;
+	}
+
+	&--big {
+		font-size: 18px;
+		padding: 12px 16px;
 	}
 
 	&--large {
@@ -80,6 +90,29 @@
 		background-color: transparent;
 		box-shadow: 0 0 0 2px $light-grey inset;
 		color: $light-grey;
+	}
+
+	&--link {
+		background-color: transparent;
+		box-shadow: none;
+		color: $green;
+
+		&:hover, &:active, &:focus {
+			text-decoration: underline;
+			background-color: transparent;
+			box-shadow: none;
+		}
+
+		&:focus:not(:active) {
+			box-shadow: none;
+		}
+	}
+
+	&--link#{&}--disabled {
+		background-color: transparent;
+		box-shadow: none;
+		color: $light-grey;
+		text-decoration: none;
 	}
 
 	&--fluid {

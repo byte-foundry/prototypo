@@ -1,15 +1,12 @@
 import React from 'react';
-import PureRenderMixin from 'react-addons-pure-render-mixin';
 
 import LocalClient from '../../stores/local-client.stores.jsx';
 import Log from '../../services/log.services.js';
 
-export default class Modal extends React.Component {
+export default class Modal extends React.PureComponent {
 	constructor(props) {
 		super(props);
-		this.shouldComponentUpdate = PureRenderMixin.shouldComponentUpdate.bind(
-			this,
-		);
+
 		this.onBackdropClick = this.onBackdropClick.bind(this);
 	}
 
