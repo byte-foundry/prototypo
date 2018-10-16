@@ -69,7 +69,7 @@
     "tether": "^1.1.0",
     "tutorial-content": "byte-foundry/tutorial-content#master",
     "uglifyjs-webpack-plugin": "^1.0.1",
-    "venus.ptf": "byte-foundry/venus.ptf#feat/simplified-params",
+    "venus.ptf": "byte-foundry/venus.ptf#feat/new-alternates",
     "whatwg-fetch": "^0.9.0",
     "worker-loader": "^0.8.0"
   },
