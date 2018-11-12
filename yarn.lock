@@ -9232,6 +9232,7 @@ libqp@1.1.0:
 
 lifespan@FranzPoize/lifespan#master, lifespan@^5.0.1:
   version "5.0.1"
+  uid "0834c672b1ca8d0b5639e0b35d3190ca32cbd7c2"
   resolved "https://codeload.github.com/FranzPoize/lifespan/tar.gz/0834c672b1ca8d0b5639e0b35d3190ca32cbd7c2"
   dependencies:
     lodash "~4.14.0"
@@ -13064,6 +13065,7 @@ remove-trailing-separator@^1.0.1:
 
 remutable@FranzPoize/remutable#master:
   version "3.0.1"
+  uid ff2dbdb4fdae7f0704c51747e934f53c5f688c19
   resolved "https://codeload.github.com/FranzPoize/remutable/tar.gz/ff2dbdb4fdae7f0704c51747e934f53c5f688c19"
   dependencies:
     crc-32 "^0.3.0"
