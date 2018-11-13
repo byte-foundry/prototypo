@@ -987,7 +987,6 @@ antique.ptf@byte-foundry/antique.ptf#feat/simplified-parameters:
   dependencies:
     karma "^1.7.1"
     prototypo-precursor "1.0.7"
-    yargs "^11.0.0"
 
 any-observable@^0.2.0:
   version "0.2.0"
@@ -5604,7 +5603,6 @@ gfnt.ptf@byte-foundry/spectral.ptf#feat/simplified-parameters:
   dependencies:
     karma "^2.0.0"
     prototypo-precursor "^1.0.4"
-    yargs "^11.0.0"
 
 glamor@^2.20.40:
   version "2.20.40"
@@ -7347,7 +7345,6 @@ john-fell.ptf@byte-foundry/john-fell.ptf#feat/simplified-parameters:
   resolved "https://codeload.github.com/byte-foundry/john-fell.ptf/tar.gz/9dd4137dccec8ef3adb28eba13b45258943c64d5"
   dependencies:
     prototypo-precursor "^1.0.4"
-    yargs "^11.0.0"
 
 js-base64@^2.1.8, js-base64@^2.1.9:
   version "2.4.3"
@@ -8095,8 +8092,7 @@ lodash@^4.0.0, lodash@^4.13.1, lodash@^4.14.0, lodash@^4.15.0, lodash@^4.17.0, l
   version "4.17.5"
   resolved "https://registry.yarnpkg.com/lodash/-/lodash-4.17.5.tgz#99a92d65c0272debe8c96b6057bc8fbfa3bed511"
 
-
-lodash@^4.17.11:
+lodash@^4.17.10, lodash@^4.17.11:
   version "4.17.11"
   resolved "https://registry.yarnpkg.com/lodash/-/lodash-4.17.11.tgz#b39ea6229ef607ecd89e2c8df12536891cac9b8d"
 
@@ -8653,6 +8649,11 @@ module-deps@^4.0.8:
     subarg "^1.0.0"
     through2 "^2.0.0"
     xtend "^4.0.0"
+
+moment@^2.10.3:
+  version "2.22.2"
+  resolved "https://registry.yarnpkg.com/moment/-/moment-2.22.2.tgz#3c257f9839fc0e93ff53149632239eb90783ff66"
+  integrity sha1-PCV/mDn8DpP/UxSWMiOeuQeD/2Y=
 
 move-concurrently@^1.0.1:
   version "1.0.1"
