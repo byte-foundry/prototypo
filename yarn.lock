@@ -983,7 +983,7 @@ antique.ptf@byte-foundry/antique.ptf#feat/new-rendering:
   resolved "https://codeload.github.com/byte-foundry/antique.ptf/tar.gz/fe5323706c49755694a6ebe43c1525ac9900b264"
   dependencies:
     karma "^1.7.1"
-    prototypo-precursor "^1.0.3"
+    prototypo-precursor "1.0.7"
 
 anymatch@^1.3.0:
   version "1.3.2"
@@ -7913,6 +7913,11 @@ lodash@^4.13.1, lodash@^4.14.0, lodash@^4.15.0, lodash@^4.17.0, lodash@^4.17.2, 
   version "4.17.5"
   resolved "https://registry.yarnpkg.com/lodash/-/lodash-4.17.5.tgz#99a92d65c0272debe8c96b6057bc8fbfa3bed511"
 
+lodash@^4.17.11:
+  version "4.17.11"
+  resolved "https://registry.yarnpkg.com/lodash/-/lodash-4.17.11.tgz#b39ea6229ef607ecd89e2c8df12536891cac9b8d"
+  integrity sha512-cQKh8igo5QUhZ7lg38DYWAxMvjSAKG0A8wGSVimP07SIUEK2UO+arSRKbRZWtelMtN5V0Hkwh5ryOto/SshYIg==
+
 lodash@~1.0.1:
   version "1.0.2"
   resolved "https://registry.yarnpkg.com/lodash/-/lodash-1.0.2.tgz#8f57560c83b59fc270bd3d561b690043430e2551"
@@ -9924,6 +9929,13 @@ prototypo-precursor@^1.0.3, prototypo-precursor@^1.0.4:
   resolved "https://registry.yarnpkg.com/prototypo-precursor/-/prototypo-precursor-1.0.6.tgz#b1398f8170ee892ff7c32657dbd16ee10966e6f8"
   dependencies:
     lodash "~4.14.0"
+
+prototypo-precursor@^1.0.7:
+  version "1.0.8"
+  resolved "https://registry.yarnpkg.com/prototypo-precursor/-/prototypo-precursor-1.0.8.tgz#ce9a514e1debc5260bab5dfa236908727d886ec0"
+  integrity sha512-gAK8EMOEMH6RbZXDMKaA38ud/HHf+PiP7DdhnsXarHXi4JLi0ADTYaY+xIKzY5zmb4olX5h1HG6QcjD0bOZRVg==
+  dependencies:
+    lodash "^4.17.11"
 
 proxy-addr@~2.0.2:
   version "2.0.3"
@@ -12722,11 +12734,12 @@ vendors@^1.0.0:
   version "1.0.1"
   resolved "https://registry.yarnpkg.com/vendors/-/vendors-1.0.1.tgz#37ad73c8ee417fb3d580e785312307d274847f22"
 
-venus.ptf@byte-foundry/venus.ptf#feat/new-rendering:
+"venus.ptf@https://github.com/byte-foundry/venus.ptf#feat/simplified-params":
   version "1.0.0"
-  resolved "https://codeload.github.com/byte-foundry/venus.ptf/tar.gz/ec7d3be3c9ac9adc62038fac4d1c6d99e6839a76"
+  resolved "https://github.com/byte-foundry/venus.ptf#35ffcf3c1b1df14802cb08167376893ee59db18d"
   dependencies:
-    prototypo-precursor "^1.0.4"
+    prototypo-precursor "^1.0.7"
+    yargs "^11.0.0"
 
 verror@1.10.0:
   version "1.10.0"
@@ -13195,6 +13208,13 @@ yargs-parser@^8.0.0, yargs-parser@^8.1.0:
   dependencies:
     camelcase "^4.1.0"
 
+yargs-parser@^9.0.2:
+  version "9.0.2"
+  resolved "https://registry.yarnpkg.com/yargs-parser/-/yargs-parser-9.0.2.tgz#9ccf6a43460fe4ed40a9bb68f48d43b8a68cc077"
+  integrity sha1-nM9qQ0YP5O1Aqbto9I1DuKaMwHc=
+  dependencies:
+    camelcase "^4.1.0"
+
 yargs@10.0.3:
   version "10.0.3"
   resolved "https://registry.yarnpkg.com/yargs/-/yargs-10.0.3.tgz#6542debd9080ad517ec5048fb454efe9e4d4aaae"
@@ -13246,6 +13266,24 @@ yargs@^10.0.3:
     which-module "^2.0.0"
     y18n "^3.2.1"
     yargs-parser "^8.1.0"
+
+yargs@^11.0.0:
+  version "11.1.0"
+  resolved "https://registry.yarnpkg.com/yargs/-/yargs-11.1.0.tgz#90b869934ed6e871115ea2ff58b03f4724ed2d77"
+  integrity sha512-NwW69J42EsCSanF8kyn5upxvjp5ds+t3+udGBeTbFnERA+lF541DDpMawzo4z6W/QrzNM18D+BPMiOBibnFV5A==
+  dependencies:
+    cliui "^4.0.0"
+    decamelize "^1.1.1"
+    find-up "^2.1.0"
+    get-caller-file "^1.0.1"
+    os-locale "^2.0.0"
+    require-directory "^2.1.1"
+    require-main-filename "^1.0.1"
+    set-blocking "^2.0.0"
+    string-width "^2.0.0"
+    which-module "^2.0.0"
+    y18n "^3.2.1"
+    yargs-parser "^9.0.2"
 
 yargs@^7.0.0:
   version "7.1.0"
