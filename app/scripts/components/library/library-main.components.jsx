@@ -52,28 +52,22 @@ class LibraryMain extends React.Component {
 			templateInfos: prototypoStore.head.toJS().templateList,
 		});
 
-		this.client
-			.getStore('/prototypoStore', this.lifespan)
-			.onUpdate((head) => {
-				this.setState({
-					openVariantModal: head.toJS().d.openVariantModal,
-					openChangeVariantNameModal: head.toJS().d
-						.openChangeVariantNameModal,
-					openDuplicateVariantModal: head.toJS().d
-						.openDuplicateVariantModal,
-					familySelectedVariantCreation: head.toJS().d
-						.familySelectedVariantCreation,
-					collectionSelectedVariant: head.toJS().d
-						.collectionSelectedVariant,
-					templatesData: head.toJS().d.templatesData,
-					search: head.toJS().d.librarySearchString,
-					librarySelectedTags: head.toJS().d.librarySelectedTags,
-					openRestrictedFeature: head.toJS().d.openRestrictedFeature,
-					restrictedFeatureHovered: head.toJS().d
-						.restrictedFeatureHovered,
-					openGoProModal: head.toJS().d.openGoProModal,
-				});
+		this.client.getStore('/prototypoStore', this.lifespan).onUpdate((head) => {
+			this.setState({
+				openVariantModal: head.toJS().d.openVariantModal,
+				openChangeVariantNameModal: head.toJS().d.openChangeVariantNameModal,
+				openDuplicateVariantModal: head.toJS().d.openDuplicateVariantModal,
+				familySelectedVariantCreation: head.toJS().d
+					.familySelectedVariantCreation,
+				collectionSelectedVariant: head.toJS().d.collectionSelectedVariant,
+				templatesData: head.toJS().d.templatesData,
+				search: head.toJS().d.librarySearchString,
+				librarySelectedTags: head.toJS().d.librarySelectedTags,
+				openRestrictedFeature: head.toJS().d.openRestrictedFeature,
+				restrictedFeatureHovered: head.toJS().d.restrictedFeatureHovered,
+				openGoProModal: head.toJS().d.openGoProModal,
 			});
+		});
 	}
 
 	componentWillUnmount() {
@@ -289,16 +283,12 @@ class LibraryMain extends React.Component {
 							/>
 							<Route
 								path="/library/fontinuse"
-								render={renderWithAllData(
-									LibraryFontsInUseList,
-								)}
+								render={renderWithAllData(LibraryFontsInUseList)}
 								exact
 							/>
 							<Route
 								path="/library/fontinuse/create"
-								render={renderWithAllData(
-									LibraryFontsInUseCreate,
-								)}
+								render={renderWithAllData(LibraryFontsInUseCreate)}
 								exact
 							/>
 							<Route
@@ -308,9 +298,7 @@ class LibraryMain extends React.Component {
 							/>
 							<Route
 								path="/library/fontinuse/:fontinuseID/edit"
-								render={renderWithAllData(
-									LibraryFontsInUseCreate,
-								)}
+								render={renderWithAllData(LibraryFontsInUseCreate)}
 								exact
 							/>
 							<Route
@@ -328,9 +316,7 @@ class LibraryMain extends React.Component {
 					)}
 				</TransitionGroup>
 				{restrictedFeatureText}
-				{this.state.openGoProModal && (
-					<GoProModal propName="openGoProModal" />
-				)}
+				{this.state.openGoProModal && <GoProModal propName="openGoProModal" />}
 				{this.state.openVariantModal && (
 					<CreateVariantModal
 						family={this.state.familySelectedVariantCreation}
@@ -511,7 +497,7 @@ export const libraryUserQuery = gql`
 
 export const presetQuery = gql`
 	query {
-		allPresets(filter: {published: true}) {
+		allPresets(filter: {isPrototypoPreset: true}) {
 			id
 			ownerInitials
 			abstractedFont {
@@ -660,9 +646,7 @@ export default compose(
 			}
 			if (data.user) {
 				return {
-					subUsers: data.user.manager
-						? data.user.manager.subUsers
-						: [],
+					subUsers: data.user.manager ? data.user.manager.subUsers : [],
 					refetch: data.refetch,
 				};
 			}
@@ -713,8 +697,7 @@ export default compose(
 					data.user.favourites.findIndex(
 						f =>
 							f.id
-							=== removeFromUserOnAbstractedFont
-								.favouritesAbstractedFont.id,
+							=== removeFromUserOnAbstractedFont.favouritesAbstractedFont.id,
 					),
 					1,
 				);
@@ -756,14 +739,8 @@ export default compose(
 					break;
 				case 'Variant':
 					variant = dataLibrary.user.library
-						.find(
-							f =>
-								f.id
-									=== createAbstractedFont.variant.family.id,
-						)
-						.variants.find(
-							v => v.id === createAbstractedFont.variant.id,
-						);
+						.find(f => f.id === createAbstractedFont.variant.family.id)
+						.variants.find(v => v.id === createAbstractedFont.variant.id);
 
 					variant.abstractedFont = {id: createAbstractedFont.id};
 					break;
@@ -825,9 +802,7 @@ export default compose(
 		options: {
 			update: (store, {data: {updateFamily}}) => {
 				const data = store.readQuery({query: libraryQuery});
-				const family = data.user.library.find(
-					f => f.id === updateFamily.id,
-				);
+				const family = data.user.library.find(f => f.id === updateFamily.id);
 
 				family.tags = [...updateFamily.tags];
 				store.writeQuery({

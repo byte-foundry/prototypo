@@ -28,11 +28,7 @@ class LibrarySidebarLeftRaw extends React.Component {
 		let subUsersProjects = subUserLibrary.map(f => (
 			<Route path={`/library/project/${f.id}`}>
 				{({match}) => (
-					<p
-						className={`sidebar-left-project ${
-							match ? 'active' : ''
-						}`}
-					>
+					<p className={`sidebar-left-project ${match ? 'active' : ''}`}>
 						<Link to={`/library/project/${f.id}`}>
 							<span className="big">{f.name}</span>
 							<span className="small">({f.variants.length})</span>
@@ -58,7 +54,7 @@ class LibrarySidebarLeftRaw extends React.Component {
 		const isSubUserActive
 			= (this.props.location.pathname === '/library'
 				&& query.get('mode') === 'team')
-			|| (subUserLibrary.some(e => e.id === this.props.match.params.projectID));
+			|| subUserLibrary.some(e => e.id === this.props.match.params.projectID);
 
 		let userProjects = [];
 
@@ -89,11 +85,7 @@ class LibrarySidebarLeftRaw extends React.Component {
 					userProjects.push(
 						<Route path={`/library/project/${family.id}`}>
 							{({match}) => (
-								<p
-									className={`sidebar-left-project ${
-										match ? 'active' : ''
-									}`}
-								>
+								<p className={`sidebar-left-project ${match ? 'active' : ''}`}>
 									<Link to={`/library/project/${family.id}`}>
 										<span className="big">{family.name}</span>
 										<span className="small">({family.variants.length})</span>
@@ -121,9 +113,7 @@ class LibrarySidebarLeftRaw extends React.Component {
 			= (this.props.location.pathname === '/library'
 				&& query.get('mode') === 'personal')
 			|| (this.props.families
-				&& this.props.families.some(
-					e => matchPath(`/library/project/${e.id}`),
-				));
+				&& this.props.families.some(e => matchPath(`/library/project/${e.id}`)));
 
 		let userFavourites = [];
 		let favourites;
@@ -137,7 +127,10 @@ class LibrarySidebarLeftRaw extends React.Component {
 				.forEach((abstractedFont) => {
 					if (abstractedFont.type !== 'Family' || abstractedFont.family) {
 						userFavourites.push(
-							<Route path={`/library/project/${abstractedFont.family && abstractedFont.family.id}`}>
+							<Route
+								path={`/library/project/${abstractedFont.family
+									&& abstractedFont.family.id}`}
+							>
 								{({match}) => (
 									<p
 										className={`sidebar-left-project ${
@@ -217,7 +210,9 @@ class LibrarySidebarLeftRaw extends React.Component {
 									to="/library"
 									className={`library-link ${
 										this.props.location.pathname === '/library'
-										&& !query.has('mode') ? 'active' : ''
+										&& !query.has('mode')
+											? 'active'
+											: ''
 									}`}
 								>
 									<span className="library-link-arrow hidden">▶</span>All
@@ -532,6 +527,10 @@ export class SidebarFilters extends React.Component {
 						{
 							active: false,
 							name: 'Google',
+						},
+						{
+							active: false,
+							name: 'Havas',
 						},
 					]}
 					editActiveFilter={this.editActiveFilter}
