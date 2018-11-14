@@ -984,13 +984,6 @@ antique.ptf@byte-foundry/antique.ptf#feat/new-rendering:
   dependencies:
     karma "^1.7.1"
     prototypo-precursor "1.0.7"
-<<<<<<< HEAD
-=======
-
-any-observable@^0.2.0:
-  version "0.2.0"
-  resolved "https://registry.yarnpkg.com/any-observable/-/any-observable-0.2.0.tgz#c67870058003579009083f54ac0abafb5c33d242"
->>>>>>> 5d6f1d21... New alternates images
 
 anymatch@^1.3.0:
   version "1.3.2"
@@ -7920,11 +7913,7 @@ lodash@^4.13.1, lodash@^4.14.0, lodash@^4.15.0, lodash@^4.17.0, lodash@^4.17.2, 
   version "4.17.5"
   resolved "https://registry.yarnpkg.com/lodash/-/lodash-4.17.5.tgz#99a92d65c0272debe8c96b6057bc8fbfa3bed511"
 
-<<<<<<< HEAD
 lodash@^4.17.11:
-=======
-lodash@^4.17.10, lodash@^4.17.11:
->>>>>>> 5d6f1d21... New alternates images
   version "4.17.11"
   resolved "https://registry.yarnpkg.com/lodash/-/lodash-4.17.11.tgz#b39ea6229ef607ecd89e2c8df12536891cac9b8d"
   integrity sha512-cQKh8igo5QUhZ7lg38DYWAxMvjSAKG0A8wGSVimP07SIUEK2UO+arSRKbRZWtelMtN5V0Hkwh5ryOto/SshYIg==
@@ -8456,14 +8445,9 @@ module-deps@^4.0.8:
     xtend "^4.0.0"
 
 moment@^2.10.3:
-<<<<<<< HEAD
-  version "2.21.0"
-  resolved "https://registry.yarnpkg.com/moment/-/moment-2.21.0.tgz#2a114b51d2a6ec9e6d83cf803f838a878d8a023a"
-=======
   version "2.22.2"
   resolved "https://registry.yarnpkg.com/moment/-/moment-2.22.2.tgz#3c257f9839fc0e93ff53149632239eb90783ff66"
   integrity sha1-PCV/mDn8DpP/UxSWMiOeuQeD/2Y=
->>>>>>> 5d6f1d21... New alternates images
 
 move-concurrently@^1.0.1:
   version "1.0.1"
@@ -9941,7 +9925,14 @@ prototypo-flux-testing@0.0.1:
   version "0.0.1"
   resolved "https://registry.yarnpkg.com/prototypo-flux-testing/-/prototypo-flux-testing-0.0.1.tgz#33694eb51c05ed4241b7072c5e49c0dda6587a3f"
 
-prototypo-precursor@^1.0.3, prototypo-precursor@^1.0.4:
+prototypo-precursor@1.0.7:
+  version "1.0.7"
+  resolved "https://registry.yarnpkg.com/prototypo-precursor/-/prototypo-precursor-1.0.7.tgz#4ac6dd0ff827cfeb0048566a35961c364d3a3607"
+  integrity sha512-gEc09QJC/H2DVDLGpuqJXTPySOQ5n3TasTUxGDqukwc8Duoeuq1A8kHc4HOC7lqBWFGGsOLYdsZkDwmjX3T2gQ==
+  dependencies:
+    lodash "~4.14.0"
+
+prototypo-precursor@^1.0.4:
   version "1.0.6"
   resolved "https://registry.yarnpkg.com/prototypo-precursor/-/prototypo-precursor-1.0.6.tgz#b1398f8170ee892ff7c32657dbd16ee10966e6f8"
   dependencies:
@@ -12753,7 +12744,7 @@ vendors@^1.0.0:
 
 "venus.ptf@https://github.com/byte-foundry/venus.ptf#feat/simplified-params":
   version "1.0.0"
-  resolved "https://github.com/byte-foundry/venus.ptf#c70783faeaf85f986dce93be489fdb8fb746497d"
+  resolved "https://github.com/byte-foundry/venus.ptf#19768ed9807cc3bdd37fe9f642f7a7360915bfff"
   dependencies:
     prototypo-precursor "^1.0.7"
     yargs "^11.0.0"
