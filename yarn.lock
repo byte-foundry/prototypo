@@ -13104,7 +13104,7 @@ vendors@^1.0.0:
 
 "venus.ptf@https://github.com/byte-foundry/venus.ptf#feat/simplified-params":
   version "1.0.0"
-  resolved "https://github.com/byte-foundry/venus.ptf#35ffcf3c1b1df14802cb08167376893ee59db18d"
+  resolved "https://github.com/byte-foundry/venus.ptf#c70783faeaf85f986dce93be489fdb8fb746497d"
   dependencies:
     prototypo-precursor "^1.0.7"
     yargs "^11.0.0"
