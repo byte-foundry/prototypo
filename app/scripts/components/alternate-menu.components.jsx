@@ -11,8 +11,19 @@ export default class AlternateMenu extends React.PureComponent {
 
 		const alternates = this.props.alternates.map((alt, index) => {
 			const img = `assets/images/${alt.altImg}`;
+			const relatedGlyphs
+				= alt.relatedGlyphs || this.props.alternates[0].relatedGlyphs;
 
-			return <Alternate id={index} alt={alt} img={img} key={index} unicode={this.props.unicode}/>;
+			return (
+				<Alternate
+					id={index}
+					alt={alt}
+					img={img}
+					key={index}
+					unicode={this.props.unicode}
+					relatedGlyphs={relatedGlyphs}
+				/>
+			);
 		});
 
 		return (
@@ -37,7 +48,11 @@ class Alternate extends React.PureComponent {
 	}
 
 	selectAlternate() {
-		this.client.dispatchAction('/set-alternate', {unicode: this.props.unicode, glyphName: this.props.alt.name, relatedGlyphs: this.props.alt.relatedGlyphs});
+		this.client.dispatchAction('/set-alternate', {
+			unicode: this.props.unicode,
+			glyphName: this.props.alt.name,
+			relatedGlyphs: this.props.relatedGlyphs,
+		});
 	}
 
 	render() {
