@@ -311,37 +311,38 @@ class LibraryList extends React.Component {
 					&& preset.ownerInitials !== 'HAVAS',
 			);
 
-		filteredPresets.forEach((preset) => {
-			console.log(preset);
-			const templateInfo = this.state.templateInfos.find(
-				template => preset.template === template.templateName,
-			) || {name: 'Undefined'};
-			const templateData = this.state.templatesData.find(
-				e => e.name === preset.template,
-			);
+		if (filteredPresets) {
+			filteredPresets.forEach((preset) => {
+				const templateInfo = this.state.templateInfos.find(
+					template => preset.template === template.templateName,
+				) || {name: 'Undefined'};
+				const templateData = this.state.templatesData.find(
+					e => e.name === preset.template,
+				);
 
-			fontData.push({
-				template: templateInfo.templateName,
-				templateName: templateInfo.name,
-				type: 'Preset',
-				name: preset.variant.family.name,
-				designer:
-					preset.ownerInitials === 'LM' || preset.ownerInitials === 'HM'
-						? 'Prototypo'
-						: '',
-				id: preset.id,
-				tags: [],
-				props: this.getPresetProps(
-					preset,
-					templateInfo,
-					templateData,
-					lmColor,
-					hmColor,
-					favourites,
-				),
-				elem: PresetItem,
+				fontData.push({
+					template: templateInfo.templateName,
+					templateName: templateInfo.name,
+					type: 'Preset',
+					name: preset.variant.family.name,
+					designer:
+						preset.ownerInitials === 'LM' || preset.ownerInitials === 'HM'
+							? 'Prototypo'
+							: '',
+					id: preset.id,
+					tags: [],
+					props: this.getPresetProps(
+						preset,
+						templateInfo,
+						templateData,
+						lmColor,
+						hmColor,
+						favourites,
+					),
+					elem: PresetItem,
+				});
 			});
-		});
+		}
 		const allTags = [];
 
 		families
