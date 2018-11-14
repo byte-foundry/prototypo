@@ -10,6 +10,8 @@ export default class AlternateMenu extends React.PureComponent {
 	render() {
 		const alternates = this.props.alternates.map((alt, index) => {
 			const img = `assets/images/${alt.altImg}`;
+			const relatedGlyphs
+				= alt.relatedGlyphs || this.props.alternates[0].relatedGlyphs;
 
 			return (
 				<Alternate
@@ -18,6 +20,7 @@ export default class AlternateMenu extends React.PureComponent {
 					img={img}
 					key={index}
 					unicode={this.props.unicode}
+					relatedGlyphs={relatedGlyphs}
 				/>
 			);
 		});
@@ -45,7 +48,7 @@ class Alternate extends React.PureComponent {
 		this.client.dispatchAction('/set-alternate', {
 			unicode: this.props.unicode,
 			glyphName: this.props.alt.name,
-			relatedGlyphs: this.props.alt.relatedGlyphs,
+			relatedGlyphs: this.props.relatedGlyphs,
 		});
 	}
 

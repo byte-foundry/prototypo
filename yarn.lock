@@ -13102,9 +13102,9 @@ vendors@^1.0.0:
   version "1.0.1"
   resolved "https://registry.yarnpkg.com/vendors/-/vendors-1.0.1.tgz#37ad73c8ee417fb3d580e785312307d274847f22"
 
-venus.ptf@byte-foundry/venus.ptf#feat/simplified-params:
+"venus.ptf@https://github.com/byte-foundry/venus.ptf#feat/simplified-params":
   version "1.0.0"
-  resolved "https://codeload.github.com/byte-foundry/venus.ptf/tar.gz/e55eca7f6a842257055ae9374e6f2e362c18bc29"
+  resolved "https://github.com/byte-foundry/venus.ptf#35ffcf3c1b1df14802cb08167376893ee59db18d"
   dependencies:
     prototypo-precursor "^1.0.7"
     yargs "^11.0.0"
