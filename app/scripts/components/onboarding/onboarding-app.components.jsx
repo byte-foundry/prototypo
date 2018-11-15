@@ -214,6 +214,8 @@ class OnboardingApp extends React.PureComponent {
 				const selectedAlternateName
 					= (values.altList || {})[unicode] || alternates[0].name;
 
+				console.log(stepData.letters);
+				console.log(unicode);
 				return alternates.map((alternate, alternateIndex) => ({
 					name:
 						alternateIndex === 0
