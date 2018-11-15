@@ -78,10 +78,7 @@ class Subscription extends React.Component {
 
 		return (
 			<div className="subscription">
-				<Link
-					to="/dashboard"
-					className="account-dashboard-icon is-in-subscription"
-				/>
+				<div className="account-dashboard-icon is-in-subscription" />
 				<div className="account-dashboard-container">
 					<SubscriptionSidebar
 						plan={query.get('plan')}

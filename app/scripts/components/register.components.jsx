@@ -168,13 +168,12 @@ class Register extends React.Component {
 			let nextLocation = '/library';
 
 			// renaming subscribe query parameter
-			if (query.has('subscribe')) {
-				nextLocation = '/account/subscribe';
-				query.set('plan', query.get('subscribe'));
-			}
-			else if (query.has('prevHash')) {
-				nextLocation = decodeURIComponent(query.get('prevHash'));
-			}
+			nextLocation = '/account/subscribe';
+			query.set('plan', query.get('subscribe') || 'personal_annual_99');
+
+			// else if (query.has('prevHash')) {
+			// 	nextLocation = decodeURIComponent(query.get('prevHash'));
+			// }
 
 			query.delete('subscribe');
 			query.delete('prevHash');
