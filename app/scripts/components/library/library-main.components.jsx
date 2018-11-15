@@ -23,6 +23,7 @@ import DuplicateVariant from '../familyVariant/duplicate-variant.components.jsx'
 import LoadingOverlay from '../shared/loading-overlay.components.jsx';
 import GoProModal from '../go-pro-modal.components.jsx';
 import {LibrarySidebarLeft} from './library-sidebars.components';
+import {Z_DATA_ERROR} from 'zlib';
 
 class LibraryMain extends React.Component {
 	constructor(props) {
@@ -359,6 +360,7 @@ export const libraryQuery = gql`
 					type
 					preset {
 						id
+						ownerInitials
 					}
 					variant {
 						id

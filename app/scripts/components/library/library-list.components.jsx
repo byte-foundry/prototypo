@@ -270,7 +270,6 @@ class LibraryList extends React.Component {
 			&& presets.find(e => e.ownerInitials === 'HAVAS');
 
 		if (havasPreset) {
-			console.log('havasPreset');
 			const templateInfo = this.state.templateInfos.find(
 				template => havasPreset.template === template.templateName,
 			) || {name: 'Undefined'};
@@ -367,7 +366,12 @@ class LibraryList extends React.Component {
 						template: templateInfo.templateName,
 						templateName: templateInfo.name,
 						name: family.name,
-						designer: '',
+						designer:
+							family.from
+							&& family.from.preset
+							&& family.from.preset.ownerInitials === 'HAVAS'
+								? 'havas'
+								: templateInfo.provider,
 						type: 'Font',
 						tags: family.tags || [],
 						variants: family.variants,
@@ -415,7 +419,12 @@ class LibraryList extends React.Component {
 								template: templateInfo.templateName,
 								templateName: templateInfo.name,
 								name: family.name,
-								designer: '',
+								designer:
+									family.from
+									&& family.from.preset
+									&& family.from.preset.ownerInitials === 'HAVAS'
+										? 'havas'
+										: templateInfo.provider,
 								type: 'SubUser',
 								tags: family.tags || [],
 								variants: family.variants,
@@ -565,6 +574,7 @@ class LibraryList extends React.Component {
 		if (
 			families !== this.props.families
 			|| favourites !== this.props.favourites
+			|| presets !== this.props.presets
 		) {
 			this.generateFonts(families, presets, favourites);
 		}
