@@ -162,51 +162,84 @@ class LibraryCreate extends React.Component {
 					elem: TemplateItem,
 				});
 			});
-		presets
-			&& presets
-				.filter(
-					preset =>
-						preset.variant.family.name !== 'Spectral'
-						&& preset.variant.family.name !== 'Elzevir'
-						&& preset.variant.family.name !== 'Grotesk'
-						&& preset.variant.family.name !== 'Fell'
-						&& preset.variant.family.name !== 'Antique',
-				)
-				.forEach((preset) => {
-					const templateInfo = this.state.templateInfos.find(
-						template => preset.template === template.templateName,
-					) || {name: 'Undefined'};
-					const templateData = this.state.templatesData.find(
-						e => e.name === preset.template,
-					);
 
-					fontsToGenerate.push({
-						name: `preset${preset.id}`,
-						template: templateInfo.templateName,
-						subset: 'Hamburgefonstiv 123',
-						values: preset.baseValues,
-					});
-					fontData.push({
-						template: templateInfo.templateName,
-						templateName: templateInfo.name,
-						type: 'Preset',
-						name: preset.variant.family.name,
-						designer:
-							preset.ownerInitials === 'LM' || preset.ownerInitials === 'HM'
-								? 'Prototypo'
-								: '',
-						tags: [templateInfo.provider, 'preset'],
-						id: preset.id,
-						props: this.getPresetProps(
-							preset,
-							templateInfo,
-							templateData,
-							lmColor,
-							hmColor,
-						),
-						elem: PresetItem,
-					});
+		const havasPreset
+			= presets
+			&& this.state.templateInfos
+			&& presets.find(e => e.ownerInitials === 'HAVAS');
+
+		if (havasPreset) {
+			const templateInfo = this.state.templateInfos.find(
+				template => havasPreset.template === template.templateName,
+			) || {name: 'Undefined'};
+			const templateData = this.state.templatesData.find(
+				e => e.name === havasPreset.template,
+			);
+
+			fontData.push({
+				template: templateInfo.templateName,
+				templateName: templateInfo.name,
+				type: 'Preset',
+				name: havasPreset.variant.family.name,
+				designer: 'Havas',
+				id: havasPreset.id,
+				tags: [],
+				props: this.getPresetProps(
+					havasPreset,
+					templateInfo,
+					templateData,
+					lmColor,
+					hmColor,
+				),
+				elem: PresetItem,
+			});
+		}
+
+		const filteredPresets
+			= presets
+			&& this.state.templateInfos
+			&& presets.filter(
+				preset =>
+					preset.variant.family.name !== 'Spectral'
+					&& preset.variant.family.name !== 'Elzevir'
+					&& preset.variant.family.name !== 'Grotesk'
+					&& preset.variant.family.name !== 'Fell'
+					&& preset.variant.family.name !== 'Antique'
+					&& preset.variant.family.name !== 'Prototypo Grotesk'
+					&& preset.ownerInitials !== 'HAVAS',
+			);
+
+		if (filteredPresets) {
+			filteredPresets.forEach((preset) => {
+				const templateInfo = this.state.templateInfos.find(
+					template => preset.template === template.templateName,
+				) || {name: 'Undefined'};
+				const templateData = this.state.templatesData.find(
+					e => e.name === preset.template,
+				);
+
+				fontData.push({
+					template: templateInfo.templateName,
+					templateName: templateInfo.name,
+					type: 'Preset',
+					name: preset.variant.family.name,
+					designer:
+						preset.ownerInitials === 'LM' || preset.ownerInitials === 'HM'
+							? 'Prototypo'
+							: '',
+					id: preset.id,
+					tags: [],
+					props: this.getPresetProps(
+						preset,
+						templateInfo,
+						templateData,
+						lmColor,
+						hmColor,
+					),
+					elem: PresetItem,
 				});
+			});
+		}
 		families.forEach((family) => {
 			const templateInfo = this.state.templateInfos.find(
 				template => template.templateName === family.template,
@@ -232,7 +265,12 @@ class LibraryCreate extends React.Component {
 				template: templateInfo.templateName,
 				templateName: templateInfo.name,
 				name: family.name,
-				designer: '',
+				designer:
+					family.from
+					&& family.from.preset
+					&& family.from.preset.ownerInitials === 'HAVAS'
+						? 'havas'
+						: templateInfo.provider,
 				tags: [templateInfo.provider, 'project', family.name],
 				type: 'Font',
 				variants: family.variants,
@@ -439,10 +477,15 @@ export class PresetItem extends React.Component {
 					Hamburgefonstiv 123
 				</p>
 				<div
-					className={'provider provider-custom'}
-					style={{backgroundColor: this.props.background}}
+					className={`provider provider-${
+						this.props.user === 'HAVAS' ? 'havas' : 'custom'
+					}`}
+					style={{
+						backgroundColor:
+							this.props.user !== 'HAVAS' ? this.props.background : 'white',
+					}}
 				>
-					{this.props.user}
+					{this.props.user !== 'HAVAS' && this.props.user}
 				</div>
 				<FontUpdater
 					name={this.props.fontName}
