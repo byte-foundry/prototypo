@@ -910,6 +910,8 @@
 				max-height: 0px;
 				transition: all 0.1s ease;
 				overflow: hidden;
+				display: flex;
+				justify-content: space-between;
 				&.opened {
 					max-height: 350px;
 					padding-top: 10px;
@@ -921,18 +923,21 @@
 					clear: both;
 				}
 				input {
-					float: right;
-					padding: 10px 20px;
-					width: 400px;
+					padding: 4px 20px;
+					flex: 2;
 					background: white;
 					color: $medium-grey;
 					box-shadow: none;
 					border: none;
 					border-radius: 20px;
 					outline: none;
+					height: 35px;
 					&:focus {
 						outline: none;
 					}
+				}
+				.library-button {
+					margin-bottom: 0;
 				}
 			}
 		}
@@ -972,7 +977,7 @@
 				background-size: 110%;
 				background-image: url('../../images/icon-HavasParis.svg');
 			}
-			
+
 			&.provider-custom {
 				text-align: center;
 				line-height: 46px;

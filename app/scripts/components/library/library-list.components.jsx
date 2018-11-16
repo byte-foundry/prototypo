@@ -964,7 +964,6 @@ export class FamilyItem extends React.Component {
 				>
 					{!this.props.isFromTeam && (
 						<LibraryButton
-							floated
 							name="Open in the editor"
 							dark
 							onClick={() => {
@@ -974,7 +973,6 @@ export class FamilyItem extends React.Component {
 					)}
 					<LibraryButton
 						name={this.state.keyDowns === 33 ? 'Download source' : 'Download'}
-						floated
 						dark
 						loading={this.props.exporting}
 						error={this.props.errorExport}
@@ -998,7 +996,6 @@ export class FamilyItem extends React.Component {
 					/>
 					<LibraryButton
 						name="Open family"
-						floated
 						dark
 						onClick={() => {
 							this.props.router
