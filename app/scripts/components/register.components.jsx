@@ -88,15 +88,16 @@ class Register extends React.Component {
 			css,
 			phone,
 			skype,
-			to: this.props.location.query.subscribe
-				? '/account/subscribe'
-				: this.props.location.query.prevHash,
+			to: '/account/subscribe',
 			oldQuery: this.props.location.query.subscribe
 				? {
 					plan: this.props.location.query.subscribe,
 					quantity: this.props.location.query.quantity,
 				}
-				: this.props.location.query,
+				: {
+					plan: 'personal_annual_99',
+					quantity: 1,
+				},
 		});
 	}
 

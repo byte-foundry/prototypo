@@ -266,10 +266,13 @@
 		&.is-in-subscription {
 			left: 20px;
 			background-color: $dark-grey;
+			cursor: initial;
 		}
-
-		&:hover {
+ 		&:hover {
 			background-color: mix(white, $darkest-grey, 10%);
+			&.is-in-subscription {
+				background-color: $dark-grey;
+			}
 		}
 	}
 
