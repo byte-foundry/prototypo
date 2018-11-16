@@ -976,7 +976,6 @@ antique.ptf@byte-foundry/antique.ptf#feat/simplified-parameters:
   dependencies:
     karma "^1.7.1"
     prototypo-precursor "1.0.7"
-    yargs "^11.0.0"
 
 any-observable@^0.2.0:
   version "0.2.0"
@@ -5556,7 +5555,6 @@ gfnt.ptf@byte-foundry/spectral.ptf#feat/simplified-parameters:
   dependencies:
     karma "^2.0.0"
     prototypo-precursor "^1.0.4"
-    yargs "^11.0.0"
 
 glamor@^2.20.40:
   version "2.20.40"
@@ -7352,7 +7350,6 @@ john-fell.ptf@byte-foundry/john-fell.ptf#feat/simplified-parameters:
   resolved "https://codeload.github.com/byte-foundry/john-fell.ptf/tar.gz/9dd4137dccec8ef3adb28eba13b45258943c64d5"
   dependencies:
     prototypo-precursor "^1.0.4"
-    yargs "^11.0.0"
 
 js-base64@^2.1.8, js-base64@^2.1.9:
   version "2.4.3"
@@ -13040,9 +13037,9 @@ vendors@^1.0.0:
   version "1.0.1"
   resolved "https://registry.yarnpkg.com/vendors/-/vendors-1.0.1.tgz#37ad73c8ee417fb3d580e785312307d274847f22"
 
-venus.ptf@byte-foundry/venus.ptf#feat/simplified-params:
+"venus.ptf@https://github.com/byte-foundry/venus.ptf#feat/simplified-params":
   version "1.0.0"
-  resolved "https://codeload.github.com/byte-foundry/venus.ptf/tar.gz/d4d1862f501fa4a527e37dfb723fe6dda04b1b27"
+  resolved "https://github.com/byte-foundry/venus.ptf#beca948c3859a5f9e7857394dfd0f4c45911a6ac"
   dependencies:
     prototypo-precursor "^1.0.7"
     yargs "^11.0.0"

@@ -65,6 +65,13 @@ export default {
 				126: 'Swirly ~',
 				96: '`',
 				48: '0123',
+				102: 'flourish', // f
+				104: 'huge', // h
+				106: 'joy', // j
+				109: 'humming', // m
+				110: 'nice', // n
+				114: 'perfect', // r
+				117: 'Human', // u
 			},
 			name: 'Alternates',
 			description: [

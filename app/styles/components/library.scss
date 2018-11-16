@@ -966,6 +966,13 @@
 				background-size: 85%;
 				background-image: url('../../images/icon-ProductionType.svg');
 			}
+
+			&.provider-havas {
+				background-color: $white;
+				background-size: 110%;
+				background-image: url('../../images/icon-HavasParis.svg');
+			}
+			
 			&.provider-custom {
 				text-align: center;
 				line-height: 46px;

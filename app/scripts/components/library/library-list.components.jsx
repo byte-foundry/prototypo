@@ -269,48 +269,84 @@ class LibraryList extends React.Component {
 					elem: TemplateItem,
 				});
 			});
-		presets
+		const havasPreset
+			= presets
 			&& this.state.templateInfos
-			&& presets
-				.filter(
-					preset =>
-						preset.variant.family.name !== 'Spectral'
-						&& preset.variant.family.name !== 'Elzevir'
-						&& preset.variant.family.name !== 'Grotesk'
-						&& preset.variant.family.name !== 'Fell'
-						&& preset.variant.family.name !== 'Antique'
-						&& preset.variant.family.name !== 'Prototypo Grotesk',
-				)
-				.forEach((preset) => {
-					const templateInfo = this.state.templateInfos.find(
-						template => preset.template === template.templateName,
-					) || {name: 'Undefined'};
-					const templateData = this.state.templatesData.find(
-						e => e.name === preset.template,
-					);
+			&& presets.find(e => e.ownerInitials === 'HAVAS');
 
-					fontData.push({
-						template: templateInfo.templateName,
-						templateName: templateInfo.name,
-						type: 'Preset',
-						name: preset.variant.family.name,
-						designer:
-							preset.ownerInitials === 'LM' || preset.ownerInitials === 'HM'
-								? 'Prototypo'
-								: '',
-						id: preset.id,
-						tags: [],
-						props: this.getPresetProps(
-							preset,
-							templateInfo,
-							templateData,
-							lmColor,
-							hmColor,
-							favourites,
-						),
-						elem: PresetItem,
-					});
+		if (havasPreset) {
+			const templateInfo = this.state.templateInfos.find(
+				template => havasPreset.template === template.templateName,
+			) || {name: 'Undefined'};
+			const templateData = this.state.templatesData.find(
+				e => e.name === havasPreset.template,
+			);
+
+			fontData.push({
+				template: templateInfo.templateName,
+				templateName: templateInfo.name,
+				type: 'Preset',
+				name: havasPreset.variant.family.name,
+				designer: 'Havas',
+				id: havasPreset.id,
+				tags: [],
+				props: this.getPresetProps(
+					havasPreset,
+					templateInfo,
+					templateData,
+					lmColor,
+					hmColor,
+					favourites,
+				),
+				elem: PresetItem,
+			});
+		}
+		const filteredPresets
+			= presets
+			&& this.state.templateInfos
+			&& presets.filter(
+				preset =>
+					preset.variant.family.name !== 'Spectral'
+					&& preset.variant.family.name !== 'Elzevir'
+					&& preset.variant.family.name !== 'Grotesk'
+					&& preset.variant.family.name !== 'Fell'
+					&& preset.variant.family.name !== 'Antique'
+					&& preset.variant.family.name !== 'Prototypo Grotesk'
+					&& preset.ownerInitials !== 'HAVAS',
+			);
+
+		if (filteredPresets) {
+			filteredPresets.forEach((preset) => {
+				const templateInfo = this.state.templateInfos.find(
+					template => preset.template === template.templateName,
+				) || {name: 'Undefined'};
+				const templateData = this.state.templatesData.find(
+					e => e.name === preset.template,
+				);
+
+				fontData.push({
+					template: templateInfo.templateName,
+					templateName: templateInfo.name,
+					type: 'Preset',
+					name: preset.variant.family.name,
+					designer:
+						preset.ownerInitials === 'LM' || preset.ownerInitials === 'HM'
+							? 'Prototypo'
+							: '',
+					id: preset.id,
+					tags: [],
+					props: this.getPresetProps(
+						preset,
+						templateInfo,
+						templateData,
+						lmColor,
+						hmColor,
+						favourites,
+					),
+					elem: PresetItem,
 				});
+			});
+		}
 		const allTags = [];
 
 		families
@@ -335,7 +371,12 @@ class LibraryList extends React.Component {
 						template: templateInfo.templateName,
 						templateName: templateInfo.name,
 						name: family.name,
-						designer: '',
+						designer:
+							family.from
+							&& family.from.preset
+							&& family.from.preset.ownerInitials === 'HAVAS'
+								? 'havas'
+								: templateInfo.provider,
 						type: 'Font',
 						tags: family.tags || [],
 						variants: family.variants,
@@ -383,7 +424,12 @@ class LibraryList extends React.Component {
 								template: templateInfo.templateName,
 								templateName: templateInfo.name,
 								name: family.name,
-								designer: '',
+								designer:
+									family.from
+									&& family.from.preset
+									&& family.from.preset.ownerInitials === 'HAVAS'
+										? 'havas'
+										: templateInfo.provider,
 								type: 'SubUser',
 								tags: family.tags || [],
 								variants: family.variants,
@@ -1040,10 +1086,15 @@ export class PresetItem extends React.Component {
 					{this.props.displayedText}
 				</p>
 				<div
-					className={'provider provider-custom'}
-					style={{backgroundColor: this.props.background}}
+					className={`provider provider-${
+						this.props.user === 'HAVAS' ? 'havas' : 'custom'
+					}`}
+					style={{
+						backgroundColor:
+							this.props.user !== 'HAVAS' ? this.props.background : 'white',
+					}}
 				>
-					{this.props.user}
+					{this.props.user !== 'HAVAS' && this.props.user}
 				</div>
 				<div
 					className={`library-item-actions ${

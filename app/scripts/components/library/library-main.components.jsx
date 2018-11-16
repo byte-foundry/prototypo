@@ -423,7 +423,7 @@ export const libraryUserQuery = gql`
 
 export const presetQuery = gql`
 	query {
-		allPresets(filter: {published: true}) {
+		allPresets(filter: {isPrototypoPreset: true}) {
 			id
 			ownerInitials
 			abstractedFont {
