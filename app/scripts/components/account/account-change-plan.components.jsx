@@ -97,7 +97,7 @@ export default class AccountChangePlan extends React.Component {
 
 	downgrade(e) {
 		e.preventDefault();
-		Intercom('showNewMessage', UNSUBSCRIBE_MESSAGE);
+		window.location = `mailto:contact@prototypo.io?subject=Cancelling subscription&body=${UNSUBSCRIBE_MESSAGE}`;
 	}
 
 	changeNumberOfUsers(value) {
@@ -186,7 +186,6 @@ export default class AccountChangePlan extends React.Component {
 								UNSUBSCRIBE_MESSAGE,
 							)}`}
 							className="account-email"
-							onClick={this.downgrade}
 							title="If this link doesn't work, you may need to turn off your privacy blocker"
 						>
 							Contact us!

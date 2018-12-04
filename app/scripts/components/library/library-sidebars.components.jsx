@@ -534,10 +534,6 @@ export class SidebarFilters extends React.Component {
 							active: false,
 							name: 'Google',
 						},
-						{
-							active: false,
-							name: 'Havas',
-						},
 					]}
 					editActiveFilter={this.editActiveFilter}
 				/>
