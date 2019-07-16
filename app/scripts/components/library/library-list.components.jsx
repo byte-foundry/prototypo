@@ -863,7 +863,7 @@ export class TemplateItem extends React.Component {
 						error={this.props.errorExport}
 						onClick={() => {
 							this.props.export(
-								!this.state.keyDowns === 33,
+								true,
 								this.props.template.name,
 								'regular',
 								this.props.values,
@@ -978,7 +978,7 @@ export class FamilyItem extends React.Component {
 						error={this.props.errorExport}
 						onClick={() => {
 							this.props.export(
-								!this.state.keyDowns === 33,
+								true,
 								this.props.family.name,
 								this.props.variantName,
 								this.props.values,
@@ -1122,7 +1122,7 @@ export class PresetItem extends React.Component {
 						error={this.props.errorExport}
 						onClick={() => {
 							this.props.export(
-								!this.state.keyDowns === 33,
+								true,
 								this.props.name,
 								'regular',
 								this.props.values,
