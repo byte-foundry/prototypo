@@ -7347,7 +7347,7 @@ jest@^22.2.1:
 
 john-fell.ptf@byte-foundry/john-fell.ptf#feat/simplified-parameters:
   version "1.0.0"
-  resolved "https://codeload.github.com/byte-foundry/john-fell.ptf/tar.gz/9dd4137dccec8ef3adb28eba13b45258943c64d5"
+  resolved "https://codeload.github.com/byte-foundry/john-fell.ptf/tar.gz/c0b830bf5e29325e56e56b142d871c725c25b501"
   dependencies:
     prototypo-precursor "^1.0.4"
 
