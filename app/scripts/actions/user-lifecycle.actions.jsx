@@ -407,7 +407,7 @@ export default {
 		}
 
 		try {
-			if (card) {
+			if (card && !validCoupon.shouldSkipCard) {
 				const cardCreated = await addCard({card});
 
 				cardCountry = cardCreated.country;
