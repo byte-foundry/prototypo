@@ -376,7 +376,7 @@ export default {
 
 		const hasBeenSubscribing = userStore.get('hasBeenSubscribing');
 		const coupon = userStore.get('choosePlanForm').couponValue;
-		const validCoupon = userStore.get('choosePlanForm').validCoupon;
+		const validCoupon = userStore.get('choosePlanForm').validCoupon || {};
 		const {fullname, number, expMonth, expYear, cvc} = card || {};
 
 		form.errors = [];
@@ -390,7 +390,7 @@ export default {
 
 		if (
 			!cardCountry
-			&& (validCoupon && !validCoupon.shouldSkipCard)
+			&& !validCoupon.shouldSkipCard
 			&& (!fullname || !number || !expMonth || !expYear || !cvc)
 		) {
 			const requiredFields = [fullname, number, expMonth, expYear, cvc];
