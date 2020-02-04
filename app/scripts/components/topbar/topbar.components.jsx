@@ -19,20 +19,16 @@ import {
 } from '../../helpers/joyride.helpers';
 
 import withCountry from '../shared/with-country.components';
-import Price from '../shared/price.components';
 import Logout from '../logout.components';
 
 import TopBarMenu from './top-bar-menu.components';
 import TopBarMenuAction from './top-bar-menu-action.components';
 import TopBarMenuIcon from './top-bar-menu-icon.components';
 import TopBarMenuLink from './top-bar-menu-link.components';
-import TopBarMenuButton from './top-bar-menu-button.components';
 import TopBarMenuDropdown from './top-bar-menu-dropdown.components';
 import TopBarMenuDropdownItem from './top-bar-menu-dropdown-item.components';
-import TopBarMenuDropdownProItem from './top-bar-menu-dropdown-pro-item.components';
 import TopBarMenuAcademy from './top-bar-menu-academy.components';
 import TopBarMenuAcademyIcon from './top-bar-menu-academy-icon.components';
-import AllowedTopBarWithPayment from './allowed-top-bar-with-payment.components';
 
 import {libraryQuery, presetQuery} from '../library/library-main.components';
 
@@ -358,14 +354,6 @@ class Topbar extends React.Component {
 		const redoText = `Redo ${
 			redoDisabled ? '' : this.state.eventList[whereAt + 1].label
 		}`;
-		const credits = this.state.credits; // eslint-disable-line prefer-destructuring
-		const freeAccount = !this.props.manager && !this.state.subscription;
-		const otfExportCost = this.state.creditChoices
-			? this.state.creditChoices.exportOtf
-			: 0;
-		const glyphrExportCost = this.state.creditChoices
-			? this.state.creditChoices.exportGlyphr
-			: 0;
 		const exporting = this.state.export && (
 			<TopBarMenuAction name="Exporting..." click={() => {}} action />
 		);
@@ -385,20 +373,6 @@ class Topbar extends React.Component {
 				name={`${this.state.credits} credits`}
 				click={() => {}}
 				action
-				alignRight
-			/>
-		);
-		const callToAction = !(credits > 0 || !freeAccount) && (
-			<TopBarMenuButton
-				label={
-					<span>
-						GET THE FULL VERSION FROM{' '}
-						<Price amount={8.25} country={this.props.country} />
-					</span>
-				}
-				noHover
-				centered
-				click={this.goToSubscribe}
 				alignRight
 			/>
 		);
@@ -477,42 +451,22 @@ class Topbar extends React.Component {
 						}}
 						separator
 					/>
-					<AllowedTopBarWithPayment credits={credits} freeAccount={freeAccount}>
-						<TopBarMenuDropdownProItem
-							name="Export font"
-							id="export-to-merged-otf"
-							freeAccount={freeAccount}
-							cost={otfExportCost}
-							credits={this.state.credits}
-							handler={this.exportMergedOTF}
-						/>
-						<TopBarMenuDropdownProItem
-							name="Export font as..."
-							id="export-to-merged-otf-as"
-							freeAccount={freeAccount}
-							cost={otfExportCost}
-							credits={this.state.credits}
-							handler={this.exportAs}
-						/>
-						<TopBarMenuDropdownProItem
-							name="Export to Glyphr Studio"
-							id="export-to-glyphr-studio"
-							freeAccount={freeAccount}
-							cost={otfExportCost}
-							handler={this.exportGlyphr}
-							credits={this.state.credits}
-							separator
-						/>
-						{/* <TopBarMenuDropdownProItem
-								name="Export family"
-								id="export-family"
-								freeAccount={freeAccount}
-								cost={otfExportCost} // TODO: multiply
-								handler={this.exportFamily}
-								credits={this.state.credits}
-								separator
-							/> */}
-					</AllowedTopBarWithPayment>
+					<TopBarMenuDropdownItem
+						name="Export font"
+						id="export-to-merged-otf"
+						handler={this.exportMergedOTF}
+					/>
+					<TopBarMenuDropdownItem
+						name="Export font as..."
+						id="export-to-merged-otf-as"
+						handler={this.exportAs}
+					/>
+					<TopBarMenuDropdownItem
+						name="Export to Glyphr Studio"
+						id="export-to-glyphr-studio"
+						handler={this.exportGlyphr}
+						separator
+					/>
 					<TopBarMenuDropdownItem
 						name="Download Web Preview extension"
 						separator
@@ -546,7 +500,6 @@ class Topbar extends React.Component {
 				<TopBarMenuDropdown name="Edit">
 					<TopBarMenuDropdownItem
 						name="Individualize parameters"
-						freeAccount={freeAccount}
 						handler={this.individualize}
 					/>
 					<TopBarMenuDropdownItem
@@ -678,7 +631,6 @@ class Topbar extends React.Component {
 					action
 				/>
 				{creditExportLabel}
-				{callToAction}
 			</TopBarMenu>
 		);
 	}

@@ -1,7 +1,6 @@
 import React from 'react';
 import Lifespan from 'lifespan';
 import moment from 'moment';
-import {Link} from 'react-router';
 import uniqWith from 'lodash/uniqWith';
 import {graphql, gql} from 'react-apollo';
 
@@ -61,28 +60,6 @@ export class AccountSubscription extends React.PureComponent {
 		const {cards, subscription, credits} = this.state;
 		const {manager, acceptManager, removeManager} = this.props;
 
-		const noCard = (
-			<div>
-				<h3 className="account-dashboard-container-small-title">
-					You do not have a card right now.
-				</h3>
-				{subscription && !subscription.cancel_at_period_end ? (
-					<p>
-						<Link className="account-link" to="/account/details/add-card">
-							Add a card
-						</Link>{' '}
-						to set up your renewal automatically.
-					</p>
-				) : (
-					<p>
-						<Link className="account-link" to="/account/details/add-card">
-							Add a card
-						</Link>{' '}
-						before subscribing.
-					</p>
-				)}
-			</div>
-		);
 		let currency;
 
 		if (subscription) {
@@ -92,29 +69,25 @@ export class AccountSubscription extends React.PureComponent {
 			currency = getCurrency(cards[0].country);
 		}
 
-		const cardDetail
-			= cards.length > 0 ? (
-				<DisplayWithLabel label="Your card">
-					{uniqWith(cards, (first, sec) => first.fingerprint === sec.fingerprint).map(card =>
-						// dedupe cards
-						 (
-							<div className="account-subscription-card" key={card.id}>
-								<div className="account-subscription-card-number">
-									**** **** **** {card.last4}
-								</div>
-								<div className="account-subscription-name">{card.name}</div>
-								<div className="account-subscription-card-expiry">
-									Expires on {String(card.exp_month).padStart(2, 0)}/{
-										card.exp_year
-									}
-								</div>
-							</div>
-						),
-					)}
-				</DisplayWithLabel>
-			) : (
-				noCard
-			);
+		const cardDetail = cards.length > 0 && (
+			<DisplayWithLabel label="Your card">
+				{uniqWith(
+					cards,
+					(first, sec) => first.fingerprint === sec.fingerprint,
+				).map(card => (
+					// dedupe cards
+					<div className="account-subscription-card" key={card.id}>
+						<div className="account-subscription-card-number">
+							**** **** **** {card.last4}
+						</div>
+						<div className="account-subscription-name">{card.name}</div>
+						<div className="account-subscription-card-expiry">
+							Expires on {String(card.exp_month).padStart(2, 0)}/{card.exp_year}
+						</div>
+					</div>
+				))}
+			</DisplayWithLabel>
+		);
 
 		const creditsDetails = (
 			<div>
@@ -135,18 +108,10 @@ export class AccountSubscription extends React.PureComponent {
 		const noPlan = (
 			<div>
 				<h3 className="account-dashboard-container-small-title">
-					You do not have a plan for the moment.
+					Prototypo is now free for everyone.
 				</h3>
 				<p>
 					<img style={{width: '100%'}} src="assets/images/go-pro.gif" />
-				</p>
-				<p>
-					Subscribe to our{' '}
-					<Link className="account-link" to="account/subscribe">
-						pro plan
-					</Link>{' '}
-					to benefit of the full power of Prototypo without restrictions to
-					export and use your fonts everywhere!
 				</p>
 			</div>
 		);
@@ -179,53 +144,51 @@ export class AccountSubscription extends React.PureComponent {
 						Your subscription has been canceled and will automatically end on{' '}
 						<strong>
 							{moment.unix(subscription.current_period_end).format('L')}
-						</strong>.
+						</strong>
+						.
 					</p>
 				)}
-				{!subscription.cancel_at_period_end
-					&& cards.length < 1 && (
+				{!subscription.cancel_at_period_end && cards.length < 1 && (
 					<p>
-							Your subscription will be canceled on{' '}
+						Your subscription will be canceled on{' '}
 						<strong>
 							{moment.unix(subscription.current_period_end).format('L')}
 						</strong>{' '}
-							because you don't have any card registered.
+						because you don't have any card registered.
 					</p>
 				)}
-				{!subscription.cancel_at_period_end
-					&& cards.length > 1 && (
+				{!subscription.cancel_at_period_end && cards.length > 1 && (
 					<p>
-							Your subscription will automatically renew on{' '}
+						Your subscription will automatically renew on{' '}
 						<strong>
 							{moment.unix(subscription.current_period_end).format('L')}{' '}
 						</strong>
-							and you will be charged{' '}
+						and you will be charged{' '}
 						<strong>
 							<Price amount={plan.amount / 100} currency={currency} />
-						</strong>.
+						</strong>
+						.
 					</p>
 				)}
 			</div>
 		) : (
 			<div>
-				{manager
-					&& manager.pending && (
+				{manager && manager.pending && (
 					<p>
 						<b>{manager.email}</b> wants to manage your subscription{' '}
 						<Button size="small" onClick={acceptManager}>
-								Accept
+							Accept
 						</Button>{' '}
 						<Button size="small" onClick={removeManager}>
-								Decline
+							Decline
 						</Button>
 					</p>
 				)}
-				{manager
-					&& !manager.pending && (
+				{manager && !manager.pending && (
 					<p>
-							Your subscription is managed by <b>{manager.email}</b>{' '}
+						Your subscription is managed by <b>{manager.email}</b>{' '}
 						<Button size="small" onClick={removeManager}>
-								Revoke
+							Revoke
 						</Button>
 					</p>
 				)}

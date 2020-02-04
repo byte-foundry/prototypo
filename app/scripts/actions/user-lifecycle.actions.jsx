@@ -92,7 +92,9 @@ function addCard({card: {fullname, number, expMonth, expYear, cvc}, vat}) {
 function spendCredits({amount}) {
 	return new Promise(async (resolve, reject) => {
 		if (parseInt(amount) > 0) {
-			const {metadata: {credits}} = await HoodieApi.spendCredits({amount});
+			const {
+				metadata: {credits},
+			} = await HoodieApi.spendCredits({amount});
 
 			const patch = prototypoStore.set('credits', credits).commit();
 
@@ -248,7 +250,6 @@ export default {
 			form.loading = false;
 			const endPatch = userStore.set('signupForm', form).commit();
 
-			HoodieApi.instance.plan = 'free_none';
 			HoodieApi.instance.email = username;
 			fbq('track', 'Lead');
 			localServer.dispatchUpdate('/userStore', endPatch);
@@ -421,7 +422,6 @@ export default {
 			});
 
 			form.loading = false;
-			HoodieApi.instance.plan = data.plan.id;
 
 			const patch = userStore
 				.set('confirmation', form)
