@@ -14,8 +14,8 @@ export const templateNames = {
 };
 
 const awsUrl = isProduction()
-	? 'https://e4jpj60rk8.execute-api.eu-west-1.amazonaws.com/prod/fonts/'
-	: 'https://tc1b6vq6o8.execute-api.eu-west-1.amazonaws.com/dev/fonts/';
+	? 'https://67phw2at83.execute-api.eu-west-1.amazonaws.com/prod/fonts/'
+	: 'https://mnhdjpr7jc.execute-api.eu-west-1.amazonaws.com/dev/fonts/';
 
 const validTemplates = [
 	...Object.values(templateNames),
