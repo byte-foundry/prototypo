@@ -1,4 +1,5 @@
-import 'babel-polyfill';
+import 'core-js/stable';
+import 'regenerator-runtime/runtime';
 import pleaseWait from 'please-wait';
 
 import React from 'react';
@@ -134,6 +135,7 @@ selectRenderOptions(
 
 		const templates = await Promise.all(
 			prototypoStore.get('templateList').map(async ({templateName}) => {
+				// prettier-ignore
 				const typedataJSON = await import(/* webpackChunkName: "ptfs" */ `../../dist/templates/${templateName}/font.json`);
 				const glyphs = [];
 

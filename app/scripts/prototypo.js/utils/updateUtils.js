@@ -129,8 +129,8 @@ export function onLine(params) {
 	];
 
 	return 'x' in params
-		? (params.x - origin.x) / vector[0] * vector[1] + origin.y
-		: (params.y - origin.y) / vector[1] * vector[0] + origin.x;
+		? ((params.x - origin.x) / vector[0]) * vector[1] + origin.y
+		: ((params.y - origin.y) / vector[1]) * vector[0] + origin.x;
 }
 
 export function pointOnCurve(
@@ -334,8 +334,8 @@ export function getIntersectionTValue(
 			return [-c / b].filter(reduce);
 		}
 		// quadratic solution:
-		var q = Math.sqrt(b * b - 4 * a * c),
-			a2 = 2 * a;
+		const q = Math.sqrt(b * b - 4 * a * c);
+		const a2 = 2 * a;
 
 		return [(q - b) / a2, (-b - q) / a2].filter(reduce);
 	}
@@ -359,7 +359,9 @@ export function getIntersectionTValue(
 		const cosphi
 			= t < -1 // eslint-disable-line no-nested-ternary
 				? -1
-				: t > 1 ? 1 : t;
+				: t > 1
+					? 1
+					: t;
 		const phi = Math.acos(cosphi);
 		const crtr = crt(r);
 		const t1 = 2 * crtr;
@@ -461,7 +463,8 @@ export function makeCurveInsideSerif(
 	const yDir = pAnchors.down ? -1 : 1;
 	const xDir = pAnchors.left ? -1 : 1;
 
-	const rotateRad = (serifRotate * pAnchors.rotationAngle || 0) * Math.PI / 180;
+	const rotateRad
+		= ((serifRotate * pAnchors.rotationAngle || 0) * Math.PI) / 180;
 	const baseWidth = pAnchors.baseWidth;
 	const baseDir = pAnchors.baseDir;
 	const baseHeight = pAnchors.baseHeight;
@@ -718,17 +721,19 @@ export function makeCurveInsideSerif(
 	}
 
 	const midStump = {
-		x: serifRoot.x + stumpNorm / 2 * stumpVector.x,
-		y: serifRoot.y + stumpNorm / 2 * stumpVector.y,
+		x: serifRoot.x + (stumpNorm / 2) * stumpVector.x,
+		y: serifRoot.y + (stumpNorm / 2) * stumpVector.y,
 		dirOut: baseDir,
 		typeIn: 'line',
 	};
 
 	const lastPoint = {
 		x:
-			pointOnCurveVar.x - stumpNorm / 2 * Math.sin(normalToCurve) * yDir * xDir,
+			pointOnCurveVar.x
+			- (stumpNorm / 2) * Math.sin(normalToCurve) * yDir * xDir,
 		y:
-			pointOnCurveVar.y + stumpNorm / 2 * Math.cos(normalToCurve) * yDir * xDir,
+			pointOnCurveVar.y
+			+ (stumpNorm / 2) * Math.cos(normalToCurve) * yDir * xDir,
 		dirIn: normalToCurve,
 		typeOut: 'line',
 		type: 'corner',

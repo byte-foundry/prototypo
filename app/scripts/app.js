@@ -61,10 +61,6 @@ import GlyphTester from './font-test/glyph-tester.components.jsx';
 import ReplayViewer from './debug/replay-viewer.components';
 /* #end */
 
-function trackUrl() {
-	ga('send', 'pageview', {page: this.state.location.pathname});
-}
-
 import apolloClient from './services/graphcool.services';
 
 // This is a hacky function to get the hot reload during development

@@ -16,8 +16,10 @@ const genDefaultConfig = require('@storybook/react/dist/server/config/defaults/w
 module.exports = (baseConfig, env) => {
 	const config = genDefaultConfig(baseConfig, env);
 
-	config.entry.manager.unshift('babel-polyfill');
-	config.entry.preview.unshift('babel-polyfill');
+	config.entry.manager.unshift('core-js/stable');
+	config.entry.manager.unshift('regenerator-runtime/runtime');
+	config.entry.preview.unshift('core-js/stable');
+	config.entry.preview.unshift('regenerator-runtime/runtime');
 
 	config.module.rules[3].exclude = path.join(__dirname, '../app/images/icons');
 
