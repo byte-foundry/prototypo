@@ -32,22 +32,33 @@ gulp.task('images', () => {
 		.pipe(gulp.dest('./dist/assets/images/academy/courses/'));
 });
 
-gulp.task('cp-genese', () => {
-	return pipeline(
-		gulp.src('./node_modules/antique.ptf/dist/font.json')
-			.pipe(gulp.dest('./dist/antique.ptf/dist/')),
-		gulp.src('./node_modules/john-fell.ptf/dist/font.json')
-			.pipe(gulp.dest('./dist/templates/john-fell.ptf')),
-		gulp.src('./node_modules/venus.ptf/dist/font.json')
-			.pipe(gulp.dest('./dist/templates/venus.ptf')),
-		gulp.src('./node_modules/elzevir.ptf/dist/font.json')
-			.pipe(gulp.dest('./dist/templates/elzevir.ptf')),
-		gulp.src('./node_modules/gfnt.ptf/dist/font.json')
-			.pipe(gulp.dest('./dist/templates/gfnt.ptf')),
-		gulp.src('./node_modules/antique.ptf/dist/font.json')
-			.pipe(gulp.dest('./dist/templates/antique.ptf'))
-	);
-});
+gulp.task('cp-john-fell', () => gulp
+	.src('./node_modules/john-fell.ptf/dist/font.json')
+	.pipe(gulp.dest('./dist/templates/john-fell.ptf')));
+
+gulp.task('cp-venus', () => gulp
+	.src('./node_modules/venus.ptf/dist/font.json')
+	.pipe(gulp.dest('./dist/templates/venus.ptf')));
+
+gulp.task('cp-elzevir', () => gulp
+	.src('./node_modules/elzevir.ptf/dist/font.json')
+	.pipe(gulp.dest('./dist/templates/elzevir.ptf')));
+
+gulp.task('cp-gfnt', () => gulp
+	.src('./node_modules/gfnt.ptf/dist/font.json')
+	.pipe(gulp.dest('./dist/templates/gfnt.ptf')));
+
+gulp.task('cp-antique', () => gulp
+	.src('./node_modules/antique.ptf/dist/font.json')
+	.pipe(gulp.dest('./dist/templates/antique.ptf')));
+
+gulp.task('cp-genese', [
+	'cp-john-fell',
+	'cp-venus',
+	'cp-elzevir',
+	'cp-gfnt',
+	'cp-antique',
+], () => {});
 
 gulp.task('cp-static', () => {
 	gulp.src(['./app/index.html', './app/iframe.html', './app/robots.txt', './app/favicon.ico', './app/404.html'])
