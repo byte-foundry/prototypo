@@ -1,4 +1,5 @@
-import 'babel-polyfill';
+import 'core-js/stable';
+import 'regenerator-runtime/runtime';
 import _uniq from 'lodash/uniq';
 import _cloneDeep from 'lodash/cloneDeep';
 

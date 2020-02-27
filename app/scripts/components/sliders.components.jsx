@@ -478,13 +478,13 @@ export class SliderTextController extends React.PureComponent {
 			'is-indiv': this.props.individualized,
 		});
 
+		const {value = 0} = this.props;
+
 		return (
 			<input
 				className={classes}
 				type="number"
-				value={
-					this.state.isTyping ? this.props.value : this.props.value.toFixed(2)
-				}
+				value={this.state.isTyping ? value : value.toFixed(2)}
 				onChange={this.handleChange}
 				onClick={this.handleClick}
 				onBlur={this.handleBlur}

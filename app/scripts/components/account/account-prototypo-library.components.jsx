@@ -2,11 +2,10 @@ import React from 'react';
 import PropTypes from 'prop-types';
 import classnames from 'classnames';
 import Lifespan from 'lifespan';
-import {Link} from 'react-router';
 import {graphql, gql} from 'react-apollo';
 
 import apolloClient from '../../services/graphcool.services';
-import LocalClient from '../../stores/local-client.stores.jsx';
+import LocalClient from '../../stores/local-client.stores';
 
 import CopyPasteInput from '../shared/copy-paste-input.components';
 import FilterableTable from '../shared/filterable-table.components';
@@ -65,15 +64,6 @@ class AccountPrototypoLibrary extends React.PureComponent {
 	}
 
 	render() {
-		const {subscription, credits} = this.state;
-		const freeAccount
-			= !this.props.isManagedAccount
-			&& !(
-				subscription
-				&& !subscription.plan.id.includes('team')
-				&& !subscription.plan.id.includes('agency')
-			);
-		const freeAccountAndHasCredits = credits && credits > 0 && freeAccount;
 		const {loading, domains, token} = this.props;
 
 		const tableHeaders = [
@@ -92,59 +82,6 @@ class AccountPrototypoLibrary extends React.PureComponent {
 			</tr>
 		));
 
-		const payingContent = (
-			<div>
-				<h1>Prototypo library token</h1>
-				<WaitForLoad loading={loading}>
-					<CopyPasteInput content={token} />
-				</WaitForLoad>
-				<h1>Authorized domains</h1>
-				<WaitForLoad loading={loading}>
-					<FilterableTable tableHeaders={tableHeaders}>
-						<tr className="sortable-table-add-user-form">
-							<td colSpan={2}>
-								<input
-									className="sortable-table-add-user-form-email"
-									type="url"
-									name="url"
-									placeholder="domain.com"
-									ref={(node) => {
-										if (node) this.url = node;
-									}}
-								/>
-							</td>
-							<td>
-								<Button size="small" onClick={this.handleSubmit}>
-									Add authorized domain
-								</Button>
-							</td>
-						</tr>
-						{domainContent}
-					</FilterableTable>
-				</WaitForLoad>
-			</div>
-		);
-
-		const freeContent = (
-			<div>
-				<h3 className="account-dashboard-container-small-title">
-					You do not have a plan for the moment. To take full advantage of the
-					library you'll need to subscribe to Prototypo.
-				</h3>
-				<p>
-					<img style={{width: '100%'}} src="assets/images/go-pro.gif" />
-				</p>
-				<p>
-					Subscribe to our{' '}
-					<Link className="account-link" to="account/subscribe">
-						pro plan
-					</Link>{' '}
-					to benefit of the full power of Prototypo's library without
-					restrictions!
-				</p>
-			</div>
-		);
-
 		return (
 			<div className="account-base account-prototypo-library">
 				<h1>Documentation</h1>
@@ -157,11 +94,41 @@ class AccountPrototypoLibrary extends React.PureComponent {
 					>
 						documentation
 					</a>{' '}
-					to learn how to use the prototypo library.<br />To use the library you
-					will need the token under here and you'll also need to add the domain
-					name where you'll want to use the library.
+					to learn how to use the prototypo library.
+					<br />
+					To use the library you will need the token under here and you'll also
+					need to add the domain name where you'll want to use the library.
 				</div>
-				{freeAccountAndHasCredits || !freeAccount ? payingContent : freeContent}
+				<div>
+					<h1>Prototypo library token</h1>
+					<WaitForLoad loading={loading}>
+						<CopyPasteInput content={token} />
+					</WaitForLoad>
+					<h1>Authorized domains</h1>
+					<WaitForLoad loading={loading}>
+						<FilterableTable tableHeaders={tableHeaders}>
+							<tr className="sortable-table-add-user-form">
+								<td colSpan={2}>
+									<input
+										className="sortable-table-add-user-form-email"
+										type="url"
+										name="url"
+										placeholder="domain.com"
+										ref={(node) => {
+											if (node) this.url = node;
+										}}
+									/>
+								</td>
+								<td>
+									<Button size="small" onClick={this.handleSubmit}>
+										Add authorized domain
+									</Button>
+								</td>
+							</tr>
+							{domainContent}
+						</FilterableTable>
+					</WaitForLoad>
+				</div>
 			</div>
 		);
 	}

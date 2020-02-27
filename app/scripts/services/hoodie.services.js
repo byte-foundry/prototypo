@@ -290,13 +290,7 @@ export default class HoodieApi {
 }
 
 function setupHoodie(data) {
-	HoodieApi.instance.hoodieId = data.id;
 	HoodieApi.instance.email = data.email;
-	HoodieApi.instance.plan = 'free_none';
-
-	if (data.manager) {
-		HoodieApi.instance.plan = 'managed';
-	}
 
 	if (window.Intercom) {
 		window.Intercom('boot', {
@@ -322,7 +316,6 @@ async function setupStripe(data, time = 1000) {
 
 			if (subscription) {
 				HoodieApi.instance.subscriptionId = subscription.id;
-				HoodieApi.instance.plan = subscription.plan.id;
 			}
 
 			localClient.dispatchAction('/load-customer-data', customer);

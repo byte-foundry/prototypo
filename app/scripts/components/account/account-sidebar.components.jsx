@@ -122,21 +122,9 @@ class AccountSidebar extends React.Component {
 						slug="account"
 						label="Account settings"
 					>
-						{accountsLinks.length > 0
-							? accountsLinks
-							: [
-								<AccountSidebarSubLink
-									to="/account/subscribe"
-									label="Subscribe to the pro plan"
-								/>,
-								<AccountSidebarSubLink
-									to="/account/subscribe?plan=team"
-									label="Subscribe to the team plan"
-								/>,
-							]}
+						{accountsLinks.length > 0 && accountsLinks}
 					</AccountSidebarLink>
-					{subscription
-						&& subscription.quantity > 1 && (
+					{subscription && subscription.quantity > 1 && (
 						<AccountSidebarLink
 							to="/account/organization"
 							slug="organization"

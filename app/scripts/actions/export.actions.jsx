@@ -10,7 +10,6 @@ import {
 import LocalServer from '../stores/local-server.stores';
 import LocalClient from '../stores/local-client.stores';
 import {FontValues} from '../services/values.services';
-import HoodieApi from '../services/hoodie.services';
 import FontMediator from '../prototypo.js/mediator/FontMediator';
 import apolloClient from '../services/graphcool.services';
 
@@ -45,43 +44,6 @@ function triggerDownload(arrayBuffer, filename) {
 	);
 }
 
-/**
- *	Checks for export authorization for a given (plan,credits) couple
- *	@param {string} the current user's plan
- *	@param {number} the current user's credit amount
- *	@return {boolean} wether the user is authorized to export or not
- */
-function exportAuthorized(plan, credits) {
-	const currentCreditCost = prototypoStore.get('currentCreditCost');
-	const paidPlan = plan.indexOf('free_') === -1;
-	const enoughCredits = credits && credits > 0 && currentCreditCost <= credits;
-
-	if (!paidPlan && !enoughCredits) {
-		localClient.dispatchAction('/store-value', {
-			errorExport: {
-				message: 'Not enough credits',
-			},
-		});
-	}
-
-	return paidPlan || enoughCredits;
-}
-
-/**
- *	Dispatches an event that will spend credits (to be done on export success callback)
- */
-function spendCreditsAction() {
-	const plan = HoodieApi.instance.plan;
-
-	if (plan.indexOf('free_') !== -1) {
-		const currentCreditCost = prototypoStore.get('currentCreditCost');
-
-		localClient.dispatchAction('/spend-credits', {
-			amount: currentCreditCost,
-		});
-	}
-}
-
 export default {
 	'/exporting': ({exporting, errorExport}) => {
 		const patch = prototypoStore
@@ -100,14 +62,6 @@ export default {
 		const exporting = prototypoStore.get('export');
 
 		if (exporting) {
-			return;
-		}
-
-		const plan = HoodieApi.instance.plan;
-		const credits = prototypoStore.get('credits');
-
-		// forbid export without plan
-		if (!exportAuthorized(plan, credits)) {
 			return;
 		}
 
@@ -195,19 +149,6 @@ export default {
 			return;
 		}
 
-		const plan = HoodieApi.instance.plan;
-		const credits = prototypoStore.get('credits');
-
-		// forbid export without plan
-		if (!exportAuthorized(plan, credits)) {
-			console.log('You need a plan to export');
-			localClient.dispatchAction('/store-value', {
-				openRestrictedFeature: true,
-				restrictedFeatureHovered: 'export',
-			});
-			return;
-		}
-
 		localClient.dispatchAction('/exporting', {exporting: true});
 
 		exportingError = setTimeout(() => {
@@ -271,19 +212,6 @@ export default {
 
 		if (exporting) {
 			console.log('Already exporting, sorry!');
-			return;
-		}
-
-		const plan = HoodieApi.instance.plan;
-		const credits = prototypoStore.get('credits');
-
-		// forbid export without plan
-		if (!exportAuthorized(plan, credits)) {
-			localClient.dispatchAction('/store-value', {
-				openRestrictedFeature: true,
-				restrictedFeatureHovered: 'export',
-			});
-			console.log('You need a plan to export');
 			return;
 		}
 
@@ -466,18 +394,9 @@ export default {
 		localClient.dispatchAction('/store-value', {uiOnboardstep: 'end'});
 		clearTimeout(exportingError);
 		window.Intercom('trackEvent', 'export-otf');
-		spendCreditsAction();
 		localClient.dispatchAction('/exporting', {exporting: false});
 	},
 	'/set-up-export-otf': ({merged, exportAs = true}) => {
-		const plan = HoodieApi.instance.plan;
-		const credits = prototypoStore.get('credits');
-
-		// forbid export without plan
-		if (!exportAuthorized(plan, credits)) {
-			return false;
-		}
-
 		const patch = prototypoStore
 			.set('exportAs', exportAs)
 			.set('mergedExportAs', merged)
@@ -489,14 +408,6 @@ export default {
 		const exporting = prototypoStore.get('export');
 
 		if (exporting) {
-			return;
-		}
-
-		const plan = HoodieApi.instance.plan;
-		const credits = prototypoStore.get('credits');
-
-		// forbid export without plan
-		if (!exportAuthorized(plan, credits)) {
 			return;
 		}
 
@@ -760,17 +671,11 @@ export default {
 			return;
 		}
 
-		const plan = HoodieApi.instance.plan;
-		const credits = prototypoStore.get('credits');
-
-		// forbid export without plan
-		if (!exportAuthorized(plan, credits)) {
-			return;
-		}
-
 		const selectedVariant = prototypoStore.get('variant');
 		const selectedFamily = prototypoStore.get('family');
-		const {data: {family}} = await apolloClient.query({
+		const {
+			data: {family},
+		} = await apolloClient.query({
 			query: gql`
 				query getFamilyValues($id: ID!) {
 					family: Family(id: $id) {
