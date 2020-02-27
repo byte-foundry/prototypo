@@ -14,7 +14,7 @@
     "cleave.js": "^0.7.14",
     "country-data": "^0.0.31",
     "del": "^1.2.0",
-    "diff": "^3.0.1",
+    "diff": "^3.5.0",
     "draft-js": "~0.9.1",
     "elzevir.ptf": "byte-foundry/elzevir.ptf#feat/simplified-parameters",
     "escape-string-regexp": "^1.0.5",
