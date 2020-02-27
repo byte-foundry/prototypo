@@ -7,7 +7,7 @@ import isProduction from '../helpers/is-production.helpers';
 import LocalClient from '../stores/local-client.stores';
 
 const AWS_URL = `https://${
-	isProduction() ? 'e4jpj60rk8' : 'tc1b6vq6o8'
+	isProduction() ? '67phw2at83' : 'mnhdjpr7jc'
 }.execute-api.eu-west-1.amazonaws.com/${isProduction() ? 'prod' : 'dev'}`;
 
 export const TWITTER_REQUEST_TOKEN_URL = `${AWS_URL}/auth/twitter/requestToken`;
