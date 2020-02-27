@@ -1,7 +1,7 @@
 sudo: false
 language: node_js
 node_js:
-- '6.11'
+- 8
 script:
 - npm rebuild node-sass
 - NODE_ENV=production yarn build:dist -- --type=prod
