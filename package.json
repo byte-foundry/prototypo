@@ -22,7 +22,7 @@
     "john-fell.ptf": "byte-foundry/john-fell.ptf#feat/simplified-parameters",
     "jszip": "^2.5.0",
     "lifespan": "FranzPoize/lifespan#master",
-    "lodash": "^4.17.11",
+    "lodash": "^4.17.13",
     "memoize-immutable": "^3.0.0",
     "moment": "^2.10.3",
     "nexus-events": "franzpoize/nexus-events#master",
