@@ -2,6 +2,7 @@ const Promise = require('bluebird'); // Bluebird promise are way better than nat
 const fs = Promise.promisifyAll(require('fs')); // We just want promise seriously
 
 const gulp = require('gulp');
+const pipeline = Promise.promisify(require('stream').pipeline);
 
 // webpack Dep
 const webpack = require('webpack');
@@ -32,18 +33,20 @@ gulp.task('images', () => {
 });
 
 gulp.task('cp-genese', () => {
-	gulp.src('./node_modules/antique.ptf/dist/font.json')
-		.pipe(gulp.dest('./dist/antique.ptf/dist/'));
-	gulp.src('./node_modules/john-fell.ptf/dist/font.json')
-		.pipe(gulp.dest('./dist/templates/john-fell.ptf'));
-	gulp.src('./node_modules/venus.ptf/dist/font.json')
-		.pipe(gulp.dest('./dist/templates/venus.ptf'));
-	gulp.src('./node_modules/elzevir.ptf/dist/font.json')
-		.pipe(gulp.dest('./dist/templates/elzevir.ptf'));
-	gulp.src('./node_modules/gfnt.ptf/dist/font.json')
-		.pipe(gulp.dest('./dist/templates/gfnt.ptf'));
-	gulp.src('./node_modules/antique.ptf/dist/font.json')
-		.pipe(gulp.dest('./dist/templates/antique.ptf'));
+	return pipeline(
+		gulp.src('./node_modules/antique.ptf/dist/font.json')
+			.pipe(gulp.dest('./dist/antique.ptf/dist/')),
+		gulp.src('./node_modules/john-fell.ptf/dist/font.json')
+			.pipe(gulp.dest('./dist/templates/john-fell.ptf')),
+		gulp.src('./node_modules/venus.ptf/dist/font.json')
+			.pipe(gulp.dest('./dist/templates/venus.ptf')),
+		gulp.src('./node_modules/elzevir.ptf/dist/font.json')
+			.pipe(gulp.dest('./dist/templates/elzevir.ptf')),
+		gulp.src('./node_modules/gfnt.ptf/dist/font.json')
+			.pipe(gulp.dest('./dist/templates/gfnt.ptf')),
+		gulp.src('./node_modules/antique.ptf/dist/font.json')
+			.pipe(gulp.dest('./dist/templates/antique.ptf'))
+	);
 });
 
 gulp.task('cp-static', () => {
