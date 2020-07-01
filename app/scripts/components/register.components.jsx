@@ -95,7 +95,7 @@ class Register extends React.Component {
 				? {
 					plan: this.props.location.query.subscribe,
 					quantity: this.props.location.query.quantity,
-				}
+				  }
 				: this.props.location.query,
 		});
 	}
@@ -121,8 +121,15 @@ class Register extends React.Component {
 			<div className="sign-up sign-base">
 				<div className="account-dashboard-icon" />
 				<div className="account-header">
-					<h1 className="account-title">Sign up</h1>
+					<h1 className="account-title">Prototypo is no more.</h1>
 				</div>
+				<a
+					href="https://www.prototypo.io/blog/news/10-years-8-months-and-12-days/"
+					className="account-dashboard-page-title"
+				>
+					RIP
+				</a>
+				{/*
 				<h1 className="account-dashboard-page-title">Nice to meet you.</h1>
 				<div className="account-dashboard-container">
 					<div className="sign-in-container">
@@ -243,6 +250,7 @@ class Register extends React.Component {
 						</form>
 					</div>
 				</div>
+				*/}
 			</div>
 		);
 	}

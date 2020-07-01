@@ -102,8 +102,15 @@ export class Signin extends React.Component {
 			<div className="sign-in sign-base">
 				<div className="account-dashboard-icon" />
 				<div className="account-header">
-					<h1 className="account-title">Sign in</h1>
+					<h1 className="account-title">Prototypo is no more.</h1>
 				</div>
+				<a
+					href="https://www.prototypo.io/blog/news/10-years-8-months-and-12-days/"
+					className="account-dashboard-page-title"
+				>
+					RIP
+				</a>
+				{/*
 				<h1 className="account-dashboard-page-title">Welcome back.</h1>
 				<div className="sign-in-container">
 					<div className="sign-in-oauth">
@@ -146,9 +153,9 @@ export class Signin extends React.Component {
 						<Link to="/signin/forgotten" className="sign-in-help-needed">
 							I forgot my password
 						</Link>
-						{/* <Link to="/signup" className="sign-in-help-needed">
+						<Link to="/signup" className="sign-in-help-needed">
 							I don't have an account
-						</Link> */}
+						</Link>
 						{errors}
 						<AccountValidationButton
 							label="Sign in"
@@ -156,6 +163,7 @@ export class Signin extends React.Component {
 						/>
 					</form>
 				</div>
+				*/}
 			</div>
 		);
 	}
